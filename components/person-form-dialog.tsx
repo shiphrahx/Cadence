@@ -24,11 +24,19 @@ interface PersonFormDialogProps {
   onSave: (person: Person) => void
 }
 
+const getTodayDate = () => {
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = String(today.getMonth() + 1).padStart(2, '0')
+  const day = String(today.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 const emptyPerson: Person = {
   name: "",
   role: "",
   level: "",
-  startDate: "",
+  startDate: getTodayDate(),
   status: "active",
   teams: [],
   notes: ""
@@ -57,9 +65,9 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave }: PersonF
       <DialogContent className="sm:max-w-[525px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>{isEditing ? "Edit Person" : "Add New Person"}</DialogTitle>
+            <DialogTitle>{isEditing ? "Edit Team Member" : "Add New Team Member"}</DialogTitle>
             <DialogDescription>
-              {isEditing ? "Update the person's details below." : "Add a new team member to your organization."}
+              {isEditing ? "Update the team member's details below." : "Add a new team member to your organization."}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -116,7 +124,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave }: PersonF
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit">{isEditing ? "Save Changes" : "Add Person"}</Button>
+            <Button type="submit">{isEditing ? "Save Changes" : "Add Team Member"}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

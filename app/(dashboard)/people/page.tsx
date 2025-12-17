@@ -217,7 +217,11 @@ export default function PeoplePage() {
             </TableHeader>
             <TableBody>
               {filteredPeople.map((person) => (
-                <TableRow key={person.id}>
+                <TableRow
+                  key={person.id}
+                  onClick={() => setEditingPerson(person)}
+                  className="cursor-pointer"
+                >
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-700">
@@ -256,7 +260,10 @@ export default function PeoplePage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => setSelectedPersonMenu(selectedPersonMenu === person.id ? null : person.id)}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setSelectedPersonMenu(selectedPersonMenu === person.id ? null : person.id)
+                        }}
                       >
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
@@ -264,18 +271,22 @@ export default function PeoplePage() {
                         <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
                           <div className="py-1">
                             <button
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.stopPropagation()
                                 setEditingPerson(person)
                                 setSelectedPersonMenu(null)
                               }}
-                              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
                             >
                               <Pencil className="h-4 w-4" />
                               Edit
                             </button>
                             <button
-                              onClick={() => handleToggleStatus(person)}
-                              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleToggleStatus(person)
+                              }}
+                              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
                             >
                               {person.status === "active" ? (
                                 <>
@@ -290,11 +301,12 @@ export default function PeoplePage() {
                               )}
                             </button>
                             <button
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.stopPropagation()
                                 setDeletingPerson(person)
                                 setSelectedPersonMenu(null)
                               }}
-                              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer"
                             >
                               <Trash2 className="h-4 w-4" />
                               Delete
