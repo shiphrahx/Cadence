@@ -36,11 +36,11 @@ export function Sidebar() {
       {/* Logo */}
       <div className="flex h-16 items-center gap-3 border-b px-6">
         <Image
-          src="/icon.png"
+          src="/icon_02.png"
           alt="Cadence"
-          width={32}
-          height={32}
-          className="h-8 w-8 object-contain"
+          width={50}
+          height={50}
+          className="h-[50px] w-[50px] object-contain rounded-lg"
         />
         <span className="text-xl font-semibold">Cadence</span>
       </div>
