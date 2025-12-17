@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init:*)",
+      "Bash(gh auth status:*)",
+      "Bash(gh repo create:*)",
+      "Bash(gh project view:*)",
+      "Bash(gh auth refresh:*)",
+      "Bash(gh project item-list:*)",
+      "Bash(dir:*)",
+      "Bash(gh issue create --title \"Auth: Implement Google OAuth with Supabase\" --body \"$(cat <<''EOF''\n## Phase 1: Foundation\n\n### Description\nImplement Google sign-in as the primary authentication method using Supabase Auth.\n\n### Specifications (from requirements)\n- No password storage or password reset flows\n- Quick onboarding (sign in → start using)\n- On first login, create a user profile record\n- Session handling: secure cookies/JWT managed by Supabase\n\n### Tasks\n- [ ] Configure Google OAuth in Supabase dashboard\n- [ ] Implement sign-in page with Google OAuth button\n- [ ] Create user profile on first login\n- [ ] Set up protected routes and middleware\n- [ ] Implement sign-out functionality\n- [ ] Add session persistence\n- [ ] Handle OAuth callback and errors\n\n### Acceptance Criteria\n- Users can sign in with Google\n- User profile is created automatically on first login\n- Protected routes redirect unauthenticated users\n- Sessions persist across page refreshes\n- Sign out works correctly\n\n### Labels\nfoundation, auth, phase-1\nEOF\n)\" --label \"foundation,auth,phase-1\")",
+      "Bash(gh issue create:*)",
+      "Bash(for i in {1..25})",
+      "Bash(do gh issue edit $i --add-project \"shiphrahx/2\")",
+      "Bash(done)",
+      "Bash(gh project item-add:*)",
+      "Bash(gh issue edit 9 --body \"$(cat <<''EOF''\n## Phase 3: Automation\n\n### Description\nUPDATED: This issue focuses on meeting recurrence configuration only (no automatic generation).\n\n### Implementation Decisions\n✅ **Users control meeting creation** - Meetings are created manually from user''s own calendar (Google/Outlook)\n✅ **Recurrence config for reference** - Users can configure recurrence patterns for documentation purposes\n✅ **No automatic meeting generation** - Users maintain full calendar control\n\n### Features\n- Configure recurring meeting patterns (weekly, fortnightly, monthly, custom)\n- Link recurrence patterns to people (1:1s) or teams (team syncs)\n- Display next expected meeting date (for reference)\n- Mark meetings as part of a recurring series\n- Pause/resume recurrence tracking\n\n### Tasks\n- [ ] Create meeting_recurrences data model\n- [ ] Build recurrence configuration UI\n- [ ] Add recurrence pattern display\n- [ ] Show \"next expected meeting\" indicator\n- [ ] Implement pause/resume functionality\n- [ ] Link meetings to recurrence patterns\n- [ ] Add recurrence status indicators\n- [ ] Create recurrence management page\n\n### Acceptance Criteria\n- Users can configure recurrence patterns for reference\n- Recurrence patterns are linked to meetings\n- No automatic meeting creation occurs\n- Users maintain full control of their calendar\n- Next expected meeting date is displayed\n\n**Labels: phase-3, meetings, automation**\nEOF\n)\")",
+      "Bash(gh issue edit:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
+    ]
+  }
+}
