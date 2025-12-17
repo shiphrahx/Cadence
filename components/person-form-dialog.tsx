@@ -65,9 +65,9 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave }: PersonF
       <DialogContent className="sm:max-w-[525px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>{isEditing ? "Edit Team Member" : "Add New Team Member"}</DialogTitle>
+            <DialogTitle>{isEditing ? `Edit ${person?.name}` : "Add New Team Member"}</DialogTitle>
             <DialogDescription>
-              {isEditing ? "Update the team member's details below." : "Add a new team member to your organization."}
+              {isEditing ? `Update ${person?.name}'s details below.` : "Add a new team member to your organization."}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
