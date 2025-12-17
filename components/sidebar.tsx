@@ -36,7 +36,7 @@ export function Sidebar() {
   return (
     <div className="flex h-full w-64 flex-col border-r bg-white">
       {/* Logo */}
-      <div className="flex h-16 items-center gap-3 border-b px-6">
+      <Link href="/" className="flex h-16 items-center gap-3 border-b px-6 hover:bg-gray-50 transition-colors">
         <Image
           src="/icon_02.png"
           alt="Cadence"
@@ -45,7 +45,7 @@ export function Sidebar() {
           className="h-[50px] w-[50px] object-contain rounded-lg"
         />
         <span className="text-xl font-semibold">Cadence</span>
-      </div>
+      </Link>
 
       {/* Search */}
       <div className="border-b p-4">
