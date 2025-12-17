@@ -1,12 +1,11 @@
 # Cadence
 
-![Cadence Banner](banner_01.png)
+![Cadence Banner](public/banner_01.png)
 
 **A lightweight web platform for engineering managers to run their day-to-day work effectively.**
 
 Cadence is your control centre for management work—bringing together tasks, meetings, delivery data, and personal growth in one clear, organised place.
 
----
 
 ## What is Cadence?
 
@@ -25,8 +24,6 @@ Cadence helps engineering managers:
 - ❌ Not an AI-driven decision platform
 
 Cadence supports good management habits—it doesn't automate judgement.
-
----
 
 ## Features
 
@@ -60,86 +57,16 @@ Cadence supports good management habits—it doesn't automate judgement.
 - Build historical context of your growth
 - Link goals to projects and learning activities
 
----
-
-## Tech Stack
-
-- **Frontend:** Next.js (React) + TypeScript
-- **UI:** Tailwind CSS + shadcn/ui
-- **Charts:** Recharts
-- **Auth:** Supabase Auth (Google OAuth)
-- **Database:** Supabase Postgres
-- **Hosting:** Vercel + Supabase
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+ and npm
-- A Supabase account
-- A Google OAuth app (for authentication)
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/shiphrahx/Cadence.git
-cd Cadence
-
-# Install dependencies
-npm install
-
-# Set up environment variables
-cp .env.example .env.local
-# Edit .env.local with your Supabase and Google OAuth credentials
-
-# Run database migrations
-npm run db:migrate
-
-# Start the development server
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) to see the application.
-
----
-
-## Project Status
-
-Cadence is currently in active development. See the [project board](https://github.com/users/shiphrahx/projects/2) for current progress.
-
-### Implementation Phases
-
-- **Phase 1: Foundation** - Project setup, auth, database, team/people management
-- **Phase 2: Core Workflow** - Tasks, meetings, projects
-- **Phase 3: Automation** - Recurring patterns, insights, auto-task creation
-- **Phase 4: Polish** - Dashboards, settings, mobile optimization
-
-See [IMPLEMENTATION_DECISIONS.md](IMPLEMENTATION_DECISIONS.md) for detailed technical decisions.
-
----
-
-## Documentation
-
-- [Implementation Decisions](IMPLEMENTATION_DECISIONS.md) - Key technical and design decisions
-- [Database Schema](docs/schema.md) - Database structure and relationships *(coming soon)*
-- [User Guide](docs/user-guide.md) - How to use Cadence *(coming soon)*
-
----
 
 ## Contributing
 
 Contributions are welcome! Please see our [Contributing Guidelines](CONTRIBUTING.md) *(coming soon)* for details.
 
----
 
 ## License
 
 This project is currently under development. License information will be added soon.
 
----
 
 ## Target Audience
 
@@ -150,7 +77,7 @@ Cadence is built for:
 - Senior Engineers transitioning into management
 - Managers leading multiple teams
 
----
+
 
 ## Contact & Support
 
