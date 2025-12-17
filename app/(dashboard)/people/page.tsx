@@ -95,6 +95,29 @@ export default function PeoplePage() {
     return name.split(' ').map(n => n[0]).join('').toUpperCase()
   }
 
+  // Calculate stats
+  const getLevelCounts = () => {
+    const counts: { [key: string]: number } = {}
+    people.forEach(person => {
+      const level = person.level || 'Unknown'
+      counts[level] = (counts[level] || 0) + 1
+    })
+    return counts
+  }
+
+  const getRecentHires = () => {
+    const thirtyDaysAgo = new Date()
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+
+    return people.filter(person => {
+      const startDate = new Date(person.startDate)
+      return startDate >= thirtyDaysAgo
+    }).length
+  }
+
+  const levelCounts = getLevelCounts()
+  const recentHiresCount = getRecentHires()
+
   const handleAddPerson = (newPerson: Omit<Person, "id">) => {
     const person: Person = {
       ...newPerson,
@@ -162,9 +185,13 @@ export default function PeoplePage() {
           </CardHeader>
           <CardContent>
             <div className="flex gap-2 flex-wrap">
-              <Badge variant="outline">Junior: 1</Badge>
-              <Badge variant="outline">Mid: 2</Badge>
-              <Badge variant="outline">Senior+: 2</Badge>
+              {Object.entries(levelCounts).length > 0 ? (
+                Object.entries(levelCounts).map(([level, count]) => (
+                  <Badge key={level} variant="outline">{level}: {count}</Badge>
+                ))
+              ) : (
+                <p className="text-xs text-muted-foreground">No people yet</p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -175,7 +202,7 @@ export default function PeoplePage() {
             <User className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1</div>
+            <div className="text-2xl font-bold">{recentHiresCount}</div>
             <p className="text-xs text-muted-foreground">
               In the last 30 days
             </p>
