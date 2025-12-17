@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import {
   LayoutDashboard,
@@ -33,10 +34,14 @@ export function Sidebar() {
   return (
     <div className="flex h-full w-64 flex-col border-r bg-white">
       {/* Logo */}
-      <div className="flex h-16 items-center gap-2 border-b px-6">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-          <span className="text-lg font-bold text-white">C</span>
-        </div>
+      <div className="flex h-16 items-center gap-3 border-b px-6">
+        <Image
+          src="/icon.png"
+          alt="Cadence"
+          width={32}
+          height={32}
+          className="h-8 w-8 object-contain"
+        />
         <span className="text-xl font-semibold">Cadence</span>
       </div>
 
