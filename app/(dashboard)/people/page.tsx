@@ -5,10 +5,32 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Plus, User, MoreHorizontal } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Plus, User, MoreHorizontal, Pencil, Trash2, UserX, UserCheck } from "lucide-react"
+import { PersonFormDialog } from "@/components/person-form-dialog"
+
+interface Person {
+  id: number
+  name: string
+  role: string
+  level: string
+  startDate: string
+  status: "active" | "inactive"
+  teams: string[]
+  notes?: string
+}
 
 // Mock data
-const mockPeople = [
+const initialPeople: Person[] = [
   {
     id: 1,
     name: "Sarah Miller",
@@ -57,8 +79,13 @@ const mockPeople = [
 ]
 
 export default function PeoplePage() {
-  const [people] = useState(mockPeople)
+  const [people, setPeople] = useState<Person[]>(initialPeople)
   const [showInactive, setShowInactive] = useState(false)
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [editingPerson, setEditingPerson] = useState<Person | null>(null)
+  const [deletingPerson, setDeletingPerson] = useState<Person | null>(null)
+  const [deleteConfirmation, setDeleteConfirmation] = useState("")
+  const [selectedPersonMenu, setSelectedPersonMenu] = useState<number | null>(null)
 
   const filteredPeople = showInactive
     ? people
@@ -66,6 +93,35 @@ export default function PeoplePage() {
 
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase()
+  }
+
+  const handleAddPerson = (newPerson: Omit<Person, "id">) => {
+    const person: Person = {
+      ...newPerson,
+      id: Math.max(...people.map(p => p.id), 0) + 1,
+      status: "active",
+    }
+    setPeople([...people, person])
+  }
+
+  const handleEditPerson = (updatedPerson: Person) => {
+    setPeople(people.map(p => p.id === updatedPerson.id ? updatedPerson : p))
+    setEditingPerson(null)
+  }
+
+  const handleToggleStatus = (person: Person) => {
+    setPeople(people.map(p =>
+      p.id === person.id ? { ...p, status: p.status === "active" ? "inactive" : "active" } : p
+    ))
+    setSelectedPersonMenu(null)
+  }
+
+  const handleDeletePerson = () => {
+    if (deletingPerson && deleteConfirmation === deletingPerson.name) {
+      setPeople(people.filter(p => p.id !== deletingPerson.id))
+      setDeletingPerson(null)
+      setDeleteConfirmation("")
+    }
   }
 
   return (
@@ -78,7 +134,7 @@ export default function PeoplePage() {
             Manage your team members and their details
           </p>
         </div>
-        <Button>
+        <Button onClick={() => setIsAddDialogOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
           Add Person
         </Button>
@@ -105,7 +161,7 @@ export default function PeoplePage() {
             <User className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               <Badge variant="outline">Junior: 1</Badge>
               <Badge variant="outline">Mid: 2</Badge>
               <Badge variant="outline">Senior+: 2</Badge>
@@ -196,9 +252,57 @@ export default function PeoplePage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="ghost" size="icon">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
+                    <div className="relative inline-block">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setSelectedPersonMenu(selectedPersonMenu === person.id ? null : person.id)}
+                      >
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                      {selectedPersonMenu === person.id && (
+                        <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+                          <div className="py-1">
+                            <button
+                              onClick={() => {
+                                setEditingPerson(person)
+                                setSelectedPersonMenu(null)
+                              }}
+                              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            >
+                              <Pencil className="h-4 w-4" />
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleToggleStatus(person)}
+                              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            >
+                              {person.status === "active" ? (
+                                <>
+                                  <UserX className="h-4 w-4" />
+                                  Set Inactive
+                                </>
+                              ) : (
+                                <>
+                                  <UserCheck className="h-4 w-4" />
+                                  Set Active
+                                </>
+                              )}
+                            </button>
+                            <button
+                              onClick={() => {
+                                setDeletingPerson(person)
+                                setSelectedPersonMenu(null)
+                              }}
+                              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -215,7 +319,7 @@ export default function PeoplePage() {
                   : "No active people. Try showing inactive people."}
               </p>
               {!showInactive && (
-                <Button>
+                <Button onClick={() => setIsAddDialogOpen(true)}>
                   <Plus className="h-4 w-4 mr-2" />
                   Add Your First Person
                 </Button>
@@ -224,6 +328,61 @@ export default function PeoplePage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Add Person Dialog */}
+      <PersonFormDialog
+        open={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+        onSave={handleAddPerson}
+      />
+
+      {/* Edit Person Dialog */}
+      <PersonFormDialog
+        open={!!editingPerson}
+        onOpenChange={(open) => !open && setEditingPerson(null)}
+        person={editingPerson}
+        onSave={handleEditPerson}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={!!deletingPerson} onOpenChange={(open) => !open && setDeletingPerson(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Person</DialogTitle>
+            <DialogDescription>
+              This action cannot be undone. This will permanently delete this person and remove all associated data.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="confirmDelete">
+                Type <strong>{deletingPerson?.name}</strong> to confirm
+              </Label>
+              <Input
+                id="confirmDelete"
+                value={deleteConfirmation}
+                onChange={(e) => setDeleteConfirmation(e.target.value)}
+                placeholder="Type person name to confirm"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setDeletingPerson(null)
+              setDeleteConfirmation("")
+            }}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeletePerson}
+              disabled={deleteConfirmation !== deletingPerson?.name}
+            >
+              Delete Person
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
