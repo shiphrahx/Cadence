@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -24,18 +24,25 @@ interface PersonFormDialogProps {
   onSave: (person: Person) => void
 }
 
+const emptyPerson: Person = {
+  name: "",
+  role: "",
+  level: "",
+  startDate: "",
+  status: "active",
+  teams: [],
+  notes: ""
+}
+
 export function PersonFormDialog({ open, onOpenChange, person, onSave }: PersonFormDialogProps) {
-  const [formData, setFormData] = useState<Person>(
-    person || {
-      name: "",
-      role: "",
-      level: "",
-      startDate: "",
-      status: "active",
-      teams: [],
-      notes: ""
+  const [formData, setFormData] = useState<Person>(person || emptyPerson)
+
+  // Reset form data when dialog opens/closes or person changes
+  useEffect(() => {
+    if (open) {
+      setFormData(person || emptyPerson)
     }
-  )
+  }, [open, person])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
