@@ -40,9 +40,9 @@ export function Sidebar() {
         <Image
           src="/icon_02.png"
           alt="Cadence"
-          width={50}
-          height={50}
-          className="h-[50px] w-[50px] object-contain rounded-lg"
+          width={35}
+          height={35}
+          className="h-[35px] w-[35px] object-contain rounded-lg"
         />
         <span className="text-xl font-semibold">Cadence</span>
       </Link>
