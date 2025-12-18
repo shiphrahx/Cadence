@@ -95,25 +95,28 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave }: PersonF
               <div className="flex gap-2">
                 <Button
                   type="button"
-                  variant={formData.level === "Junior" ? "default" : "outline"}
+                  variant="outline"
                   size="sm"
                   onClick={() => setFormData({ ...formData, level: "Junior" })}
+                  className={formData.level === "Junior" ? "bg-green-100 text-green-700 border-green-300 hover:bg-green-200" : "hover:bg-green-50"}
                 >
                   Junior
                 </Button>
                 <Button
                   type="button"
-                  variant={formData.level === "Mid" ? "default" : "outline"}
+                  variant="outline"
                   size="sm"
                   onClick={() => setFormData({ ...formData, level: "Mid" })}
+                  className={formData.level === "Mid" ? "bg-yellow-100 text-yellow-700 border-yellow-300 hover:bg-yellow-200" : "hover:bg-yellow-50"}
                 >
                   Mid
                 </Button>
                 <Button
                   type="button"
-                  variant={formData.level === "Senior" ? "default" : "outline"}
+                  variant="outline"
                   size="sm"
                   onClick={() => setFormData({ ...formData, level: "Senior" })}
+                  className={formData.level === "Senior" ? "bg-pink-100 text-pink-700 border-pink-300 hover:bg-pink-200" : "hover:bg-pink-50"}
                 >
                   Senior
                 </Button>

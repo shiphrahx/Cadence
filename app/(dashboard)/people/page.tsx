@@ -95,6 +95,19 @@ export default function PeoplePage() {
     return name.split(' ').map(n => n[0]).join('').toUpperCase()
   }
 
+  const getLevelBadgeClass = (level: string) => {
+    switch (level) {
+      case "Junior":
+        return "bg-green-100 text-green-700 border-green-300"
+      case "Mid":
+        return "bg-yellow-100 text-yellow-700 border-yellow-300"
+      case "Senior":
+        return "bg-pink-100 text-pink-700 border-pink-300"
+      default:
+        return "bg-blue-100 text-blue-700 border-blue-300"
+    }
+  }
+
   // Calculate stats
   const getLevelCounts = () => {
     const counts: { [key: string]: number } = {}
@@ -259,7 +272,7 @@ export default function PeoplePage() {
                   </TableCell>
                   <TableCell className="text-muted-foreground">{person.role}</TableCell>
                   <TableCell>
-                    <Badge variant="outline">{person.level}</Badge>
+                    <Badge variant="outline" className={getLevelBadgeClass(person.level)}>{person.level}</Badge>
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
