@@ -90,25 +90,49 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave }: PersonF
                 placeholder="e.g. Senior Software Engineer"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="level">Level / Seniority</Label>
-                <Input
-                  id="level"
-                  value={formData.level}
-                  onChange={(e) => setFormData({ ...formData, level: e.target.value })}
-                  placeholder="e.g. Senior"
-                />
+            <div className="grid gap-2">
+              <Label>Level / Seniority</Label>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={formData.level === "Junior" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setFormData({ ...formData, level: "Junior" })}
+                >
+                  Junior
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.level === "Mid" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setFormData({ ...formData, level: "Mid" })}
+                >
+                  Mid
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.level === "Senior" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setFormData({ ...formData, level: "Senior" })}
+                >
+                  Senior
+                </Button>
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="startDate">Start Date</Label>
-                <Input
-                  id="startDate"
-                  type="date"
-                  value={formData.startDate}
-                  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                />
-              </div>
+              <Input
+                id="level"
+                value={formData.level}
+                onChange={(e) => setFormData({ ...formData, level: e.target.value })}
+                placeholder="Or enter custom level..."
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="startDate">Start Date</Label>
+              <Input
+                id="startDate"
+                type="date"
+                value={formData.startDate}
+                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+              />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="notes">Notes</Label>
