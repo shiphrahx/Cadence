@@ -129,7 +129,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[525px]">
+      <DialogContent className="sm:max-w-[700px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>{isEditing ? `Edit ${person?.name}` : "Add New Team Member"}</DialogTitle>
@@ -258,7 +258,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
 
                 {/* Person Teams */}
                 <div className="flex-1">
-                  <Label className="text-xs text-gray-600 mb-1">Person Teams ({personTeamsList.length})</Label>
+                  <Label className="text-xs text-gray-600 mb-1">{formData.name ? `${formData.name}'s Teams` : "Person's Teams"} ({personTeamsList.length})</Label>
                   <div className="border border-gray-300 rounded-md h-32 overflow-y-auto">
                     {personTeamsList.length > 0 ? (
                       personTeamsList.map((team) => (

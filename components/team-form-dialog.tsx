@@ -135,7 +135,7 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[525px]">
+      <DialogContent className="sm:max-w-[700px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>{isEditing ? `Edit ${team?.name}` : "Create New Team"}</DialogTitle>
