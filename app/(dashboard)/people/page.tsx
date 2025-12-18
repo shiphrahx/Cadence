@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -28,6 +28,18 @@ interface Person {
   teams: string[]
   notes?: string
 }
+
+interface Team {
+  id: number
+  name: string
+}
+
+// Mock data - simplified team list for person assignment
+const mockTeams: Team[] = [
+  { id: 1, name: "Platform Engineering" },
+  { id: 2, name: "Product Development" },
+  { id: 3, name: "Mobile Team" },
+]
 
 // Mock data
 const initialPeople: Person[] = [
@@ -90,6 +102,23 @@ export default function PeoplePage() {
   const filteredPeople = showInactive
     ? people
     : people.filter(person => person.status === "active")
+
+  // Close popup when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (selectedPersonMenu !== null) {
+        setSelectedPersonMenu(null)
+      }
+    }
+
+    if (selectedPersonMenu !== null) {
+      document.addEventListener('click', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+    }
+  }, [selectedPersonMenu])
 
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase()
@@ -180,13 +209,13 @@ export default function PeoplePage() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total People</CardTitle>
+            <CardTitle className="text-sm font-medium">Active People</CardTitle>
             <User className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{people.length}</div>
+            <div className="text-2xl font-bold">{people.filter(p => p.status === "active").length}</div>
             <p className="text-xs text-muted-foreground">
-              {people.filter(p => p.status === "active").length} active
+              {people.filter(p => p.status === "inactive").length} inactive
             </p>
           </CardContent>
         </Card>
@@ -308,7 +337,7 @@ export default function PeoplePage() {
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                       {selectedPersonMenu === person.id && (
-                        <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+                        <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
                           <div className="py-1">
                             <button
                               onClick={(e) => {
@@ -386,6 +415,7 @@ export default function PeoplePage() {
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
         onSave={handleAddPerson}
+        availableTeams={mockTeams}
       />
 
       {/* Edit Person Dialog */}
@@ -394,6 +424,7 @@ export default function PeoplePage() {
         onOpenChange={(open) => !open && setEditingPerson(null)}
         person={editingPerson}
         onSave={handleEditPerson}
+        availableTeams={mockTeams}
       />
 
       {/* Delete Confirmation Dialog */}

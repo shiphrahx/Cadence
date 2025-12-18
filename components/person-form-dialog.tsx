@@ -5,6 +5,12 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { ChevronRight, ChevronLeft } from "lucide-react"
+
+interface Team {
+  id: number
+  name: string
+}
 
 interface Person {
   id?: number
@@ -22,6 +28,7 @@ interface PersonFormDialogProps {
   onOpenChange: (open: boolean) => void
   person?: Person | null
   onSave: (person: Person) => void
+  availableTeams?: Team[]
 }
 
 const getTodayDate = () => {
@@ -42,13 +49,17 @@ const emptyPerson: Person = {
   notes: ""
 }
 
-export function PersonFormDialog({ open, onOpenChange, person, onSave }: PersonFormDialogProps) {
+export function PersonFormDialog({ open, onOpenChange, person, onSave, availableTeams = [] }: PersonFormDialogProps) {
   const [formData, setFormData] = useState<Person>(person || emptyPerson)
+  const [selectedAvailable, setSelectedAvailable] = useState<string[]>([])
+  const [selectedTeams, setSelectedTeams] = useState<string[]>([])
 
   // Reset form data when dialog opens/closes or person changes
   useEffect(() => {
     if (open) {
       setFormData(person || emptyPerson)
+      setSelectedAvailable([])
+      setSelectedTeams([])
     }
   }, [open, person])
 
@@ -60,9 +71,65 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave }: PersonF
 
   const isEditing = !!person
 
+  const availableTeamsList = availableTeams.filter(team =>
+    !formData.teams.includes(team.name)
+  )
+
+  const personTeamsList = availableTeams.filter(team =>
+    formData.teams.includes(team.name)
+  )
+
+  const handleAddToTeams = () => {
+    setFormData({
+      ...formData,
+      teams: [...formData.teams, ...selectedAvailable]
+    })
+    setSelectedAvailable([])
+  }
+
+  const handleRemoveFromTeams = () => {
+    setFormData({
+      ...formData,
+      teams: formData.teams.filter(team => !selectedTeams.includes(team))
+    })
+    setSelectedTeams([])
+  }
+
+  const toggleAvailableSelection = (teamName: string) => {
+    setSelectedAvailable(prev =>
+      prev.includes(teamName)
+        ? prev.filter(name => name !== teamName)
+        : [...prev, teamName]
+    )
+  }
+
+  const toggleTeamSelection = (teamName: string) => {
+    setSelectedTeams(prev =>
+      prev.includes(teamName)
+        ? prev.filter(name => name !== teamName)
+        : [...prev, teamName]
+    )
+  }
+
+  const handleDoubleClickAvailable = (teamName: string) => {
+    setFormData({
+      ...formData,
+      teams: [...formData.teams, teamName]
+    })
+    setSelectedAvailable(prev => prev.filter(name => name !== teamName))
+  }
+
+  const handleDoubleClickTeam = (teamName: string) => {
+    setFormData({
+      ...formData,
+      teams: formData.teams.filter(team => team !== teamName)
+    })
+    setSelectedTeams(prev => prev.filter(name => name !== teamName))
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[525px]">
+      <DialogContent className="sm:max-w-[700px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>{isEditing ? `Edit ${person?.name}` : "Add New Team Member"}</DialogTitle>
@@ -136,6 +203,84 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave }: PersonF
                 value={formData.startDate}
                 onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
               />
+            </div>
+            <div className="grid gap-2">
+              <Label>Teams</Label>
+              <div className="flex gap-3 items-center">
+                {/* Available Teams */}
+                <div className="flex-1">
+                  <Label className="text-xs text-gray-600 mb-1">Available Teams</Label>
+                  <div className="border border-gray-300 rounded-md h-32 overflow-y-auto">
+                    {availableTeamsList.length > 0 ? (
+                      availableTeamsList.map((team) => (
+                        <div
+                          key={team.id}
+                          onClick={() => toggleAvailableSelection(team.name)}
+                          onDoubleClick={() => handleDoubleClickAvailable(team.name)}
+                          className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 select-none ${
+                            selectedAvailable.includes(team.name) ? 'bg-primary-50 border-l-2 border-primary-600' : ''
+                          }`}
+                        >
+                          {team.name}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-sm text-gray-500">
+                        All teams assigned
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Arrow Buttons */}
+                <div className="flex flex-col gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={handleAddToTeams}
+                    disabled={selectedAvailable.length === 0}
+                    className="h-8 w-8"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={handleRemoveFromTeams}
+                    disabled={selectedTeams.length === 0}
+                    className="h-8 w-8"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                {/* Person Teams */}
+                <div className="flex-1">
+                  <Label className="text-xs text-gray-600 mb-1">{formData.name ? `${formData.name}'s Teams` : "Person's Teams"} ({personTeamsList.length})</Label>
+                  <div className="border border-gray-300 rounded-md h-32 overflow-y-auto">
+                    {personTeamsList.length > 0 ? (
+                      personTeamsList.map((team) => (
+                        <div
+                          key={team.id}
+                          onClick={() => toggleTeamSelection(team.name)}
+                          onDoubleClick={() => handleDoubleClickTeam(team.name)}
+                          className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 select-none ${
+                            selectedTeams.includes(team.name) ? 'bg-primary-50 border-l-2 border-primary-600' : ''
+                          }`}
+                        >
+                          {team.name}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-sm text-gray-500">
+                        No teams yet
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
             <div className="grid gap-2">
               <Label htmlFor="notes">Notes</Label>
