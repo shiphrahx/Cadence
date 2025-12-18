@@ -29,6 +29,18 @@ interface Person {
   notes?: string
 }
 
+interface Team {
+  id: number
+  name: string
+}
+
+// Mock data - simplified team list for person assignment
+const mockTeams: Team[] = [
+  { id: 1, name: "Platform Engineering" },
+  { id: 2, name: "Product Development" },
+  { id: 3, name: "Mobile Team" },
+]
+
 // Mock data
 const initialPeople: Person[] = [
   {
@@ -403,6 +415,7 @@ export default function PeoplePage() {
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
         onSave={handleAddPerson}
+        availableTeams={mockTeams}
       />
 
       {/* Edit Person Dialog */}
@@ -411,6 +424,7 @@ export default function PeoplePage() {
         onOpenChange={(open) => !open && setEditingPerson(null)}
         person={editingPerson}
         onSave={handleEditPerson}
+        availableTeams={mockTeams}
       />
 
       {/* Delete Confirmation Dialog */}
