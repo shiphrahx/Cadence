@@ -25,8 +25,23 @@ interface Team {
   status: "active" | "inactive"
   memberCount: number
   createdAt: string
+  memberIds?: number[]
   notes?: string
 }
+
+interface Person {
+  id: number
+  name: string
+}
+
+// Mock data - simplified person list for team assignment
+const mockPeople: Person[] = [
+  { id: 1, name: "Sarah Miller" },
+  { id: 2, name: "John Doe" },
+  { id: 3, name: "Emily Wong" },
+  { id: 4, name: "Mike Chen" },
+  { id: 5, name: "Alex Johnson" },
+]
 
 // Mock data
 const initialTeams: Team[] = [
@@ -35,24 +50,27 @@ const initialTeams: Team[] = [
     name: "Platform Engineering",
     description: "Core platform and infrastructure team",
     status: "active",
-    memberCount: 8,
+    memberCount: 2,
     createdAt: "2024-01-15",
+    memberIds: [1, 2],
   },
   {
     id: 2,
     name: "Product Development",
     description: "Customer-facing product features",
     status: "active",
-    memberCount: 7,
+    memberCount: 2,
     createdAt: "2024-02-01",
+    memberIds: [2, 3],
   },
   {
     id: 3,
     name: "Mobile Team",
     description: "iOS and Android applications",
     status: "inactive",
-    memberCount: 5,
+    memberCount: 1,
     createdAt: "2023-11-10",
+    memberIds: [5],
   },
 ]
 
@@ -219,7 +237,7 @@ export default function TeamsPage() {
                     })}
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="relative inline-block">
+                    <div className="relative">
                       <Button
                         variant="ghost"
                         size="icon"
@@ -231,7 +249,10 @@ export default function TeamsPage() {
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                       {selectedTeamMenu === team.id && (
-                        <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+                        <div className="fixed mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50" style={{
+                          transform: 'translate(-100%, 0)',
+                          marginLeft: '-12px'
+                        }}>
                           <div className="py-1">
                             <button
                               onClick={(e) => {
@@ -309,6 +330,7 @@ export default function TeamsPage() {
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
         onSave={handleAddTeam}
+        availablePeople={mockPeople}
       />
 
       {/* Edit Team Dialog */}
@@ -317,6 +339,7 @@ export default function TeamsPage() {
         onOpenChange={(open) => !open && setEditingTeam(null)}
         team={editingTeam}
         onSave={handleEditTeam}
+        availablePeople={mockPeople}
       />
 
       {/* Delete Confirmation Dialog */}
