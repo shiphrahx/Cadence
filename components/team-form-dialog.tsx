@@ -117,6 +117,22 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
     )
   }
 
+  const handleDoubleClickAvailable = (personId: number) => {
+    setFormData({
+      ...formData,
+      memberIds: [...(formData.memberIds || []), personId]
+    })
+    setSelectedAvailable(prev => prev.filter(id => id !== personId))
+  }
+
+  const handleDoubleClickMember = (personId: number) => {
+    setFormData({
+      ...formData,
+      memberIds: formData.memberIds?.filter(id => id !== personId) || []
+    })
+    setSelectedMembers(prev => prev.filter(id => id !== personId))
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[525px]">
@@ -160,6 +176,7 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
                         <div
                           key={person.id}
                           onClick={() => toggleAvailableSelection(person.id)}
+                          onDoubleClick={() => handleDoubleClickAvailable(person.id)}
                           className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 ${
                             selectedAvailable.includes(person.id) ? 'bg-primary-50 border-l-2 border-primary-600' : ''
                           }`}
@@ -208,6 +225,7 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
                         <div
                           key={person.id}
                           onClick={() => toggleMemberSelection(person.id)}
+                          onDoubleClick={() => handleDoubleClickMember(person.id)}
                           className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 ${
                             selectedMembers.includes(person.id) ? 'bg-primary-50 border-l-2 border-primary-600' : ''
                           }`}
