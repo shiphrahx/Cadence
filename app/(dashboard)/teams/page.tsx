@@ -171,10 +171,10 @@ export default function TeamsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {teams.reduce((sum, team) => sum + team.memberCount, 0)}
+              {teams.filter(t => t.status === "active").reduce((sum, team) => sum + team.memberCount, 0)}
             </div>
             <p className="text-xs text-muted-foreground">
-              Across all teams
+              In active teams
             </p>
           </CardContent>
         </Card>
@@ -186,10 +186,12 @@ export default function TeamsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {Math.round(teams.reduce((sum, team) => sum + team.memberCount, 0) / teams.length)}
+              {teams.filter(t => t.status === "active").length > 0
+                ? Math.round(teams.filter(t => t.status === "active").reduce((sum, team) => sum + team.memberCount, 0) / teams.filter(t => t.status === "active").length)
+                : 0}
             </div>
             <p className="text-xs text-muted-foreground">
-              Members per team
+              Members per active team
             </p>
           </CardContent>
         </Card>
