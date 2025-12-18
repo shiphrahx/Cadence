@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-import { X } from "lucide-react"
+import { ChevronRight, ChevronLeft } from "lucide-react"
 
 interface Person {
   id: number
@@ -53,13 +53,15 @@ const emptyTeam: Team = {
 
 export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeople = [] }: TeamFormDialogProps) {
   const [formData, setFormData] = useState<Team>(team || emptyTeam)
-  const [searchQuery, setSearchQuery] = useState("")
+  const [selectedAvailable, setSelectedAvailable] = useState<number[]>([])
+  const [selectedMembers, setSelectedMembers] = useState<number[]>([])
 
   // Reset form data when dialog opens/closes or team changes
   useEffect(() => {
     if (open) {
       setFormData(team || emptyTeam)
-      setSearchQuery("")
+      setSelectedAvailable([])
+      setSelectedMembers([])
     }
   }, [open, team])
 
@@ -75,28 +77,44 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
 
   const isEditing = !!team
 
-  const selectedMembers = availablePeople.filter(person =>
+  const availablePeopleList = availablePeople.filter(person =>
+    !formData.memberIds?.includes(person.id)
+  )
+
+  const teamMembersList = availablePeople.filter(person =>
     formData.memberIds?.includes(person.id)
   )
 
-  const filteredAvailablePeople = availablePeople.filter(person =>
-    !formData.memberIds?.includes(person.id) &&
-    person.name.toLowerCase().includes(searchQuery.toLowerCase())
-  )
-
-  const handleAddMember = (personId: number) => {
+  const handleAddToTeam = () => {
     setFormData({
       ...formData,
-      memberIds: [...(formData.memberIds || []), personId]
+      memberIds: [...(formData.memberIds || []), ...selectedAvailable]
     })
-    setSearchQuery("")
+    setSelectedAvailable([])
   }
 
-  const handleRemoveMember = (personId: number) => {
+  const handleRemoveFromTeam = () => {
     setFormData({
       ...formData,
-      memberIds: formData.memberIds?.filter(id => id !== personId) || []
+      memberIds: formData.memberIds?.filter(id => !selectedMembers.includes(id)) || []
     })
+    setSelectedMembers([])
+  }
+
+  const toggleAvailableSelection = (personId: number) => {
+    setSelectedAvailable(prev =>
+      prev.includes(personId)
+        ? prev.filter(id => id !== personId)
+        : [...prev, personId]
+    )
+  }
+
+  const toggleMemberSelection = (personId: number) => {
+    setSelectedMembers(prev =>
+      prev.includes(personId)
+        ? prev.filter(id => id !== personId)
+        : [...prev, personId]
+    )
   }
 
   return (
@@ -132,44 +150,79 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
             </div>
             <div className="grid gap-2">
               <Label>Team Members</Label>
-              {selectedMembers.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-2">
-                  {selectedMembers.map((person) => (
-                    <Badge key={person.id} variant="secondary" className="gap-1">
-                      {person.name}
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveMember(person.id)}
-                        className="ml-1 hover:bg-gray-300 rounded-full"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </Badge>
-                  ))}
+              <div className="flex gap-3 items-center">
+                {/* Available People */}
+                <div className="flex-1">
+                  <Label className="text-xs text-gray-600 mb-1">Available People</Label>
+                  <div className="border border-gray-300 rounded-md h-48 overflow-y-auto">
+                    {availablePeopleList.length > 0 ? (
+                      availablePeopleList.map((person) => (
+                        <div
+                          key={person.id}
+                          onClick={() => toggleAvailableSelection(person.id)}
+                          className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 ${
+                            selectedAvailable.includes(person.id) ? 'bg-primary-50 border-l-2 border-primary-600' : ''
+                          }`}
+                        >
+                          {person.name}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-sm text-gray-500">
+                        All people assigned
+                      </div>
+                    )}
+                  </div>
                 </div>
-              )}
-              <Input
-                placeholder="Search people to add..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              {searchQuery && filteredAvailablePeople.length > 0 && (
-                <div className="max-h-40 overflow-y-auto border border-gray-300 rounded-md">
-                  {filteredAvailablePeople.map((person) => (
-                    <button
-                      key={person.id}
-                      type="button"
-                      onClick={() => handleAddMember(person.id)}
-                      className="w-full text-left px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                    >
-                      {person.name}
-                    </button>
-                  ))}
+
+                {/* Arrow Buttons */}
+                <div className="flex flex-col gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={handleAddToTeam}
+                    disabled={selectedAvailable.length === 0}
+                    className="h-8 w-8"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={handleRemoveFromTeam}
+                    disabled={selectedMembers.length === 0}
+                    className="h-8 w-8"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
                 </div>
-              )}
-              {searchQuery && filteredAvailablePeople.length === 0 && (
-                <p className="text-sm text-gray-500 px-3 py-2">No people found</p>
-              )}
+
+                {/* Team Members */}
+                <div className="flex-1">
+                  <Label className="text-xs text-gray-600 mb-1">Team Members ({teamMembersList.length})</Label>
+                  <div className="border border-gray-300 rounded-md h-48 overflow-y-auto">
+                    {teamMembersList.length > 0 ? (
+                      teamMembersList.map((person) => (
+                        <div
+                          key={person.id}
+                          onClick={() => toggleMemberSelection(person.id)}
+                          className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 ${
+                            selectedMembers.includes(person.id) ? 'bg-primary-50 border-l-2 border-primary-600' : ''
+                          }`}
+                        >
+                          {person.name}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-sm text-gray-500">
+                        No members yet
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
             <div className="grid gap-2">
               <Label htmlFor="notes">Notes</Label>
