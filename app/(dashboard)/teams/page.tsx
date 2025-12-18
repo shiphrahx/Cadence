@@ -5,10 +5,31 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Plus, Users as UsersIcon, MoreHorizontal } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Plus, Users as UsersIcon, MoreHorizontal, Pencil, Trash2, UserX, UserCheck } from "lucide-react"
+import { TeamFormDialog } from "@/components/team-form-dialog"
+
+interface Team {
+  id: number
+  name: string
+  description: string
+  status: "active" | "inactive"
+  memberCount: number
+  createdAt: string
+  notes?: string
+}
 
 // Mock data
-const mockTeams = [
+const initialTeams: Team[] = [
   {
     id: 1,
     name: "Platform Engineering",
@@ -36,12 +57,46 @@ const mockTeams = [
 ]
 
 export default function TeamsPage() {
-  const [teams] = useState(mockTeams)
+  const [teams, setTeams] = useState<Team[]>(initialTeams)
   const [showInactive, setShowInactive] = useState(false)
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [editingTeam, setEditingTeam] = useState<Team | null>(null)
+  const [deletingTeam, setDeletingTeam] = useState<Team | null>(null)
+  const [deleteConfirmation, setDeleteConfirmation] = useState("")
+  const [selectedTeamMenu, setSelectedTeamMenu] = useState<number | null>(null)
 
   const filteredTeams = showInactive
     ? teams
     : teams.filter(team => team.status === "active")
+
+  const handleAddTeam = (newTeam: Omit<Team, "id">) => {
+    const team: Team = {
+      ...newTeam,
+      id: Math.max(...teams.map(t => t.id), 0) + 1,
+      status: "active",
+    }
+    setTeams([...teams, team])
+  }
+
+  const handleEditTeam = (updatedTeam: Team) => {
+    setTeams(teams.map(t => t.id === updatedTeam.id ? updatedTeam : t))
+    setEditingTeam(null)
+  }
+
+  const handleToggleStatus = (team: Team) => {
+    setTeams(teams.map(t =>
+      t.id === team.id ? { ...t, status: t.status === "active" ? "inactive" : "active" } : t
+    ))
+    setSelectedTeamMenu(null)
+  }
+
+  const handleDeleteTeam = () => {
+    if (deletingTeam && deleteConfirmation === deletingTeam.name) {
+      setTeams(teams.filter(t => t.id !== deletingTeam.id))
+      setDeletingTeam(null)
+      setDeleteConfirmation("")
+    }
+  }
 
   return (
     <div className="flex flex-col gap-6 p-8">
@@ -53,7 +108,7 @@ export default function TeamsPage() {
             Manage your teams and team members
           </p>
         </div>
-        <Button>
+        <Button onClick={() => setIsAddDialogOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
           Create Team
         </Button>
@@ -138,7 +193,11 @@ export default function TeamsPage() {
             </TableHeader>
             <TableBody>
               {filteredTeams.map((team) => (
-                <TableRow key={team.id}>
+                <TableRow
+                  key={team.id}
+                  onClick={() => setEditingTeam(team)}
+                  className="cursor-pointer"
+                >
                   <TableCell className="font-medium">{team.name}</TableCell>
                   <TableCell className="text-muted-foreground">{team.description}</TableCell>
                   <TableCell>
@@ -160,9 +219,65 @@ export default function TeamsPage() {
                     })}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="ghost" size="icon">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
+                    <div className="relative inline-block">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setSelectedTeamMenu(selectedTeamMenu === team.id ? null : team.id)
+                        }}
+                      >
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                      {selectedTeamMenu === team.id && (
+                        <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+                          <div className="py-1">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setEditingTeam(team)
+                                setSelectedTeamMenu(null)
+                              }}
+                              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                            >
+                              <Pencil className="h-4 w-4" />
+                              Edit
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleToggleStatus(team)
+                              }}
+                              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                            >
+                              {team.status === "active" ? (
+                                <>
+                                  <UserX className="h-4 w-4" />
+                                  Set Inactive
+                                </>
+                              ) : (
+                                <>
+                                  <UserCheck className="h-4 w-4" />
+                                  Set Active
+                                </>
+                              )}
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setDeletingTeam(team)
+                                setSelectedTeamMenu(null)
+                              }}
+                              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -179,7 +294,7 @@ export default function TeamsPage() {
                   : "No active teams. Try showing inactive teams."}
               </p>
               {!showInactive && (
-                <Button>
+                <Button onClick={() => setIsAddDialogOpen(true)}>
                   <Plus className="h-4 w-4 mr-2" />
                   Create Your First Team
                 </Button>
@@ -188,6 +303,61 @@ export default function TeamsPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Add Team Dialog */}
+      <TeamFormDialog
+        open={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+        onSave={handleAddTeam}
+      />
+
+      {/* Edit Team Dialog */}
+      <TeamFormDialog
+        open={!!editingTeam}
+        onOpenChange={(open) => !open && setEditingTeam(null)}
+        team={editingTeam}
+        onSave={handleEditTeam}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={!!deletingTeam} onOpenChange={(open) => !open && setDeletingTeam(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Team</DialogTitle>
+            <DialogDescription>
+              This action cannot be undone. This will permanently delete this team and remove all associated data.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="confirmDelete">
+                Type <strong>{deletingTeam?.name}</strong> to confirm
+              </Label>
+              <Input
+                id="confirmDelete"
+                value={deleteConfirmation}
+                onChange={(e) => setDeleteConfirmation(e.target.value)}
+                placeholder="Type team name to confirm"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setDeletingTeam(null)
+              setDeleteConfirmation("")
+            }}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteTeam}
+              disabled={deleteConfirmation !== deletingTeam?.name}
+            >
+              Delete Team
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
