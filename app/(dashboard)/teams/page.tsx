@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -86,6 +86,23 @@ export default function TeamsPage() {
   const filteredTeams = showInactive
     ? teams
     : teams.filter(team => team.status === "active")
+
+  // Close popup when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (selectedTeamMenu !== null) {
+        setSelectedTeamMenu(null)
+      }
+    }
+
+    if (selectedTeamMenu !== null) {
+      document.addEventListener('click', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+    }
+  }, [selectedTeamMenu])
 
   const handleAddTeam = (newTeam: Omit<Team, "id">) => {
     const team: Team = {
@@ -237,7 +254,7 @@ export default function TeamsPage() {
                     })}
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="relative">
+                    <div className="relative inline-block">
                       <Button
                         variant="ghost"
                         size="icon"
@@ -249,10 +266,7 @@ export default function TeamsPage() {
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                       {selectedTeamMenu === team.id && (
-                        <div className="fixed mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50" style={{
-                          transform: 'translate(-100%, 0)',
-                          marginLeft: '-12px'
-                        }}>
+                        <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
                           <div className="py-1">
                             <button
                               onClick={(e) => {
