@@ -288,14 +288,14 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
             </div>
 
             {/* Right Column - Notes */}
-            <div className="grid gap-2">
-              <Label htmlFor="notes">Notes</Label>
+            <div className="flex flex-col">
+              <Label htmlFor="notes" className="mb-2">Notes</Label>
               <Textarea
                 id="notes"
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 placeholder="Any additional notes..."
-                className="h-full min-h-[400px] resize-none"
+                className="flex-1 resize-none"
               />
             </div>
           </div>
