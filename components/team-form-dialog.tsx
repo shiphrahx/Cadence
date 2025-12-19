@@ -23,6 +23,7 @@ interface Team {
   createdAt: string
   memberIds?: number[]
   notes?: string
+  documentationUrl?: string
 }
 
 interface TeamFormDialogProps {
@@ -48,7 +49,8 @@ const emptyTeam: Team = {
   memberCount: 0,
   createdAt: getTodayDate(),
   memberIds: [],
-  notes: ""
+  notes: "",
+  documentationUrl: ""
 }
 
 export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeople = [] }: TeamFormDialogProps) {
@@ -162,6 +164,16 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Brief description of the team's focus..."
                 rows={3}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="documentationUrl">Documentation Link</Label>
+              <Input
+                id="documentationUrl"
+                value={formData.documentationUrl}
+                onChange={(e) => setFormData({ ...formData, documentationUrl: e.target.value })}
+                placeholder="e.g. Confluence, Notion, or Teams page URL"
+                type="url"
               />
             </div>
             <div className="grid gap-2">

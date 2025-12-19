@@ -12,7 +12,8 @@ import {
   Calendar,
   Target,
   Settings,
-  Search
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -30,34 +31,56 @@ const bottomNavigation = [
   { name: "Settings", href: "/settings", icon: Settings },
 ]
 
-export function Sidebar() {
+interface SidebarProps {
+  isOpen: boolean
+  onToggle: () => void
+}
+
+export function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const pathname = usePathname()
 
   return (
-    <div className="flex h-full w-64 flex-col border-r bg-white">
+    <div className={cn(
+      "flex h-full flex-col border-r bg-white transition-all duration-300",
+      isOpen ? "w-64" : "w-16"
+    )}>
       {/* Logo */}
-      <Link href="/" className="flex h-16 items-center gap-3 border-b px-6 hover:bg-gray-50 transition-colors">
-        <Image
-          src="/icon_02.png"
-          alt="Cadence"
-          width={35}
-          height={35}
-          className="h-[35px] w-[35px] object-contain rounded-lg"
-        />
-        <span className="text-xl font-semibold">Cadence</span>
-      </Link>
-
-      {/* Search */}
-      <div className="border-b p-4">
-        <button className="flex w-full items-center gap-2 rounded-md border bg-gray-50 px-3 py-2 text-sm text-gray-500 hover:bg-gray-100">
-          <Search className="h-4 w-4" />
-          <span>Search</span>
-          <kbd className="ml-auto rounded border bg-white px-1.5 py-0.5 text-xs">⌘K</kbd>
-        </button>
+      <div className="flex h-16 items-center border-b">
+        <Link href="/" className={cn(
+          "flex items-center gap-3 hover:bg-gray-50 transition-colors flex-1",
+          isOpen ? "px-6" : "px-3 justify-center"
+        )}>
+          <Image
+            src="/icon_02.png"
+            alt="Cadence"
+            width={35}
+            height={35}
+            className="h-[35px] w-[35px] object-contain rounded-lg flex-shrink-0"
+          />
+          {isOpen && <span className="text-xl font-semibold">Cadence</span>}
+        </Link>
+        {isOpen && (
+          <button
+            onClick={onToggle}
+            className="px-3 h-full hover:bg-gray-100 transition-colors"
+            aria-label="Collapse sidebar"
+          >
+            <ChevronLeft className="h-5 w-5 text-gray-600" />
+          </button>
+        )}
       </div>
 
       {/* Main Navigation */}
-      <nav className="flex-1 space-y-1 p-4">
+      <nav className="flex-1 space-y-1 p-4 relative">
+        {!isOpen && (
+          <button
+            onClick={onToggle}
+            className="flex items-center justify-center w-full rounded-md px-3 py-2 text-gray-700 hover:bg-gray-100 transition-colors mb-2"
+            aria-label="Expand sidebar"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        )}
         {navigation.map((item) => {
           const isActive = pathname === item.href
           return (
@@ -68,11 +91,13 @@ export function Sidebar() {
                 "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                 isActive
                   ? "bg-primary-50 text-primary-700"
-                  : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                !isOpen && "justify-center"
               )}
+              title={!isOpen ? item.name : undefined}
             >
-              <item.icon className="h-5 w-5" />
-              {item.name}
+              <item.icon className="h-5 w-5 flex-shrink-0" />
+              {isOpen && item.name}
             </Link>
           )
         })}
@@ -90,11 +115,13 @@ export function Sidebar() {
                 "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                 isActive
                   ? "bg-primary-50 text-primary-700"
-                  : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                !isOpen && "justify-center"
               )}
+              title={!isOpen ? item.name : undefined}
             >
-              <item.icon className="h-5 w-5" />
-              {item.name}
+              <item.icon className="h-5 w-5 flex-shrink-0" />
+              {isOpen && item.name}
             </Link>
           )
         })}
@@ -102,14 +129,21 @@ export function Sidebar() {
 
       {/* User Profile */}
       <div className="border-t p-4">
-        <button className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-gray-100">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-primary-700">
+        <button className={cn(
+          "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-gray-100",
+          !isOpen && "justify-center"
+        )}
+        title={!isOpen ? "User Profile" : undefined}
+        >
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-primary-700 flex-shrink-0">
             <span className="text-sm font-semibold">U</span>
           </div>
-          <div className="flex-1 text-left">
-            <div className="text-sm font-medium text-gray-900">User</div>
-            <div className="text-xs text-gray-500">View profile</div>
-          </div>
+          {isOpen && (
+            <div className="flex-1 text-left">
+              <div className="text-sm font-medium text-gray-900">User</div>
+              <div className="text-xs text-gray-500">View profile</div>
+            </div>
+          )}
         </button>
       </div>
     </div>
