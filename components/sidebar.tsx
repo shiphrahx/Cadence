@@ -75,10 +75,10 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
         {!isOpen && (
           <button
             onClick={onToggle}
-            className="flex items-center justify-center w-full rounded-md px-3 py-2 text-gray-700 hover:bg-gray-100 transition-colors mb-2"
+            className="flex items-center justify-center w-full rounded-md px-3 py-3 text-gray-700 hover:bg-gray-100 transition-colors mb-2"
             aria-label="Expand sidebar"
           >
-            <ChevronRight className="h-5 w-5" />
+            <ChevronRight className="h-6 w-6" />
           </button>
         )}
         {navigation.map((item) => {

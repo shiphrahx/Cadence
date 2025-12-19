@@ -137,12 +137,12 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[700px]">
+      <DialogContent className="sm:max-w-[900px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>{isEditing ? `Edit ${team?.name}` : "Create New Team"}</DialogTitle>
+            <DialogTitle>{isEditing ? team?.name : "Create New Team"}</DialogTitle>
             <DialogDescription>
-              {isEditing ? `Update ${team?.name}'s details below.` : "Add a new team to your organization."}
+              {isEditing ? `Update details below.` : "Add a new team to your organization."}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">

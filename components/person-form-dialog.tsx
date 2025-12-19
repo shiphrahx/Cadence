@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import { ChevronRight, ChevronLeft } from "lucide-react"
 
 interface Team {
@@ -129,12 +130,12 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[700px]">
+      <DialogContent className="sm:max-w-[900px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>{isEditing ? `Edit ${person?.name}` : "Add New Team Member"}</DialogTitle>
+            <DialogTitle>{isEditing ? person?.name : "Add New Team Member"}</DialogTitle>
             <DialogDescription>
-              {isEditing ? `Update ${person?.name}'s details below.` : "Add a new team member to your organization."}
+              {isEditing ? `Update details below.` : "Add a new team member to your organization."}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -284,11 +285,12 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
             </div>
             <div className="grid gap-2">
               <Label htmlFor="notes">Notes</Label>
-              <Input
+              <Textarea
                 id="notes"
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 placeholder="Any additional notes..."
+                rows={3}
               />
             </div>
           </div>
