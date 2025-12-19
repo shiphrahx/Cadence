@@ -27,7 +27,11 @@
       "Bash(taskkill:*)",
       "Bash(npm run build:*)",
       "Bash(git checkout:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(gh issue view:*)",
+      "Bash(npx shadcn@latest add select:*)"
     ]
   }
 }

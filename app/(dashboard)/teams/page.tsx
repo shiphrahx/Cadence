@@ -27,6 +27,7 @@ interface Team {
   createdAt: string
   memberIds?: number[]
   notes?: string
+  documentationUrl?: string
 }
 
 interface Person {
