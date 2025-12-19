@@ -145,115 +145,120 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
               {isEditing ? `Update details below.` : "Add a new team to your organization."}
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="name">Team Name *</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="e.g. Platform Engineering"
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Brief description of the team's focus..."
-                rows={3}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="documentationUrl">Documentation Link</Label>
-              <Input
-                id="documentationUrl"
-                value={formData.documentationUrl}
-                onChange={(e) => setFormData({ ...formData, documentationUrl: e.target.value })}
-                placeholder="e.g. Confluence, Notion, or Teams page URL"
-                type="url"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label>Team Members</Label>
-              <div className="flex gap-3 items-center">
-                {/* Available People */}
-                <div className="flex-1">
-                  <Label className="text-xs text-gray-600 mb-1">Available People</Label>
-                  <div className="border border-gray-300 rounded-md h-48 overflow-y-auto">
-                    {availablePeopleList.length > 0 ? (
-                      availablePeopleList.map((person) => (
-                        <div
-                          key={person.id}
-                          onClick={() => toggleAvailableSelection(person.id)}
-                          onDoubleClick={() => handleDoubleClickAvailable(person.id)}
-                          className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 select-none ${
-                            selectedAvailable.includes(person.id) ? 'bg-primary-50 border-l-2 border-primary-600' : ''
-                          }`}
-                        >
-                          {person.name}
+          <div className="grid grid-cols-2 gap-6 py-4">
+            {/* Left Column - Form Fields */}
+            <div className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="name">Team Name *</Label>
+                <Input
+                  id="name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="e.g. Platform Engineering"
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Brief description of the team's focus..."
+                  rows={3}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="documentationUrl">Documentation Link</Label>
+                <Input
+                  id="documentationUrl"
+                  value={formData.documentationUrl}
+                  onChange={(e) => setFormData({ ...formData, documentationUrl: e.target.value })}
+                  placeholder="e.g. Confluence, Notion, or Teams page URL"
+                  type="url"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label>Team Members</Label>
+                <div className="flex gap-3 items-center">
+                  {/* Available People */}
+                  <div className="flex-1">
+                    <Label className="text-xs text-gray-600 mb-1">Available People</Label>
+                    <div className="border border-gray-300 rounded-md h-48 overflow-y-auto">
+                      {availablePeopleList.length > 0 ? (
+                        availablePeopleList.map((person) => (
+                          <div
+                            key={person.id}
+                            onClick={() => toggleAvailableSelection(person.id)}
+                            onDoubleClick={() => handleDoubleClickAvailable(person.id)}
+                            className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 select-none ${
+                              selectedAvailable.includes(person.id) ? 'bg-primary-50 border-l-2 border-primary-600' : ''
+                            }`}
+                          >
+                            {person.name}
+                          </div>
+                        ))
+                      ) : (
+                        <div className="flex items-center justify-center h-full text-sm text-gray-500">
+                          All people assigned
                         </div>
-                      ))
-                    ) : (
-                      <div className="flex items-center justify-center h-full text-sm text-gray-500">
-                        All people assigned
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                {/* Arrow Buttons */}
-                <div className="flex flex-col gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={handleAddToTeam}
-                    disabled={selectedAvailable.length === 0}
-                    className="h-8 w-8"
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={handleRemoveFromTeam}
-                    disabled={selectedMembers.length === 0}
-                    className="h-8 w-8"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                </div>
+                  {/* Arrow Buttons */}
+                  <div className="flex flex-col gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={handleAddToTeam}
+                      disabled={selectedAvailable.length === 0}
+                      className="h-8 w-8"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={handleRemoveFromTeam}
+                      disabled={selectedMembers.length === 0}
+                      className="h-8 w-8"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                  </div>
 
-                {/* Team Members */}
-                <div className="flex-1">
-                  <Label className="text-xs text-gray-600 mb-1">Team Members ({teamMembersList.length})</Label>
-                  <div className="border border-gray-300 rounded-md h-48 overflow-y-auto">
-                    {teamMembersList.length > 0 ? (
-                      teamMembersList.map((person) => (
-                        <div
-                          key={person.id}
-                          onClick={() => toggleMemberSelection(person.id)}
-                          onDoubleClick={() => handleDoubleClickMember(person.id)}
-                          className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 select-none ${
-                            selectedMembers.includes(person.id) ? 'bg-primary-50 border-l-2 border-primary-600' : ''
-                          }`}
-                        >
-                          {person.name}
+                  {/* Team Members */}
+                  <div className="flex-1">
+                    <Label className="text-xs text-gray-600 mb-1">Team Members ({teamMembersList.length})</Label>
+                    <div className="border border-gray-300 rounded-md h-48 overflow-y-auto">
+                      {teamMembersList.length > 0 ? (
+                        teamMembersList.map((person) => (
+                          <div
+                            key={person.id}
+                            onClick={() => toggleMemberSelection(person.id)}
+                            onDoubleClick={() => handleDoubleClickMember(person.id)}
+                            className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 select-none ${
+                              selectedMembers.includes(person.id) ? 'bg-primary-50 border-l-2 border-primary-600' : ''
+                            }`}
+                          >
+                            {person.name}
+                          </div>
+                        ))
+                      ) : (
+                        <div className="flex items-center justify-center h-full text-sm text-gray-500">
+                          No members yet
                         </div>
-                      ))
-                    ) : (
-                      <div className="flex items-center justify-center h-full text-sm text-gray-500">
-                        No members yet
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+
+            {/* Right Column - Notes */}
             <div className="grid gap-2">
               <Label htmlFor="notes">Notes</Label>
               <Textarea
@@ -261,7 +266,7 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 placeholder="Any additional notes..."
-                rows={2}
+                className="h-full min-h-[400px] resize-none"
               />
             </div>
           </div>
