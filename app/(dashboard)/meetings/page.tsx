@@ -2,20 +2,11 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
+import { Card, CardContent } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { Plus, Calendar as CalendarIcon, MoreHorizontal, Pencil, Trash2, Users, User } from "lucide-react"
+import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
+import { Plus, ChevronRight, ChevronDown } from "lucide-react"
 import { MeetingFormDialog } from "@/components/meeting-form-dialog"
 
 interface Meeting {
@@ -24,8 +15,11 @@ interface Meeting {
   type: string
   date: string
   attendees: string[]
-  status: "upcoming" | "completed" | "cancelled"
+  actionItems?: string
   notes?: string
+  personName?: string // For 1:1 meetings
+  recurrence?: string
+  nextMeetingDate?: string
 }
 
 // Mock data
@@ -36,341 +30,405 @@ const initialMeetings: Meeting[] = [
     type: "1:1",
     date: "2024-12-20",
     attendees: ["Sarah Miller"],
-    status: "upcoming",
+    personName: "Sarah Miller",
+    recurrence: "weekly",
+    nextMeetingDate: "2024-12-27",
+    actionItems: "- Follow up on Q1 roadmap\n- Schedule design review",
+    notes: "Discussed career progression and upcoming projects. Sarah is interested in taking on more leadership responsibilities.",
   },
   {
     id: 2,
+    title: "1:1 with Sarah Miller",
+    type: "1:1",
+    date: "2024-12-13",
+    attendees: ["Sarah Miller"],
+    personName: "Sarah Miller",
+    recurrence: "weekly",
+    notes: "Weekly check-in. Discussed current sprint progress.",
+  },
+  {
+    id: 3,
     title: "Team Sync - Platform Engineering",
     type: "Team Sync",
     date: "2024-12-18",
     attendees: ["Platform Engineering"],
-    status: "completed",
-    notes: "Discussed Q1 roadmap and priorities",
+    actionItems: "- Deploy new infrastructure\n- Update documentation",
+    notes: "Discussed Q1 roadmap and priorities. Team is on track for the release.",
   },
   {
-    id: 3,
+    id: 4,
     title: "Sprint Retrospective",
     type: "Retro",
     date: "2024-12-15",
     attendees: ["Product Development"],
-    status: "completed",
+    notes: "Reviewed sprint performance. Identified areas for improvement.",
   },
 ]
 
+// Mock people for autocomplete
+const mockPeople = [
+  "Sarah Miller",
+  "John Doe",
+  "Jane Smith",
+  "Mike Johnson",
+  "Emily Chen"
+]
+
+// Mock teams for autocomplete
+const mockTeams = [
+  "Platform Engineering",
+  "Product Development",
+  "Design Team",
+  "Data Science",
+  "Mobile Team"
+]
+
+interface TreeNode {
+  type: string
+  people?: {
+    [personName: string]: Meeting[]
+  }
+  meetings?: Meeting[]
+}
+
 export default function MeetingsPage() {
   const [meetings, setMeetings] = useState<Meeting[]>(initialMeetings)
-  const [showCompleted, setShowCompleted] = useState(true)
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
-  const [editingMeeting, setEditingMeeting] = useState<Meeting | null>(null)
-  const [deletingMeeting, setDeletingMeeting] = useState<Meeting | null>(null)
-  const [deleteConfirmation, setDeleteConfirmation] = useState("")
-  const [selectedMeetingMenu, setSelectedMeetingMenu] = useState<number | null>(null)
+  const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(initialMeetings[0])
+  const [expandedTypes, setExpandedTypes] = useState<Set<string>>(new Set(["1:1"]))
+  const [expandedPeople, setExpandedPeople] = useState<Set<string>>(new Set(["Sarah Miller"]))
+  const [leftPanelWidth, setLeftPanelWidth] = useState(320)
+  const [isResizing, setIsResizing] = useState(false)
 
-  const filteredMeetings = showCompleted
-    ? meetings
-    : meetings.filter(meeting => meeting.status !== "completed")
+  // Organize meetings into tree structure
+  const organizeTree = (): { [type: string]: TreeNode } => {
+    const tree: { [type: string]: TreeNode } = {}
 
-  // Close popup when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (selectedMeetingMenu !== null) {
-        setSelectedMeetingMenu(null)
+    meetings.forEach((meeting) => {
+      if (!tree[meeting.type]) {
+        tree[meeting.type] = {
+          type: meeting.type,
+          people: meeting.type === "1:1" ? {} : undefined,
+          meetings: meeting.type !== "1:1" ? [] : undefined,
+        }
       }
-    }
 
-    if (selectedMeetingMenu !== null) {
-      document.addEventListener('click', handleClickOutside)
-    }
+      if (meeting.type === "1:1" && meeting.personName) {
+        if (!tree[meeting.type].people![meeting.personName]) {
+          tree[meeting.type].people![meeting.personName] = []
+        }
+        tree[meeting.type].people![meeting.personName].push(meeting)
+      } else {
+        tree[meeting.type].meetings!.push(meeting)
+      }
+    })
 
-    return () => {
-      document.removeEventListener('click', handleClickOutside)
+    // Sort meetings by date (most recent first)
+    Object.values(tree).forEach((node) => {
+      if (node.people) {
+        Object.values(node.people).forEach((personMeetings) => {
+          personMeetings.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        })
+      }
+      if (node.meetings) {
+        node.meetings.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      }
+    })
+
+    return tree
+  }
+
+  const tree = organizeTree()
+
+  const toggleType = (type: string) => {
+    const newExpanded = new Set(expandedTypes)
+    if (newExpanded.has(type)) {
+      newExpanded.delete(type)
+    } else {
+      newExpanded.add(type)
     }
-  }, [selectedMeetingMenu])
+    setExpandedTypes(newExpanded)
+  }
+
+  const togglePerson = (personName: string) => {
+    const newExpanded = new Set(expandedPeople)
+    if (newExpanded.has(personName)) {
+      newExpanded.delete(personName)
+    } else {
+      newExpanded.add(personName)
+    }
+    setExpandedPeople(newExpanded)
+  }
+
+  const formatDate = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    })
+  }
 
   const handleAddMeeting = (newMeeting: Omit<Meeting, "id">) => {
     const meeting: Meeting = {
       ...newMeeting,
       id: Math.max(...meetings.map(m => m.id), 0) + 1,
+      personName: newMeeting.type === "1:1" ? newMeeting.attendees[0] : undefined,
     }
     setMeetings([...meetings, meeting])
+    setSelectedMeeting(meeting)
   }
 
-  const handleEditMeeting = (updatedMeeting: Meeting) => {
+  const handleUpdateMeeting = (updatedMeeting: Meeting) => {
+    // Validate next meeting date is after meeting date
+    if (updatedMeeting.nextMeetingDate && updatedMeeting.date) {
+      const meetingDate = new Date(updatedMeeting.date)
+      const nextMeetingDate = new Date(updatedMeeting.nextMeetingDate)
+      if (nextMeetingDate <= meetingDate) {
+        alert("Next meeting date must be after the meeting date")
+        return
+      }
+    }
+
     setMeetings(meetings.map(m => m.id === updatedMeeting.id ? updatedMeeting : m))
-    setEditingMeeting(null)
+    setSelectedMeeting(updatedMeeting)
   }
 
-  const handleDeleteMeeting = () => {
-    if (deletingMeeting && deleteConfirmation === deletingMeeting.title) {
-      setMeetings(meetings.filter(m => m.id !== deletingMeeting.id))
-      setDeletingMeeting(null)
-      setDeleteConfirmation("")
-    }
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault()
+    setIsResizing(true)
   }
 
-  const getStatusBadgeClass = (status: string) => {
-    switch (status) {
-      case "upcoming":
-        return "bg-blue-100 text-blue-700 border-blue-300"
-      case "completed":
-        return "bg-green-100 text-green-700 border-green-300"
-      case "cancelled":
-        return "bg-gray-100 text-gray-700 border-gray-300"
-      default:
-        return "bg-gray-100 text-gray-700 border-gray-300"
+  // Add mouse event listeners
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing) return
+
+      // Get the main container element (the meetings page container)
+      const mainContainer = document.querySelector('main')
+      if (!mainContainer) return
+
+      const containerRect = mainContainer.getBoundingClientRect()
+      const newWidth = e.clientX - containerRect.left
+
+      if (newWidth >= 240 && newWidth <= 600) {
+        setLeftPanelWidth(newWidth)
+      }
     }
-  }
+
+    const handleMouseUp = () => {
+      setIsResizing(false)
+    }
+
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove)
+      document.addEventListener('mouseup', handleMouseUp)
+      document.body.style.cursor = 'col-resize'
+      document.body.style.userSelect = 'none'
+
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove)
+        document.removeEventListener('mouseup', handleMouseUp)
+        document.body.style.cursor = ''
+        document.body.style.userSelect = ''
+      }
+    }
+  }, [isResizing])
 
   return (
-    <div className="flex flex-col gap-6 p-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Meetings</h1>
-          <p className="text-gray-600 mt-1">
-            Track and manage your meetings
-          </p>
-        </div>
-        <Button onClick={() => setIsAddDialogOpen(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Schedule Meeting
-        </Button>
-      </div>
-
-      {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Upcoming</CardTitle>
-            <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{meetings.filter(m => m.status === "upcoming").length}</div>
-            <p className="text-xs text-muted-foreground">
-              Scheduled meetings
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">This Week</CardTitle>
-            <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {meetings.filter(m => {
-                const meetingDate = new Date(m.date)
-                const today = new Date()
-                const weekFromNow = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000)
-                return meetingDate >= today && meetingDate <= weekFromNow
-              }).length}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              In the next 7 days
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Completed</CardTitle>
-            <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{meetings.filter(m => m.status === "completed").length}</div>
-            <p className="text-xs text-muted-foreground">
-              Total completed
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Meetings List */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>All Meetings</CardTitle>
-              <CardDescription>
-                {filteredMeetings.length} meeting{filteredMeetings.length !== 1 ? 's' : ''}
-              </CardDescription>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowCompleted(!showCompleted)}
-            >
-              {showCompleted ? "Hide" : "Show"} Completed
+    <div className="flex h-full">
+      {/* Left Panel - Tree View */}
+      <div
+        className="border-r bg-white overflow-y-auto flex-shrink-0"
+        style={{ width: `${leftPanelWidth}px` }}
+      >
+        <div className="p-4 border-b">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-lg font-semibold">Meetings</h2>
+            <Button size="sm" onClick={() => setIsAddDialogOpen(true)}>
+              <Plus className="h-4 w-4 mr-1" />
+              Log
             </Button>
           </div>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Attendees</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredMeetings.map((meeting) => (
-                <TableRow
-                  key={meeting.id}
-                  onClick={() => setEditingMeeting(meeting)}
-                  className="cursor-pointer"
-                >
-                  <TableCell className="font-medium">{meeting.title}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{meeting.type}</Badge>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {new Date(meeting.date).toLocaleDateString('en-GB', {
-                      day: '2-digit',
-                      month: 'short',
-                      year: 'numeric'
-                    })}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {meeting.attendees.length === 1 && !meeting.attendees[0].includes('Engineering') && !meeting.attendees[0].includes('Development') ? (
-                        <User className="h-4 w-4 text-muted-foreground" />
-                      ) : (
-                        <Users className="h-4 w-4 text-muted-foreground" />
-                      )}
-                      <span className="text-sm">{meeting.attendees.join(", ")}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={getStatusBadgeClass(meeting.status)}>
-                      {meeting.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="relative inline-block">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setSelectedMeetingMenu(selectedMeetingMenu === meeting.id ? null : meeting.id)
-                        }}
+          <p className="text-xs text-gray-600">
+            Select a meeting to view details
+          </p>
+        </div>
+
+        <div className="p-2">
+          {Object.entries(tree).map(([type, node]) => (
+            <div key={type} className="mb-1">
+              {/* Meeting Type */}
+              <button
+                onClick={() => toggleType(type)}
+                className="flex items-center gap-2 w-full px-2 py-1.5 text-sm font-medium text-gray-900 hover:bg-gray-100 rounded"
+              >
+                {expandedTypes.has(type) ? (
+                  <ChevronDown className="h-4 w-4 flex-shrink-0" />
+                ) : (
+                  <ChevronRight className="h-4 w-4 flex-shrink-0" />
+                )}
+                {type}
+              </button>
+
+              {/* Expanded content */}
+              {expandedTypes.has(type) && (
+                <div className="ml-4">
+                  {/* For 1:1 meetings, group by person */}
+                  {node.people && Object.entries(node.people).map(([personName, personMeetings]) => (
+                    <div key={personName} className="mb-1">
+                      <button
+                        onClick={() => togglePerson(personName)}
+                        className="flex items-center gap-2 w-full px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded"
                       >
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                      {selectedMeetingMenu === meeting.id && (
-                        <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
-                          <div className="py-1">
+                        {expandedPeople.has(personName) ? (
+                          <ChevronDown className="h-4 w-4 flex-shrink-0" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4 flex-shrink-0" />
+                        )}
+                        {personName}
+                      </button>
+
+                      {/* Person's meetings */}
+                      {expandedPeople.has(personName) && (
+                        <div className="ml-4">
+                          {personMeetings.map((meeting) => (
                             <button
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                setEditingMeeting(meeting)
-                                setSelectedMeetingMenu(null)
-                              }}
-                              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                              key={meeting.id}
+                              onClick={() => setSelectedMeeting(meeting)}
+                              className={`block w-full text-left px-2 py-1.5 text-xs rounded ${
+                                selectedMeeting?.id === meeting.id
+                                  ? "bg-primary-50 text-primary-700 font-medium"
+                                  : "text-gray-600 hover:bg-gray-100"
+                              }`}
                             >
-                              <Pencil className="h-4 w-4" />
-                              Edit
+                              {formatDate(meeting.date)}
                             </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                setDeletingMeeting(meeting)
-                                setSelectedMeetingMenu(null)
-                              }}
-                              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                              Delete
-                            </button>
-                          </div>
+                          ))}
                         </div>
                       )}
                     </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                  ))}
 
-          {filteredMeetings.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <CalendarIcon className="h-12 w-12 text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-1">No meetings found</h3>
-              <p className="text-sm text-gray-600 mb-4">
-                {showCompleted
-                  ? "You don't have any meetings yet."
-                  : "No upcoming meetings. Try showing completed meetings."}
-              </p>
-              {!showCompleted && (
-                <Button onClick={() => setIsAddDialogOpen(true)}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Schedule Your First Meeting
-                </Button>
+                  {/* For other meetings, just list them */}
+                  {node.meetings && node.meetings.map((meeting) => (
+                    <button
+                      key={meeting.id}
+                      onClick={() => setSelectedMeeting(meeting)}
+                      className={`block w-full text-left px-2 py-1.5 text-xs rounded ml-4 ${
+                        selectedMeeting?.id === meeting.id
+                          ? "bg-primary-50 text-primary-700 font-medium"
+                          : "text-gray-600 hover:bg-gray-100"
+                      }`}
+                    >
+                      {formatDate(meeting.date)}
+                    </button>
+                  ))}
+                </div>
               )}
             </div>
-          )}
-        </CardContent>
-      </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* Resizable Divider */}
+      <div
+        className={`w-1 bg-gray-200 hover:bg-primary-400 cursor-col-resize flex-shrink-0 ${
+          isResizing ? 'bg-primary-500' : ''
+        }`}
+        onMouseDown={handleMouseDown}
+      />
+
+      {/* Right Panel - Meeting Details */}
+      <div className="flex-1 overflow-y-auto bg-gray-50">
+        {selectedMeeting ? (
+          <div className="p-8">
+            <Card>
+              <CardContent className="p-6">
+                <div className="space-y-6">
+                  {/* Date and Next Meeting Date */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-sm font-medium text-gray-700">Date</Label>
+                      <Input
+                        type="date"
+                        value={selectedMeeting.date}
+                        onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, date: e.target.value })}
+                        className="mt-1"
+                      />
+                    </div>
+                    {selectedMeeting.type === "1:1" && selectedMeeting.recurrence && selectedMeeting.recurrence !== "none" && selectedMeeting.nextMeetingDate && (
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Next Meeting</Label>
+                        <Input
+                          type="date"
+                          value={selectedMeeting.nextMeetingDate}
+                          onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, nextMeetingDate: e.target.value })}
+                          className="mt-1"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Attendees */}
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700">Attendees</Label>
+                    <Input
+                      value={selectedMeeting.attendees.join(", ")}
+                      onChange={(e) => handleUpdateMeeting({
+                        ...selectedMeeting,
+                        attendees: e.target.value.split(",").map(a => a.trim()).filter(a => a.length > 0)
+                      })}
+                      placeholder="Enter names separated by commas"
+                      className="mt-1"
+                    />
+                  </div>
+
+                  {/* Action Items */}
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700">Action Items</Label>
+                    <Textarea
+                      value={selectedMeeting.actionItems || ""}
+                      onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, actionItems: e.target.value })}
+                      placeholder="- Action item 1&#10;- Action item 2"
+                      rows={4}
+                      className="mt-1 font-mono text-sm"
+                    />
+                  </div>
+
+                  {/* Meeting Notes */}
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700">Meeting Notes</Label>
+                    <Textarea
+                      value={selectedMeeting.notes || ""}
+                      onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, notes: e.target.value })}
+                      placeholder="Meeting notes, discussion points, decisions..."
+                      rows={12}
+                      className="mt-1 font-mono text-sm"
+                    />
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Markdown formatting is supported
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <p className="text-gray-500">Select a meeting to view details</p>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Add Meeting Dialog */}
       <MeetingFormDialog
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
         onSave={handleAddMeeting}
+        availablePeople={mockPeople}
       />
-
-      {/* Edit Meeting Dialog */}
-      <MeetingFormDialog
-        open={!!editingMeeting}
-        onOpenChange={(open) => !open && setEditingMeeting(null)}
-        meeting={editingMeeting}
-        onSave={handleEditMeeting}
-      />
-
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={!!deletingMeeting} onOpenChange={(open) => !open && setDeletingMeeting(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Meeting</DialogTitle>
-            <DialogDescription>
-              This action cannot be undone. This will permanently delete this meeting.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="confirmDelete">
-                Type <strong>{deletingMeeting?.title}</strong> to confirm
-              </Label>
-              <Input
-                id="confirmDelete"
-                value={deleteConfirmation}
-                onChange={(e) => setDeleteConfirmation(e.target.value)}
-                placeholder="Type meeting title to confirm"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => {
-              setDeletingMeeting(null)
-              setDeleteConfirmation("")
-            }}>
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDeleteMeeting}
-              disabled={deleteConfirmation !== deletingMeeting?.title}
-            >
-              Delete Meeting
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }
