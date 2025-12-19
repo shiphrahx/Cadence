@@ -130,7 +130,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[900px]">
+      <DialogContent className="sm:max-w-[1100px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>{isEditing ? person?.name : "Add New Team Member"}</DialogTitle>
