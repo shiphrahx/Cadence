@@ -246,7 +246,7 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[1320px] max-h-[calc(95vh+200px)]">
+      <DialogContent className="sm:max-w-[1320px] max-h-[calc(90vh*1.2)]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>{isEditing ? meeting?.title : "Log Meeting"}</DialogTitle>
@@ -254,7 +254,7 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
               {isEditing ? `Update meeting details and notes.` : "Add meeting details and notes."}
             </DialogDescription>
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-6 py-4 overflow-y-auto max-h-[calc(95vh)] px-1">
+          <div className="grid grid-cols-2 gap-6 py-4 overflow-y-auto max-h-[calc(90vh*1.2-200px)] px-1">
             {/* Left Column - Form Fields */}
             <div className="grid gap-3 pr-1">
               {/* Conditional Fields based on Meeting Type */}
