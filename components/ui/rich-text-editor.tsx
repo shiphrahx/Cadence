@@ -61,6 +61,7 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
           onValueChange(html)
         }
       },
+      immediatelyRender: false,
     })
 
     // Update editor content when value prop changes
