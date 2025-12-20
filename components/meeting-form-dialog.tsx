@@ -231,55 +231,58 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
           </DialogHeader>
           <div className="grid grid-cols-2 gap-6 py-4 overflow-y-auto max-h-[calc(90vh-200px)] px-1">
             {/* Left Column - Form Fields */}
-            <div className="grid gap-4 pr-1">
-              {/* Meeting Type - First Field */}
-              <div className="grid gap-2">
-                <Label htmlFor="type">Meeting Type *</Label>
-                <Select
-                  value={formData.type}
-                  onValueChange={(value) => setFormData({ ...formData, type: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select meeting type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {meetingTypes.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
+            <div className="grid gap-3 pr-1">
               {/* Conditional Fields based on Meeting Type */}
               {is1on1 ? (
                 <>
-                  {/* Person Field for 1:1 */}
-                  <div className="grid gap-2">
-                    <Label htmlFor="person">Person *</Label>
-                    <div className="relative">
-                      <Input
-                        id="person"
-                        value={personInput}
-                        onChange={(e) => setPersonInput(e.target.value)}
-                        onFocus={() => setShowSuggestions(filteredPeople.length > 0)}
-                        placeholder="Start typing a name..."
-                        required
-                      />
-                      {showSuggestions && (
-                        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
-                          {filteredPeople.map((person, index) => (
-                            <div
-                              key={index}
-                              onClick={() => handlePersonSelect(person)}
-                              className="px-3 py-2 text-sm cursor-pointer hover:bg-gray-100"
-                            >
-                              {person}
-                            </div>
+                  {/* Meeting Type and Person side by side */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="grid gap-2">
+                      <Label htmlFor="type">Meeting Type *</Label>
+                      <Select
+                        value={formData.type}
+                        onValueChange={(value) => setFormData({ ...formData, type: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select meeting type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {meetingTypes.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
                           ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Person Field for 1:1 */}
+                      <div className="grid gap-2">
+                        <Label htmlFor="person">Person *</Label>
+                        <div className="relative">
+                          <Input
+                            id="person"
+                            value={personInput}
+                            onChange={(e) => setPersonInput(e.target.value)}
+                            onFocus={() => setShowSuggestions(filteredPeople.length > 0)}
+                            placeholder="Start typing a name..."
+                            required
+                          />
+                          {showSuggestions && (
+                            <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                              {filteredPeople.map((person, index) => (
+                                <div
+                                  key={index}
+                                  onClick={() => handlePersonSelect(person)}
+                                  className="px-3 py-2 text-sm cursor-pointer hover:bg-gray-100"
+                                >
+                                  {person}
+                                </div>
+                              ))}
+                            </div>
+                          )}
                         </div>
-                      )}
+                      </div>
                     </div>
                     <p className="text-xs text-muted-foreground">
                       Select from your team or type a new name
@@ -334,36 +337,58 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                 </>
               ) : isTeamBased ? (
                 <>
-                  {/* Team Field for team-based meetings */}
-                  <div className="grid gap-2">
-                    <Label htmlFor="team">Team *</Label>
-                    <div className="relative">
-                      <Input
-                        id="team"
-                        value={teamInput}
-                        onChange={(e) => setTeamInput(e.target.value)}
-                        onFocus={() => setShowTeamSuggestions(filteredTeams.length > 0)}
-                        placeholder="Start typing a team name..."
-                        required
-                      />
-                      {showTeamSuggestions && (
-                        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
-                          {filteredTeams.map((team, index) => (
-                            <div
-                              key={index}
-                              onClick={() => handleTeamSelect(team)}
-                              className="px-3 py-2 text-sm cursor-pointer hover:bg-gray-100"
-                            >
-                              {team}
-                            </div>
+                  {/* Meeting Type and Team side by side */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="grid gap-2">
+                      <Label htmlFor="type">Meeting Type *</Label>
+                      <Select
+                        value={formData.type}
+                        onValueChange={(value) => setFormData({ ...formData, type: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select meeting type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {meetingTypes.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
                           ))}
-                        </div>
-                      )}
+                        </SelectContent>
+                      </Select>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      Select from your teams or type a new name
-                    </p>
+
+                    {/* Team Field for team-based meetings */}
+                    <div className="grid gap-2">
+                      <Label htmlFor="team">Team *</Label>
+                      <div className="relative">
+                        <Input
+                          id="team"
+                          value={teamInput}
+                          onChange={(e) => setTeamInput(e.target.value)}
+                          onFocus={() => setShowTeamSuggestions(filteredTeams.length > 0)}
+                          placeholder="Start typing a team name..."
+                          required
+                        />
+                        {showTeamSuggestions && (
+                          <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                            {filteredTeams.map((team, index) => (
+                              <div
+                                key={index}
+                                onClick={() => handleTeamSelect(team)}
+                                className="px-3 py-2 text-sm cursor-pointer hover:bg-gray-100"
+                              >
+                                {team}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
+                  <p className="text-xs text-muted-foreground -mt-2">
+                    Select from your teams or type a new name
+                  </p>
 
                   {/* Date Field for team-based meetings */}
                   <div className="grid gap-2">
@@ -427,16 +452,38 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                 </>
               ) : (
                 <>
-                  {/* Meeting Title for other meetings */}
-                  <div className="grid gap-2">
-                    <Label htmlFor="title">Meeting Title *</Label>
-                    <Input
-                      id="title"
-                      value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      placeholder="e.g. All Hands Q4 2024"
-                      required
-                    />
+                  {/* Meeting Type and Title side by side */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="grid gap-2">
+                      <Label htmlFor="type">Meeting Type *</Label>
+                      <Select
+                        value={formData.type}
+                        onValueChange={(value) => setFormData({ ...formData, type: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select meeting type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {meetingTypes.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Meeting Title for other meetings */}
+                    <div className="grid gap-2">
+                      <Label htmlFor="title">Meeting Title *</Label>
+                      <Input
+                        id="title"
+                        value={formData.title}
+                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                        placeholder="e.g. All Hands Q4 2024"
+                        required
+                      />
+                    </div>
                   </div>
 
                   {/* Attendees for other meetings */}
@@ -477,8 +524,8 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                   id="actionItems"
                   value={formData.actionItems}
                   onValueChange={(value) => setFormData({ ...formData, actionItems: value })}
-                  placeholder="- Action item 1&#10;- Action item 2&#10;- Action item 3"
-                  rows={4}
+                  placeholder={"- Action item 1\n- Action item 2\n- Action item 3"}
+                  rows={6}
                   className="font-mono text-sm"
                 />
               </div>
@@ -492,7 +539,7 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                 value={formData.notes}
                 onValueChange={(value) => setFormData({ ...formData, notes: value })}
                 placeholder="Meeting notes, discussion points, decisions..."
-                className="flex-1 resize-none font-mono text-sm min-h-[400px]"
+                className="flex-1 resize-none font-mono text-sm min-h-[500px]"
               />
             </div>
           </div>
