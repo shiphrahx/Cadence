@@ -243,6 +243,7 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
             padding: 1rem 1.25rem;
             line-height: 1.7;
             color: #1f2937;
+            font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
           }
 
           .tiptap-editor .ProseMirror:focus {
@@ -412,7 +413,9 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
             float: left;
             height: 0;
             pointer-events: none;
-            font-style: italic;
+            font-style: normal;
+            font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-weight: 400;
           }
 
           /* Selection styling */

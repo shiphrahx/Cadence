@@ -525,7 +525,7 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                   onValueChange={(value) => setFormData({ ...formData, actionItems: value })}
                   placeholder={"- Action item 1\n- Action item 2\n- Action item 3"}
                   rows={6}
-                  className="font-mono text-sm"
+                  className="text-sm"
                 />
               </div>
             </div>
@@ -539,7 +539,7 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                   value={formData.notes}
                   onValueChange={(value) => setFormData({ ...formData, notes: value })}
                   placeholder="Meeting notes, discussion points, decisions..."
-                  className="h-full resize-none font-mono text-sm"
+                  className="h-full resize-none text-sm"
                 />
               </div>
             </div>
