@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -91,6 +92,7 @@ const initialPeople: Person[] = [
 ]
 
 export default function PeoplePage() {
+  const router = useRouter()
   const [people, setPeople] = useState<Person[]>(initialPeople)
   const [showInactive, setShowInactive] = useState(false)
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
@@ -288,7 +290,7 @@ export default function PeoplePage() {
               {filteredPeople.map((person) => (
                 <TableRow
                   key={person.id}
-                  onClick={() => setEditingPerson(person)}
+                  onClick={() => router.push(`/people/${person.id}`)}
                   className="cursor-pointer"
                 >
                   <TableCell>

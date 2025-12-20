@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { MarkdownTextarea } from "@/components/ui/markdown-textarea"
 import { Input } from "@/components/ui/input"
-import { Plus, ChevronRight, ChevronDown } from "lucide-react"
+import { Plus, ChevronRight, ChevronDown, ChevronsRight, ChevronsDown } from "lucide-react"
 import { MeetingFormDialog } from "@/components/meeting-form-dialog"
 
 interface Meeting {
@@ -19,6 +19,7 @@ interface Meeting {
   actionItems?: string
   notes?: string
   personName?: string // For 1:1 meetings
+  teamName?: string // For team-based meetings
   recurrence?: string
   nextMeetingDate?: string
 }
@@ -53,6 +54,7 @@ const initialMeetings: Meeting[] = [
     type: "Team Sync",
     date: "2024-12-18",
     attendees: ["Platform Engineering"],
+    teamName: "Platform Engineering",
     actionItems: "- Deploy new infrastructure\n- Update documentation",
     notes: "Discussed Q1 roadmap and priorities. Team is on track for the release.",
   },
@@ -62,6 +64,7 @@ const initialMeetings: Meeting[] = [
     type: "Retro",
     date: "2024-12-15",
     attendees: ["Product Development"],
+    teamName: "Product Development",
     notes: "Reviewed sprint performance. Identified areas for improvement.",
   },
 ]
@@ -89,6 +92,9 @@ interface TreeNode {
   people?: {
     [personName: string]: Meeting[]
   }
+  teams?: {
+    [teamName: string]: Meeting[]
+  }
   meetings?: Meeting[]
 }
 
@@ -98,19 +104,24 @@ export default function MeetingsPage() {
   const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(initialMeetings[0])
   const [expandedTypes, setExpandedTypes] = useState<Set<string>>(new Set(["1:1"]))
   const [expandedPeople, setExpandedPeople] = useState<Set<string>>(new Set(["Sarah Miller"]))
+  const [expandedTeams, setExpandedTeams] = useState<Set<string>>(new Set())
   const [leftPanelWidth, setLeftPanelWidth] = useState(320)
   const [isResizing, setIsResizing] = useState(false)
 
   // Organize meetings into tree structure
   const organizeTree = (): { [type: string]: TreeNode } => {
     const tree: { [type: string]: TreeNode } = {}
+    const teamBasedTypes = ["Team Sync", "Retro", "Planning", "Review", "Standup"]
 
     meetings.forEach((meeting) => {
+      const isTeamBased = teamBasedTypes.includes(meeting.type)
+
       if (!tree[meeting.type]) {
         tree[meeting.type] = {
           type: meeting.type,
           people: meeting.type === "1:1" ? {} : undefined,
-          meetings: meeting.type !== "1:1" ? [] : undefined,
+          teams: isTeamBased ? {} : undefined,
+          meetings: !meeting.type.includes("1:1") && !isTeamBased ? [] : undefined,
         }
       }
 
@@ -119,6 +130,11 @@ export default function MeetingsPage() {
           tree[meeting.type].people![meeting.personName] = []
         }
         tree[meeting.type].people![meeting.personName].push(meeting)
+      } else if (isTeamBased && meeting.teamName) {
+        if (!tree[meeting.type].teams![meeting.teamName]) {
+          tree[meeting.type].teams![meeting.teamName] = []
+        }
+        tree[meeting.type].teams![meeting.teamName].push(meeting)
       } else {
         tree[meeting.type].meetings!.push(meeting)
       }
@@ -129,6 +145,11 @@ export default function MeetingsPage() {
       if (node.people) {
         Object.values(node.people).forEach((personMeetings) => {
           personMeetings.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        })
+      }
+      if (node.teams) {
+        Object.values(node.teams).forEach((teamMeetings) => {
+          teamMeetings.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
         })
       }
       if (node.meetings) {
@@ -161,6 +182,41 @@ export default function MeetingsPage() {
     setExpandedPeople(newExpanded)
   }
 
+  const toggleTeam = (teamName: string) => {
+    const newExpanded = new Set(expandedTeams)
+    if (newExpanded.has(teamName)) {
+      newExpanded.delete(teamName)
+    } else {
+      newExpanded.add(teamName)
+    }
+    setExpandedTeams(newExpanded)
+  }
+
+  const expandAll = () => {
+    const allTypes = Object.keys(tree)
+    const allPeople: string[] = []
+    const allTeams: string[] = []
+
+    Object.values(tree).forEach(node => {
+      if (node.people) {
+        allPeople.push(...Object.keys(node.people))
+      }
+      if (node.teams) {
+        allTeams.push(...Object.keys(node.teams))
+      }
+    })
+
+    setExpandedTypes(new Set(allTypes))
+    setExpandedPeople(new Set(allPeople))
+    setExpandedTeams(new Set(allTeams))
+  }
+
+  const collapseAll = () => {
+    setExpandedTypes(new Set())
+    setExpandedPeople(new Set())
+    setExpandedTeams(new Set())
+  }
+
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('en-GB', {
       day: '2-digit',
@@ -170,10 +226,12 @@ export default function MeetingsPage() {
   }
 
   const handleAddMeeting = (newMeeting: Omit<Meeting, "id">) => {
+    const teamBasedTypes = ["Team Sync", "Retro", "Planning", "Review", "Standup"]
     const meeting: Meeting = {
       ...newMeeting,
       id: Math.max(...meetings.map(m => m.id), 0) + 1,
       personName: newMeeting.type === "1:1" ? newMeeting.attendees[0] : undefined,
+      teamName: teamBasedTypes.includes(newMeeting.type) ? newMeeting.attendees[0] : undefined,
     }
     setMeetings([...meetings, meeting])
     setSelectedMeeting(meeting)
@@ -250,9 +308,31 @@ export default function MeetingsPage() {
               Log
             </Button>
           </div>
-          <p className="text-xs text-gray-600">
-            Select a meeting to view details
-          </p>
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-gray-600">
+              Select a meeting to view details
+            </p>
+            <div className="flex gap-1">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={expandAll}
+                className="h-6 px-2 text-xs"
+                title="Expand all"
+              >
+                <ChevronsDown className="h-3 w-3" />
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={collapseAll}
+                className="h-6 px-2 text-xs"
+                title="Collapse all"
+              >
+                <ChevronsRight className="h-3 w-3" />
+              </Button>
+            </div>
+          </div>
         </div>
 
         <div className="p-2">
@@ -293,6 +373,42 @@ export default function MeetingsPage() {
                       {expandedPeople.has(personName) && (
                         <div className="ml-4">
                           {personMeetings.map((meeting) => (
+                            <button
+                              key={meeting.id}
+                              onClick={() => setSelectedMeeting(meeting)}
+                              className={`block w-full text-left px-2 py-1.5 text-xs rounded ${
+                                selectedMeeting?.id === meeting.id
+                                  ? "bg-primary-50 text-primary-700 font-medium"
+                                  : "text-gray-600 hover:bg-gray-100"
+                              }`}
+                            >
+                              {formatDate(meeting.date)}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+
+                  {/* For team-based meetings, group by team */}
+                  {node.teams && Object.entries(node.teams).map(([teamName, teamMeetings]) => (
+                    <div key={teamName} className="mb-1">
+                      <button
+                        onClick={() => toggleTeam(teamName)}
+                        className="flex items-center gap-2 w-full px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                      >
+                        {expandedTeams.has(teamName) ? (
+                          <ChevronDown className="h-4 w-4 flex-shrink-0" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4 flex-shrink-0" />
+                        )}
+                        {teamName}
+                      </button>
+
+                      {/* Team's meetings */}
+                      {expandedTeams.has(teamName) && (
+                        <div className="ml-4">
+                          {teamMeetings.map((meeting) => (
                             <button
                               key={meeting.id}
                               onClick={() => setSelectedMeeting(meeting)}
@@ -370,18 +486,29 @@ export default function MeetingsPage() {
                     )}
                   </div>
 
-                  {/* Attendees */}
-                  <div>
-                    <Label className="text-sm font-medium text-gray-700">Attendees</Label>
-                    <Input
-                      value={selectedMeeting.attendees.join(", ")}
-                      onChange={(e) => handleUpdateMeeting({
-                        ...selectedMeeting,
-                        attendees: e.target.value.split(",").map(a => a.trim()).filter(a => a.length > 0)
-                      })}
-                      placeholder="Enter names separated by commas"
-                      className="mt-1"
-                    />
+                  {/* Title and Attendees */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-sm font-medium text-gray-700">Title</Label>
+                      <Input
+                        value={selectedMeeting.title}
+                        onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, title: e.target.value })}
+                        placeholder="Meeting title"
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-700">Attendees</Label>
+                      <Input
+                        value={selectedMeeting.attendees.join(", ")}
+                        onChange={(e) => handleUpdateMeeting({
+                          ...selectedMeeting,
+                          attendees: e.target.value.split(",").map(a => a.trim()).filter(a => a.length > 0)
+                        })}
+                        placeholder="Enter names separated by commas"
+                        className="mt-1"
+                      />
+                    </div>
                   </div>
 
                   {/* Action Items */}
@@ -390,9 +517,9 @@ export default function MeetingsPage() {
                     <MarkdownTextarea
                       value={selectedMeeting.actionItems || ""}
                       onValueChange={(value) => handleUpdateMeeting({ ...selectedMeeting, actionItems: value })}
-                      placeholder="- Action item 1&#10;- Action item 2"
+                      placeholder={"- Action item 1\n- Action item 2"}
                       rows={4}
-                      className="mt-1 font-mono text-sm"
+                      className="mt-1 text-sm"
                     />
                   </div>
 
@@ -404,7 +531,7 @@ export default function MeetingsPage() {
                       onValueChange={(value) => handleUpdateMeeting({ ...selectedMeeting, notes: value })}
                       placeholder="Meeting notes, discussion points, decisions..."
                       rows={12}
-                      className="mt-1 font-mono text-sm"
+                      className="mt-1 text-sm"
                     />
                   </div>
                 </div>
