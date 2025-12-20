@@ -102,6 +102,14 @@ const recurrenceOptions = [
   { value: "quarterly", label: "Quarterly" },
 ]
 
+const oneOnOneTemplates = [
+  "1st Meeting",
+  "Career Growth Check-in",
+  "Regular Check-in",
+  "Peer 1:1",
+  "Performance Review"
+]
+
 export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availablePeople = [], availableTeams = [], defaultPerson }: MeetingFormDialogProps) {
   const [formData, setFormData] = useState<Meeting>(meeting || emptyMeeting)
   const [personInput, setPersonInput] = useState("")
@@ -111,6 +119,7 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
   const [filteredTeams, setFilteredTeams] = useState<string[]>([])
   const [showTeamSuggestions, setShowTeamSuggestions] = useState(false)
   const [validationError, setValidationError] = useState("")
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("")
 
   // Reset form data when dialog opens/closes or meeting changes
   useEffect(() => {
@@ -237,7 +246,7 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[1100px] max-h-[90vh]">
+      <DialogContent className="sm:max-w-[1320px] max-h-[95vh]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>{isEditing ? meeting?.title : "Log Meeting"}</DialogTitle>
@@ -245,7 +254,7 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
               {isEditing ? `Update meeting details and notes.` : "Add meeting details and notes."}
             </DialogDescription>
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-6 py-4 overflow-y-auto max-h-[calc(90vh-200px)] px-1">
+          <div className="grid grid-cols-2 gap-6 py-4 overflow-y-auto max-h-[calc(95vh-200px)] px-1">
             {/* Left Column - Form Fields */}
             <div className="grid gap-3 pr-1">
               {/* Conditional Fields based on Meeting Type */}
@@ -545,16 +554,47 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
               </div>
             </div>
 
-            {/* Right Column - Notes */}
-            <div className="flex flex-col pl-1">
-              <Label className="mb-2">Notes</Label>
-              <div className="flex-1">
-                <MarkdownTextarea
-                  value={formData.notes}
-                  onValueChange={(value) => setFormData({ ...formData, notes: value })}
-                  placeholder="Meeting notes, discussion points, decisions..."
-                  className="h-full resize-none text-sm"
-                />
+            {/* Right Column - Templates and Notes */}
+            <div className="flex flex-col pl-1 gap-4">
+              {/* Template Selection - Only for 1:1 meetings */}
+              {is1on1 && (
+                <div className="grid gap-2">
+                  <Label>Templates</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {oneOnOneTemplates.map((template) => (
+                      <Button
+                        key={template}
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSelectedTemplate(template)}
+                        className={`text-xs border ${
+                          selectedTemplate === template
+                            ? "bg-primary-100 text-primary-700 border-primary-300"
+                            : "bg-white text-gray-700 hover:bg-gray-50"
+                        }`}
+                      >
+                        {template}
+                      </Button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Select a template to load pre-formatted notes
+                  </p>
+                </div>
+              )}
+
+              {/* Notes Section */}
+              <div className="flex flex-col flex-1">
+                <Label className="mb-2">Notes</Label>
+                <div className="flex-1">
+                  <MarkdownTextarea
+                    value={formData.notes}
+                    onValueChange={(value) => setFormData({ ...formData, notes: value })}
+                    placeholder="Meeting notes, discussion points, decisions..."
+                    className="h-full resize-none text-sm"
+                  />
+                </div>
               </div>
             </div>
           </div>
