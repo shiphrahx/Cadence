@@ -473,11 +473,11 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
               {/* Action Items */}
               <div className="grid gap-2">
                 <Label htmlFor="actionItems">Action Items</Label>
-                <Textarea
+                <MarkdownTextarea
                   id="actionItems"
                   value={formData.actionItems}
-                  onChange={(e) => setFormData({ ...formData, actionItems: e.target.value })}
-                  placeholder={"- Action item 1\n- Action item 2\n- Action item 3"}
+                  onValueChange={(value) => setFormData({ ...formData, actionItems: value })}
+                  placeholder="- Action item 1&#10;- Action item 2&#10;- Action item 3"
                   rows={4}
                   className="font-mono text-sm"
                 />

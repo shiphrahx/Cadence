@@ -387,9 +387,9 @@ export default function MeetingsPage() {
                   {/* Action Items */}
                   <div>
                     <Label className="text-sm font-medium text-gray-700">Action Items</Label>
-                    <Textarea
+                    <MarkdownTextarea
                       value={selectedMeeting.actionItems || ""}
-                      onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, actionItems: e.target.value })}
+                      onValueChange={(value) => handleUpdateMeeting({ ...selectedMeeting, actionItems: value })}
                       placeholder="- Action item 1&#10;- Action item 2"
                       rows={4}
                       className="mt-1 font-mono text-sm"
