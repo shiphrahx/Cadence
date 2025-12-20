@@ -261,9 +261,8 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
 
             {/* Right Column - Notes */}
             <div className="flex flex-col">
-              <Label htmlFor="notes" className="mb-2">Notes</Label>
+              <Label className="mb-2">Notes</Label>
               <MarkdownTextarea
-                id="notes"
                 value={formData.notes}
                 onValueChange={(value) => setFormData({ ...formData, notes: value })}
                 placeholder="Any additional notes..."

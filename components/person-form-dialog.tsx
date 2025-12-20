@@ -19,7 +19,7 @@ interface Person {
   role: string
   level: string
   startDate: string
-  status: string
+  status: "active" | "inactive"
   teams: string[]
   notes?: string
 }

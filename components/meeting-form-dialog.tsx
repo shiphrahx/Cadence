@@ -35,6 +35,7 @@ interface MeetingFormDialogProps {
   onSave: (meeting: Meeting) => void
   availablePeople?: string[]
   availableTeams?: string[]
+  defaultPerson?: string
 }
 
 const getTodayDate = () => {
@@ -101,7 +102,7 @@ const recurrenceOptions = [
   { value: "quarterly", label: "Quarterly" },
 ]
 
-export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availablePeople = [], availableTeams = [] }: MeetingFormDialogProps) {
+export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availablePeople = [], availableTeams = [], defaultPerson }: MeetingFormDialogProps) {
   const [formData, setFormData] = useState<Meeting>(meeting || emptyMeeting)
   const [personInput, setPersonInput] = useState("")
   const [filteredPeople, setFilteredPeople] = useState<string[]>([])
@@ -115,8 +116,21 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
   useEffect(() => {
     if (open) {
       const initialData = meeting || emptyMeeting
-      setFormData(initialData)
-      setPersonInput(initialData.personName || "")
+
+      // If defaultPerson is provided and we're not editing, pre-populate the person field
+      if (defaultPerson && !meeting) {
+        setFormData({
+          ...initialData,
+          attendees: [defaultPerson],
+          personName: defaultPerson,
+          title: `1:1 with ${defaultPerson}`
+        })
+        setPersonInput(defaultPerson)
+      } else {
+        setFormData(initialData)
+        setPersonInput(initialData.personName || "")
+      }
+
       setTeamInput(initialData.attendees?.[0] || "")
       setValidationError("")
 
@@ -126,7 +140,7 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
         setFormData(prev => ({ ...prev, nextMeetingDate: nextDate }))
       }
     }
-  }, [open, meeting])
+  }, [open, meeting, defaultPerson])
 
   // Update next meeting date when date or recurrence changes
   useEffect(() => {
@@ -518,9 +532,8 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
 
               {/* Action Items */}
               <div className="grid gap-2">
-                <Label htmlFor="actionItems">Action Items</Label>
+                <Label>Action Items</Label>
                 <MarkdownTextarea
-                  id="actionItems"
                   value={formData.actionItems}
                   onValueChange={(value) => setFormData({ ...formData, actionItems: value })}
                   placeholder={"- Action item 1\n- Action item 2\n- Action item 3"}
@@ -532,10 +545,9 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
 
             {/* Right Column - Notes */}
             <div className="flex flex-col pl-1">
-              <Label htmlFor="notes" className="mb-2">Notes</Label>
+              <Label className="mb-2">Notes</Label>
               <div className="flex-1">
                 <MarkdownTextarea
-                  id="notes"
                   value={formData.notes}
                   onValueChange={(value) => setFormData({ ...formData, notes: value })}
                   placeholder="Meeting notes, discussion points, decisions..."
