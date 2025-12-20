@@ -31,7 +31,8 @@
       "Bash(netstat:*)",
       "Bash(findstr:*)",
       "Bash(gh issue view:*)",
-      "Bash(npx shadcn@latest add select:*)"
+      "Bash(npx shadcn@latest add select:*)",
+      "Bash(cmd //c taskkill //PID 53340 //F)"
     ]
   }
 }

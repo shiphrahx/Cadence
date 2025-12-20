@@ -235,7 +235,7 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
               {/* Conditional Fields based on Meeting Type */}
               {is1on1 ? (
                 <>
-                  {/* Meeting Type and Person side by side */}
+                  {/* Meeting Type and Date side by side */}
                   <div className="grid grid-cols-2 gap-3">
                     <div className="grid gap-2">
                       <Label htmlFor="type">Meeting Type *</Label>
@@ -256,49 +256,48 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                       </Select>
                     </div>
 
-                    {/* Person Field for 1:1 */}
-                      <div className="grid gap-2">
-                        <Label htmlFor="person">Person *</Label>
-                        <div className="relative">
-                          <Input
-                            id="person"
-                            value={personInput}
-                            onChange={(e) => setPersonInput(e.target.value)}
-                            onFocus={() => setShowSuggestions(filteredPeople.length > 0)}
-                            placeholder="Start typing a name..."
-                            required
-                          />
-                          {showSuggestions && (
-                            <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
-                              {filteredPeople.map((person, index) => (
-                                <div
-                                  key={index}
-                                  onClick={() => handlePersonSelect(person)}
-                                  className="px-3 py-2 text-sm cursor-pointer hover:bg-gray-100"
-                                >
-                                  {person}
-                                </div>
-                              ))}
+                    {/* Date Field for 1:1 */}
+                    <div className="grid gap-2">
+                      <Label htmlFor="date">Date *</Label>
+                      <Input
+                        id="date"
+                        type="date"
+                        value={formData.date}
+                        onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  {/* Person Field for 1:1 */}
+                  <div className="grid gap-2">
+                    <Label htmlFor="person">Person *</Label>
+                    <div className="relative">
+                      <Input
+                        id="person"
+                        value={personInput}
+                        onChange={(e) => setPersonInput(e.target.value)}
+                        onFocus={() => setShowSuggestions(filteredPeople.length > 0)}
+                        placeholder="Start typing a name..."
+                        required
+                      />
+                      {showSuggestions && (
+                        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                          {filteredPeople.map((person, index) => (
+                            <div
+                              key={index}
+                              onClick={() => handlePersonSelect(person)}
+                              className="px-3 py-2 text-sm cursor-pointer hover:bg-gray-100"
+                            >
+                              {person}
                             </div>
-                          )}
+                          ))}
                         </div>
-                      </div>
+                      )}
                     </div>
                     <p className="text-xs text-muted-foreground">
                       Select from your team or type a new name
                     </p>
-                  </div>
-
-                  {/* Date Field for 1:1 */}
-                  <div className="grid gap-2">
-                    <Label htmlFor="date">Date *</Label>
-                    <Input
-                      id="date"
-                      type="date"
-                      value={formData.date}
-                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                      required
-                    />
                   </div>
 
                   {/* Recurrence and Next Meeting - Side by Side */}
@@ -337,7 +336,7 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                 </>
               ) : isTeamBased ? (
                 <>
-                  {/* Meeting Type and Team side by side */}
+                  {/* Meeting Type and Date side by side */}
                   <div className="grid grid-cols-2 gap-3">
                     <div className="grid gap-2">
                       <Label htmlFor="type">Meeting Type *</Label>
@@ -358,48 +357,48 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                       </Select>
                     </div>
 
-                    {/* Team Field for team-based meetings */}
+                    {/* Date Field for team-based meetings */}
                     <div className="grid gap-2">
-                      <Label htmlFor="team">Team *</Label>
-                      <div className="relative">
-                        <Input
-                          id="team"
-                          value={teamInput}
-                          onChange={(e) => setTeamInput(e.target.value)}
-                          onFocus={() => setShowTeamSuggestions(filteredTeams.length > 0)}
-                          placeholder="Start typing a team name..."
-                          required
-                        />
-                        {showTeamSuggestions && (
-                          <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
-                            {filteredTeams.map((team, index) => (
-                              <div
-                                key={index}
-                                onClick={() => handleTeamSelect(team)}
-                                className="px-3 py-2 text-sm cursor-pointer hover:bg-gray-100"
-                              >
-                                {team}
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
+                      <Label htmlFor="date">Date *</Label>
+                      <Input
+                        id="date"
+                        type="date"
+                        value={formData.date}
+                        onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                        required
+                      />
                     </div>
                   </div>
-                  <p className="text-xs text-muted-foreground -mt-2">
-                    Select from your teams or type a new name
-                  </p>
 
-                  {/* Date Field for team-based meetings */}
+                  {/* Team Field for team-based meetings */}
                   <div className="grid gap-2">
-                    <Label htmlFor="date">Date *</Label>
-                    <Input
-                      id="date"
-                      type="date"
-                      value={formData.date}
-                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                      required
-                    />
+                    <Label htmlFor="team">Team *</Label>
+                    <div className="relative">
+                      <Input
+                        id="team"
+                        value={teamInput}
+                        onChange={(e) => setTeamInput(e.target.value)}
+                        onFocus={() => setShowTeamSuggestions(filteredTeams.length > 0)}
+                        placeholder="Start typing a team name..."
+                        required
+                      />
+                      {showTeamSuggestions && (
+                        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                          {filteredTeams.map((team, index) => (
+                            <div
+                              key={index}
+                              onClick={() => handleTeamSelect(team)}
+                              className="px-3 py-2 text-sm cursor-pointer hover:bg-gray-100"
+                            >
+                              {team}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Select from your teams or type a new name
+                    </p>
                   </div>
 
                   {/* Recurrence and Next Meeting - Side by Side */}
@@ -452,7 +451,7 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                 </>
               ) : (
                 <>
-                  {/* Meeting Type and Title side by side */}
+                  {/* Meeting Type and Date side by side */}
                   <div className="grid grid-cols-2 gap-3">
                     <div className="grid gap-2">
                       <Label htmlFor="type">Meeting Type *</Label>
@@ -473,17 +472,29 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                       </Select>
                     </div>
 
-                    {/* Meeting Title for other meetings */}
+                    {/* Date Field for other meetings */}
                     <div className="grid gap-2">
-                      <Label htmlFor="title">Meeting Title *</Label>
+                      <Label htmlFor="date">Date *</Label>
                       <Input
-                        id="title"
-                        value={formData.title}
-                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                        placeholder="e.g. All Hands Q4 2024"
+                        id="date"
+                        type="date"
+                        value={formData.date}
+                        onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                         required
                       />
                     </div>
+                  </div>
+
+                  {/* Meeting Title for other meetings */}
+                  <div className="grid gap-2">
+                    <Label htmlFor="title">Meeting Title *</Label>
+                    <Input
+                      id="title"
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      placeholder="e.g. All Hands Q4 2024"
+                      required
+                    />
                   </div>
 
                   {/* Attendees for other meetings */}
@@ -501,18 +512,6 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                     <p className="text-xs text-muted-foreground">
                       Separate multiple attendees with commas
                     </p>
-                  </div>
-
-                  {/* Date Field for other meetings */}
-                  <div className="grid gap-2">
-                    <Label htmlFor="date">Date *</Label>
-                    <Input
-                      id="date"
-                      type="date"
-                      value={formData.date}
-                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                      required
-                    />
                   </div>
                 </>
               )}
@@ -534,13 +533,15 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
             {/* Right Column - Notes */}
             <div className="flex flex-col pl-1">
               <Label htmlFor="notes" className="mb-2">Notes</Label>
-              <MarkdownTextarea
-                id="notes"
-                value={formData.notes}
-                onValueChange={(value) => setFormData({ ...formData, notes: value })}
-                placeholder="Meeting notes, discussion points, decisions..."
-                className="flex-1 resize-none font-mono text-sm min-h-[500px]"
-              />
+              <div className="flex-1">
+                <MarkdownTextarea
+                  id="notes"
+                  value={formData.notes}
+                  onValueChange={(value) => setFormData({ ...formData, notes: value })}
+                  placeholder="Meeting notes, discussion points, decisions..."
+                  className="h-full resize-none font-mono text-sm"
+                />
+              </div>
             </div>
           </div>
           {validationError && (

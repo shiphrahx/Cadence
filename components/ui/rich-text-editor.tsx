@@ -124,7 +124,7 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
     )
 
     return (
-      <div ref={ref} className="border border-gray-300 rounded-lg bg-white shadow-sm overflow-hidden transition-shadow duration-200 hover:shadow-md">
+      <div ref={ref} className={cn("border border-gray-300 rounded-lg bg-white shadow-sm overflow-hidden transition-shadow duration-200 hover:shadow-md", className?.includes('h-full') ? 'h-full flex flex-col' : '')}>
         {/* Toolbar */}
         <div className="flex flex-wrap gap-1 p-3 border-b border-gray-200 bg-gradient-to-b from-gray-50 to-white">
           {/* Text Formatting Group */}
@@ -231,9 +231,9 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
           className={cn(
             "overflow-y-auto tiptap-editor bg-white",
             "focus-within:bg-gray-50/30 transition-colors duration-200",
-            className
+            className?.includes('h-full') ? 'flex-1' : ''
           )}
-          style={{ minHeight: `${rows * 1.5}rem` }}
+          style={className?.includes('h-full') ? undefined : { minHeight: `${rows * 1.5}rem` }}
         >
           <EditorContent editor={editor} />
         </div>
