@@ -19,7 +19,7 @@ import { Plus, Users as UsersIcon, MoreHorizontal, Pencil, Trash2, UserX, UserCh
 import { TeamFormDialog } from "@/components/team-form-dialog"
 
 interface Team {
-  id: number
+  id?: number
   name: string
   description: string
   status: "active" | "inactive"
@@ -105,17 +105,19 @@ export default function TeamsPage() {
     }
   }, [selectedTeamMenu])
 
-  const handleAddTeam = (newTeam: Omit<Team, "id">) => {
+  const handleAddTeam = (newTeam: Team) => {
     const team: Team = {
       ...newTeam,
-      id: Math.max(...teams.map(t => t.id), 0) + 1,
+      id: Math.max(...teams.map(t => t.id || 0), 0) + 1,
       status: "active",
     }
     setTeams([...teams, team])
   }
 
   const handleEditTeam = (updatedTeam: Team) => {
-    setTeams(teams.map(t => t.id === updatedTeam.id ? updatedTeam : t))
+    if (updatedTeam.id) {
+      setTeams(teams.map(t => t.id === updatedTeam.id ? { ...updatedTeam, id: updatedTeam.id } as Team : t))
+    }
     setEditingTeam(null)
   }
 
@@ -263,12 +265,14 @@ export default function TeamsPage() {
                         size="icon"
                         onClick={(e) => {
                           e.stopPropagation()
-                          setSelectedTeamMenu(selectedTeamMenu === team.id ? null : team.id)
+                          if (team.id !== undefined) {
+                            setSelectedTeamMenu(selectedTeamMenu === team.id ? null : team.id)
+                          }
                         }}
                       >
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
-                      {selectedTeamMenu === team.id && (
+                      {team.id !== undefined && selectedTeamMenu === team.id && (
                         <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
                           <div className="py-1">
                             <button

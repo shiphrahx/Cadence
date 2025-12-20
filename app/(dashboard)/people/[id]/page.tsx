@@ -579,10 +579,9 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
 
             {/* Right Column - Notes */}
             <div className="flex flex-col">
-              <Label htmlFor="notes" className="mb-2">Notes</Label>
+              <Label className="mb-2">Notes</Label>
               <div className="flex-1">
                 <MarkdownTextarea
-                  id="notes"
                   value={formData.notes || ""}
                   onValueChange={(value) => setFormData({ ...formData, notes: value })}
                   placeholder="Any additional notes about this person..."
@@ -784,6 +783,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
         onSave={handleAddMeeting}
         availablePeople={mockPeople}
         availableTeams={mockTeamsForMeetings}
+        defaultPerson={formData.name}
       />
     </div>
   )

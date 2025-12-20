@@ -20,7 +20,7 @@ import { Plus, User, MoreHorizontal, Pencil, Trash2, UserX, UserCheck } from "lu
 import { PersonFormDialog } from "@/components/person-form-dialog"
 
 interface Person {
-  id: number
+  id?: number
   name: string
   role: string
   level: string
@@ -162,17 +162,19 @@ export default function PeoplePage() {
   const levelCounts = getLevelCounts()
   const recentHiresCount = getRecentHires()
 
-  const handleAddPerson = (newPerson: Omit<Person, "id">) => {
+  const handleAddPerson = (newPerson: Person) => {
     const person: Person = {
       ...newPerson,
-      id: Math.max(...people.map(p => p.id), 0) + 1,
+      id: Math.max(...people.map(p => p.id || 0), 0) + 1,
       status: "active",
     }
     setPeople([...people, person])
   }
 
   const handleEditPerson = (updatedPerson: Person) => {
-    setPeople(people.map(p => p.id === updatedPerson.id ? updatedPerson : p))
+    if (updatedPerson.id) {
+      setPeople(people.map(p => p.id === updatedPerson.id ? { ...updatedPerson, id: updatedPerson.id } as Person : p))
+    }
     setEditingPerson(null)
   }
 
@@ -333,12 +335,14 @@ export default function PeoplePage() {
                         size="icon"
                         onClick={(e) => {
                           e.stopPropagation()
-                          setSelectedPersonMenu(selectedPersonMenu === person.id ? null : person.id)
+                          if (person.id !== undefined) {
+                            setSelectedPersonMenu(selectedPersonMenu === person.id ? null : person.id)
+                          }
                         }}
                       >
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
-                      {selectedPersonMenu === person.id && (
+                      {person.id !== undefined && selectedPersonMenu === person.id && (
                         <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
                           <div className="py-1">
                             <button
