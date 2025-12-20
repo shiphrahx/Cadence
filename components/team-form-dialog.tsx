@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { MarkdownTextarea } from "@/components/ui/markdown-textarea"
 import { Badge } from "@/components/ui/badge"
 import { ChevronRight, ChevronLeft } from "lucide-react"
 
@@ -261,10 +262,10 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
             {/* Right Column - Notes */}
             <div className="flex flex-col">
               <Label htmlFor="notes" className="mb-2">Notes</Label>
-              <Textarea
+              <MarkdownTextarea
                 id="notes"
                 value={formData.notes}
-                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                onValueChange={(value) => setFormData({ ...formData, notes: value })}
                 placeholder="Any additional notes..."
                 className="flex-1 resize-none"
               />

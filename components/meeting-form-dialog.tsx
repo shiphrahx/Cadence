@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { MarkdownTextarea } from "@/components/ui/markdown-textarea"
 import {
   Select,
   SelectContent,
@@ -116,6 +117,8 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
       const initialData = meeting || emptyMeeting
       setFormData(initialData)
       setPersonInput(initialData.personName || "")
+      setTeamInput(initialData.attendees?.[0] || "")
+      setValidationError("")
 
       // Calculate next meeting date if recurrence is set
       if (initialData.recurrence && initialData.recurrence !== "none") {
@@ -228,30 +231,44 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
           </DialogHeader>
           <div className="grid grid-cols-2 gap-6 py-4 overflow-y-auto max-h-[calc(90vh-200px)] px-1">
             {/* Left Column - Form Fields */}
-            <div className="grid gap-4 pr-1">
-              {/* Meeting Type - First Field */}
-              <div className="grid gap-2">
-                <Label htmlFor="type">Meeting Type *</Label>
-                <Select
-                  value={formData.type}
-                  onValueChange={(value) => setFormData({ ...formData, type: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select meeting type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {meetingTypes.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
+            <div className="grid gap-3 pr-1">
               {/* Conditional Fields based on Meeting Type */}
               {is1on1 ? (
                 <>
+                  {/* Meeting Type and Date side by side */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="grid gap-2">
+                      <Label htmlFor="type">Meeting Type *</Label>
+                      <Select
+                        value={formData.type}
+                        onValueChange={(value) => setFormData({ ...formData, type: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select meeting type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {meetingTypes.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Date Field for 1:1 */}
+                    <div className="grid gap-2">
+                      <Label htmlFor="date">Date *</Label>
+                      <Input
+                        id="date"
+                        type="date"
+                        value={formData.date}
+                        onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                        required
+                      />
+                    </div>
+                  </div>
+
                   {/* Person Field for 1:1 */}
                   <div className="grid gap-2">
                     <Label htmlFor="person">Person *</Label>
@@ -283,53 +300,76 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                     </p>
                   </div>
 
-                  {/* Date Field for 1:1 */}
-                  <div className="grid gap-2">
-                    <Label htmlFor="date">Date *</Label>
-                    <Input
-                      id="date"
-                      type="date"
-                      value={formData.date}
-                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                      required
-                    />
-                  </div>
-
-                  {/* Recurrence Field */}
-                  <div className="grid gap-2">
-                    <Label htmlFor="recurrence">Recurrence</Label>
-                    <Select
-                      value={formData.recurrence || "none"}
-                      onValueChange={(value) => setFormData({ ...formData, recurrence: value })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select recurrence" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {recurrenceOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Next Meeting Date - Editable */}
-                  {formData.recurrence && formData.recurrence !== "none" && (
+                  {/* Recurrence and Next Meeting - Side by Side */}
+                  <div className="grid grid-cols-2 gap-4">
                     <div className="grid gap-2">
-                      <Label htmlFor="nextMeetingDate">Next Meeting</Label>
-                      <Input
-                        id="nextMeetingDate"
-                        type="date"
-                        value={formData.nextMeetingDate || ""}
-                        onChange={(e) => setFormData({ ...formData, nextMeetingDate: e.target.value })}
-                      />
+                      <Label htmlFor="recurrence">Recurrence</Label>
+                      <Select
+                        value={formData.recurrence || "none"}
+                        onValueChange={(value) => setFormData({ ...formData, recurrence: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select recurrence" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {recurrenceOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
-                  )}
+
+                    {formData.recurrence && formData.recurrence !== "none" && (
+                      <div className="grid gap-2">
+                        <Label htmlFor="nextMeetingDate">Next Meeting</Label>
+                        <Input
+                          id="nextMeetingDate"
+                          type="date"
+                          value={formData.nextMeetingDate || ""}
+                          onChange={(e) => setFormData({ ...formData, nextMeetingDate: e.target.value })}
+                        />
+                      </div>
+                    )}
+                  </div>
                 </>
               ) : isTeamBased ? (
                 <>
+                  {/* Meeting Type and Date side by side */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="grid gap-2">
+                      <Label htmlFor="type">Meeting Type *</Label>
+                      <Select
+                        value={formData.type}
+                        onValueChange={(value) => setFormData({ ...formData, type: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select meeting type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {meetingTypes.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Date Field for team-based meetings */}
+                    <div className="grid gap-2">
+                      <Label htmlFor="date">Date *</Label>
+                      <Input
+                        id="date"
+                        type="date"
+                        value={formData.date}
+                        onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                        required
+                      />
+                    </div>
+                  </div>
+
                   {/* Team Field for team-based meetings */}
                   <div className="grid gap-2">
                     <Label htmlFor="team">Team *</Label>
@@ -361,21 +401,43 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                     </p>
                   </div>
 
-                  {/* Date Field for team-based meetings */}
-                  <div className="grid gap-2">
-                    <Label htmlFor="date">Date *</Label>
-                    <Input
-                      id="date"
-                      type="date"
-                      value={formData.date}
-                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                      required
-                    />
+                  {/* Recurrence and Next Meeting - Side by Side */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="recurrence">Recurrence</Label>
+                      <Select
+                        value={formData.recurrence || "none"}
+                        onValueChange={(value) => setFormData({ ...formData, recurrence: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select recurrence" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {recurrenceOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {formData.recurrence && formData.recurrence !== "none" && (
+                      <div className="grid gap-2">
+                        <Label htmlFor="nextMeetingDate">Next Meeting</Label>
+                        <Input
+                          id="nextMeetingDate"
+                          type="date"
+                          value={formData.nextMeetingDate || ""}
+                          onChange={(e) => setFormData({ ...formData, nextMeetingDate: e.target.value })}
+                        />
+                      </div>
+                    )}
                   </div>
 
-                  {/* Meeting Title - Optional */}
+                  {/* Meeting Title */}
                   <div className="grid gap-2">
-                    <Label htmlFor="title">Meeting Title (Optional)</Label>
+                    <Label htmlFor="title">Meeting Title</Label>
                     <Input
                       id="title"
                       value={formData.title}
@@ -389,6 +451,40 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                 </>
               ) : (
                 <>
+                  {/* Meeting Type and Date side by side */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="grid gap-2">
+                      <Label htmlFor="type">Meeting Type *</Label>
+                      <Select
+                        value={formData.type}
+                        onValueChange={(value) => setFormData({ ...formData, type: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select meeting type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {meetingTypes.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Date Field for other meetings */}
+                    <div className="grid gap-2">
+                      <Label htmlFor="date">Date *</Label>
+                      <Input
+                        id="date"
+                        type="date"
+                        value={formData.date}
+                        onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                        required
+                      />
+                    </div>
+                  </div>
+
                   {/* Meeting Title for other meetings */}
                   <div className="grid gap-2">
                     <Label htmlFor="title">Meeting Title *</Label>
@@ -417,30 +513,18 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                       Separate multiple attendees with commas
                     </p>
                   </div>
-
-                  {/* Date Field for other meetings */}
-                  <div className="grid gap-2">
-                    <Label htmlFor="date">Date *</Label>
-                    <Input
-                      id="date"
-                      type="date"
-                      value={formData.date}
-                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                      required
-                    />
-                  </div>
                 </>
               )}
 
               {/* Action Items */}
               <div className="grid gap-2">
                 <Label htmlFor="actionItems">Action Items</Label>
-                <Textarea
+                <MarkdownTextarea
                   id="actionItems"
                   value={formData.actionItems}
-                  onChange={(e) => setFormData({ ...formData, actionItems: e.target.value })}
+                  onValueChange={(value) => setFormData({ ...formData, actionItems: value })}
                   placeholder={"- Action item 1\n- Action item 2\n- Action item 3"}
-                  rows={4}
+                  rows={6}
                   className="font-mono text-sm"
                 />
               </div>
@@ -449,16 +533,15 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
             {/* Right Column - Notes */}
             <div className="flex flex-col pl-1">
               <Label htmlFor="notes" className="mb-2">Notes</Label>
-              <Textarea
-                id="notes"
-                value={formData.notes}
-                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                placeholder="Meeting notes, discussion points, decisions... (Markdown supported)"
-                className="flex-1 resize-none font-mono text-sm min-h-[400px]"
-              />
-              <p className="text-xs text-muted-foreground mt-2">
-                Markdown formatting is supported
-              </p>
+              <div className="flex-1">
+                <MarkdownTextarea
+                  id="notes"
+                  value={formData.notes}
+                  onValueChange={(value) => setFormData({ ...formData, notes: value })}
+                  placeholder="Meeting notes, discussion points, decisions..."
+                  className="h-full resize-none font-mono text-sm"
+                />
+              </div>
             </div>
           </div>
           {validationError && (

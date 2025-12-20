@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { MarkdownTextarea } from "@/components/ui/markdown-textarea"
 import { Input } from "@/components/ui/input"
 import { Plus, ChevronRight, ChevronDown } from "lucide-react"
 import { MeetingFormDialog } from "@/components/meeting-form-dialog"
@@ -386,9 +387,9 @@ export default function MeetingsPage() {
                   {/* Action Items */}
                   <div>
                     <Label className="text-sm font-medium text-gray-700">Action Items</Label>
-                    <Textarea
+                    <MarkdownTextarea
                       value={selectedMeeting.actionItems || ""}
-                      onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, actionItems: e.target.value })}
+                      onValueChange={(value) => handleUpdateMeeting({ ...selectedMeeting, actionItems: value })}
                       placeholder="- Action item 1&#10;- Action item 2"
                       rows={4}
                       className="mt-1 font-mono text-sm"
@@ -398,16 +399,13 @@ export default function MeetingsPage() {
                   {/* Meeting Notes */}
                   <div>
                     <Label className="text-sm font-medium text-gray-700">Meeting Notes</Label>
-                    <Textarea
+                    <MarkdownTextarea
                       value={selectedMeeting.notes || ""}
-                      onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, notes: e.target.value })}
+                      onValueChange={(value) => handleUpdateMeeting({ ...selectedMeeting, notes: value })}
                       placeholder="Meeting notes, discussion points, decisions..."
                       rows={12}
                       className="mt-1 font-mono text-sm"
                     />
-                    <p className="text-xs text-muted-foreground mt-2">
-                      Markdown formatting is supported
-                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -428,6 +426,7 @@ export default function MeetingsPage() {
         onOpenChange={setIsAddDialogOpen}
         onSave={handleAddMeeting}
         availablePeople={mockPeople}
+        availableTeams={mockTeams}
       />
     </div>
   )
