@@ -50,7 +50,7 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
       editorProps: {
         attributes: {
           class: cn(
-            "prose prose-sm max-w-none focus:outline-none px-3 py-2 text-sm",
+            "focus:outline-none px-3 py-2 text-sm text-gray-900",
             className
           ),
         },
@@ -208,11 +208,104 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
 
         {/* Editor */}
         <div
-          className={cn("overflow-y-auto", className)}
+          className={cn("overflow-y-auto tiptap-editor", className)}
           style={{ minHeight: `${rows * 1.5}rem` }}
         >
           <EditorContent editor={editor} />
         </div>
+        <style jsx global>{`
+          .tiptap-editor .ProseMirror {
+            min-height: inherit;
+          }
+
+          .tiptap-editor .ProseMirror p {
+            margin: 0.5rem 0;
+          }
+
+          .tiptap-editor .ProseMirror h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 1rem 0 0.5rem 0;
+            line-height: 1.2;
+          }
+
+          .tiptap-editor .ProseMirror h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0.75rem 0 0.5rem 0;
+            line-height: 1.3;
+          }
+
+          .tiptap-editor .ProseMirror h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0.5rem 0 0.25rem 0;
+            line-height: 1.4;
+          }
+
+          .tiptap-editor .ProseMirror ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin: 0.5rem 0;
+          }
+
+          .tiptap-editor .ProseMirror ol {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin: 0.5rem 0;
+          }
+
+          .tiptap-editor .ProseMirror li {
+            margin: 0.25rem 0;
+          }
+
+          .tiptap-editor .ProseMirror code {
+            background-color: #f3f4f6;
+            padding: 0.125rem 0.25rem;
+            border-radius: 0.25rem;
+            font-size: 0.875em;
+            font-family: monospace;
+          }
+
+          .tiptap-editor .ProseMirror pre {
+            background-color: #1f2937;
+            color: #f9fafb;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            overflow-x: auto;
+            margin: 0.5rem 0;
+          }
+
+          .tiptap-editor .ProseMirror pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+          }
+
+          .tiptap-editor .ProseMirror blockquote {
+            border-left: 4px solid #d1d5db;
+            padding-left: 1rem;
+            margin: 0.5rem 0;
+            font-style: italic;
+            color: #6b7280;
+          }
+
+          .tiptap-editor .ProseMirror strong {
+            font-weight: 700;
+          }
+
+          .tiptap-editor .ProseMirror em {
+            font-style: italic;
+          }
+
+          .tiptap-editor .ProseMirror p.is-editor-empty:first-child::before {
+            color: #9ca3af;
+            content: attr(data-placeholder);
+            float: left;
+            height: 0;
+            pointer-events: none;
+          }
+        `}</style>
       </div>
     )
   }
