@@ -159,7 +159,9 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
         person.toLowerCase().includes(personInput.toLowerCase())
       )
       setFilteredPeople(filtered)
-      setShowSuggestions(filtered.length > 0 && personInput.length > 0)
+      // Don't show suggestions if the input exactly matches a person (already selected)
+      const exactMatch = availablePeople.some(person => person.toLowerCase() === personInput.toLowerCase())
+      setShowSuggestions(filtered.length > 0 && personInput.length > 0 && !exactMatch)
     } else {
       setShowSuggestions(false)
     }
