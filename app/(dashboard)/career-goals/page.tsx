@@ -350,7 +350,11 @@ export default function CareerGoalsPage() {
             Starting Point & Destination
           </CardTitle>
           <p className="text-sm text-gray-600 mt-2">
-            Reflect on your current role, responsibilities, and capabilities. Be honest about your strengths, areas for improvement, and what motivates you at work. This section helps you establish your baseline before setting goals. Describe your long-term aspiration or next career milestone. Think about what role, level, or scope you want to achieve and what success looks like for you.
+            Reflect on your current role, responsibilities, and capabilities.
+            Be honest about your strengths, areas for improvement, and what motivates you at work.
+            This section helps you establish your baseline before setting goals.
+            Describe your long-term aspiration or next career milestone.
+            Think about what role, level, or scope you want to achieve and what success looks like for you.
           </p>
         </CardHeader>
         <CardContent>
@@ -358,7 +362,9 @@ export default function CareerGoalsPage() {
             <div className="grid gap-2">
               <Label>Where you are now</Label>
               <p className="text-xs text-gray-500 mb-2">
-                Example: I'm currently a Mid-Level Engineer with strong backend and API development skills. My strengths lie in delivering reliable code and collaborating effectively with my peers. I'd like to improve my design thinking, architectural understanding, and confidence in technical discussions.
+                Example: I am currently a Lead / Engineering Manager, responsible for delivery, technical direction, and people management.
+                I am effective at keeping work moving and resolving issues as they come up, but I am still too involved in day-to-day execution. 
+                I often step in to unblock or make decisions myself, which limits how much space I create for others to lead and reduces my time for more strategic work.
               </p>
               <MarkdownTextarea
                 value={whereYouAre}
@@ -372,7 +378,9 @@ export default function CareerGoalsPage() {
             <div className="grid gap-2">
               <Label>Where you want to go</Label>
               <p className="text-xs text-gray-500 mb-2">
-                Example: My main goal over the next 12 months is to grow into a Senior Engineer by strengthening my technical depth, communication, and ability to influence outcomes across the team. I want to take more ownership of end-to-end delivery, improve how I collaborate with others, and contribute to raising our engineering standards.
+                Example: My goal in 12 months is to move into a more senior leadership role where my impact comes from setting direction rather than solving every problem myself. 
+                I aim to delegate more effectively and focus on longer-term technical and organisational decisions. 
+                Success means teams operate independently, delivery is predictable, and I can spend most of my time on strategy, risk, and alignment rather than execution.
               </p>
               <MarkdownTextarea
                 value={whereYouWantToGo}
@@ -396,7 +404,9 @@ export default function CareerGoalsPage() {
                 Gap Analysis
               </CardTitle>
               <p className="text-sm text-gray-600 mt-2">
-                Identify the gaps between your current position and your desired destination. These could be technical, behavioural, or contextual. The goal is to clearly see where you should focus more of your efforts to close the gap between where you are now and where you want to be.
+                Identify the gaps between your current position and your desired destination. 
+                These could be technical, behavioural, or contextual. 
+                The goal is to clearly see where you should focus more of your efforts to close the gap between where you are now and where you want to be.
               </p>
             </div>
             <Button onClick={openAddGapDialog}>
@@ -472,7 +482,8 @@ export default function CareerGoalsPage() {
             Short-term (0-4 months)
           </CardTitle>
           <p className="text-sm text-gray-600 mt-2">
-            Focus on quick wins and foundational improvements you can achieve in the next few months. These goals should help you build momentum by strengthening the skills, habits, and knowledge you'll need to progress further.
+            Focus on quick wins and foundational improvements you can achieve in the next few months. 
+            These goals should help you build momentum by strengthening the skills, habits, and knowledge you'll need to progress further.
           </p>
         </CardHeader>
         <CardContent>
@@ -575,7 +586,7 @@ export default function CareerGoalsPage() {
                               options={categories.map((cat) => ({
                                 value: cat,
                                 label: cat.length > 20 ? cat.substring(0, 20) + "..." : cat,
-                                className: "bg-orange-100 text-orange-700",
+                                className: "bg-red-100 text-red-700",
                               }))}
                             />
                           </td>
@@ -635,7 +646,10 @@ export default function CareerGoalsPage() {
             Mid-term (4-8 months)
           </CardTitle>
           <p className="text-sm text-gray-600 mt-2">
-            Focus on goals that show deeper growth and sustained progress. At this stage, you should be applying your foundational skills to more complex situations, building consistency, and demonstrating broader impact. These goals should reflect maturity, expanding your scope, strengthening your expertise, and improving how you collaborate and influence others.
+            Focus on goals that show deeper growth and sustained progress. 
+            At this stage, you should be applying your foundational skills to more complex situations, 
+            building consistency, and demonstrating broader impact. These goals should reflect maturity, 
+            expanding your scope, strengthening your expertise, and improving how you collaborate and influence others.
           </p>
         </CardHeader>
         <CardContent>
