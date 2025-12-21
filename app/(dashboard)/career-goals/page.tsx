@@ -396,19 +396,19 @@ export default function CareerGoalsPage() {
       {/* Gap Analysis */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex items-start justify-between gap-6">
+            <div className="flex-1">
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="h-5 w-5" />
                 Gap Analysis
               </CardTitle>
               <p className="text-sm text-gray-600 mt-2">
-                Identify the gaps between your current position and your desired destination. 
-                These could be technical, behavioural, or contextual. 
+                Identify the gaps between your current position and your desired destination.
+                These could be technical, behavioural, or contextual.
                 The goal is to clearly see where you should focus more of your efforts to close the gap between where you are now and where you want to be.
               </p>
             </div>
-            <Button onClick={openAddGapDialog}>
+            <Button onClick={openAddGapDialog} className="flex-shrink-0">
               <Plus className="h-4 w-4 mr-2" />
               Add Category
             </Button>
@@ -429,21 +429,21 @@ export default function CareerGoalsPage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
+              <table className="w-full border-collapse table-fixed">
                 <thead>
                   <tr className="border-b">
-                    <th className="text-left p-3 bg-gray-50 font-semibold text-sm">Category</th>
-                    <th className="text-left p-3 bg-gray-50 font-semibold text-sm">Current State</th>
-                    <th className="text-left p-3 bg-gray-50 font-semibold text-sm">Desired State</th>
-                    <th className="text-center p-3 bg-gray-50 font-semibold text-sm w-24">Actions</th>
+                    <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[20%]">Category</th>
+                    <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[35%]">Current State</th>
+                    <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[35%]">Desired State</th>
+                    <th className="text-center p-3 bg-gray-50 font-semibold text-sm w-[10%]">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {gapAnalysis.map((row) => (
                     <tr key={row.id} className="border-b hover:bg-gray-50">
-                      <td className="p-3 font-medium text-sm">{row.category}</td>
-                      <td className="p-3 text-sm text-gray-700">{row.currentState}</td>
-                      <td className="p-3 text-sm text-gray-700">{row.desiredState}</td>
+                      <td className="p-3 font-medium text-sm break-words">{row.category}</td>
+                      <td className="p-3 text-sm text-gray-700 break-words">{row.currentState}</td>
+                      <td className="p-3 text-sm text-gray-700 break-words">{row.desiredState}</td>
                       <td className="p-3">
                         <div className="flex items-center justify-center gap-2">
                           <Button
@@ -477,7 +477,7 @@ export default function CareerGoalsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Zap className="h-5 w-5 text-yellow-600" />
+            <Zap className="h-5 w-5" />
             Short-term (0-4 months)
           </CardTitle>
           <p className="text-sm text-gray-600 mt-2">
@@ -492,17 +492,17 @@ export default function CareerGoalsPage() {
               <div>
                 <h3 className="text-sm font-semibold mb-3">Desired Focus Distribution</h3>
                 <div className="overflow-x-auto border rounded-lg bg-white">
-                  <table className="w-full border-collapse">
+                  <table className="w-full border-collapse table-fixed">
                     <thead>
                       <tr className="border-b">
-                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm text-gray-700">Category</th>
-                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm text-gray-700">Focus %</th>
-                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm text-gray-700">Why</th>
+                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[30%]">Category</th>
+                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[10%]">Focus %</th>
+                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[60%]">Why</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {shortTermFocus.map((item, index) => (
-                        <tr key={item.category} className={`border-b hover:bg-gray-50 ${index % 2 === 0 ? '' : 'bg-gray-50/50'}`}>
+                      {shortTermFocus.map((item) => (
+                        <tr key={item.category} className="border-b hover:bg-gray-50">
                           <td className="p-3 font-medium text-sm max-w-[300px] truncate" title={item.category}>{item.category}</td>
                           <td className="p-3">
                             <Input
@@ -532,6 +532,17 @@ export default function CareerGoalsPage() {
                     </tbody>
                   </table>
                 </div>
+                {(() => {
+                  const total = shortTermFocus.reduce((sum, item) => sum + item.focusPercent, 0)
+                  if (total !== 100 && total > 0) {
+                    return (
+                      <div className="mt-2 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-3">
+                        <strong>Warning:</strong> Total focus percentage is {total}%. It should equal 100%.
+                      </div>
+                    )
+                  }
+                  return null
+                })()}
               </div>
             )}
 
@@ -564,8 +575,9 @@ export default function CareerGoalsPage() {
                               value={goal.goal}
                               onChange={(e) => updateGoal(setShortTermGoals, shortTermGoals, goal.id, "goal", e.target.value)}
                               placeholder="Goal description..."
-                              className="text-sm resize-none min-h-[60px]"
+                              className="text-sm min-h-[60px]"
                               rows={2}
+                              autoResize
                             />
                           </td>
                           <td className="p-2">
@@ -631,6 +643,33 @@ export default function CareerGoalsPage() {
               <div>
                 <h3 className="text-sm font-semibold mb-3">Current Focus Distribution</h3>
                 {renderPieChart(shortTermGoals)}
+                {(() => {
+                  const currentDist = calculateGoalDistribution(shortTermGoals)
+                  const mismatches: string[] = []
+
+                  shortTermFocus.forEach((desired) => {
+                    const currentCount = currentDist[desired.category] || 0
+                    const currentPercent = shortTermGoals.length > 0
+                      ? Math.round((currentCount / shortTermGoals.length) * 100)
+                      : 0
+
+                    if (desired.focusPercent > 0 && currentPercent !== desired.focusPercent) {
+                      mismatches.push(`${desired.category}: ${currentPercent}% (target: ${desired.focusPercent}%)`)
+                    }
+                  })
+
+                  if (mismatches.length > 0) {
+                    return (
+                      <div className="mt-4 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-3">
+                        <strong>Note:</strong> Current focus differs from desired:
+                        <ul className="mt-1 ml-4 list-disc">
+                          {mismatches.map((msg, i) => <li key={i}>{msg}</li>)}
+                        </ul>
+                      </div>
+                    )
+                  }
+                  return null
+                })()}
               </div>
             </div>
           </div>
@@ -641,7 +680,7 @@ export default function CareerGoalsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-blue-600" />
+            <TrendingUp className="h-5 w-5" />
             Mid-term (4-8 months)
           </CardTitle>
           <p className="text-sm text-gray-600 mt-2">
@@ -658,17 +697,17 @@ export default function CareerGoalsPage() {
               <div>
                 <h3 className="text-sm font-semibold mb-3">Desired Focus Distribution</h3>
                 <div className="overflow-x-auto border rounded-lg bg-white">
-                  <table className="w-full border-collapse">
+                  <table className="w-full border-collapse table-fixed">
                     <thead>
                       <tr className="border-b">
-                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm text-gray-700">Category</th>
-                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm text-gray-700">Focus %</th>
-                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm text-gray-700">Why</th>
+                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[30%]">Category</th>
+                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[10%]">Focus %</th>
+                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[60%]">Why</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {midTermFocus.map((item, index) => (
-                        <tr key={item.category} className={`border-b hover:bg-gray-50 ${index % 2 === 0 ? '' : 'bg-gray-50/50'}`}>
+                      {midTermFocus.map((item) => (
+                        <tr key={item.category} className="border-b hover:bg-gray-50">
                           <td className="p-3 font-medium text-sm max-w-[300px] truncate" title={item.category}>{item.category}</td>
                           <td className="p-3">
                             <Input
@@ -698,6 +737,17 @@ export default function CareerGoalsPage() {
                     </tbody>
                   </table>
                 </div>
+                {(() => {
+                  const total = midTermFocus.reduce((sum, item) => sum + item.focusPercent, 0)
+                  if (total !== 100 && total > 0) {
+                    return (
+                      <div className="mt-2 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-3">
+                        <strong>Warning:</strong> Total focus percentage is {total}%. It should equal 100%.
+                      </div>
+                    )
+                  }
+                  return null
+                })()}
               </div>
             )}
 
@@ -730,8 +780,9 @@ export default function CareerGoalsPage() {
                               value={goal.goal}
                               onChange={(e) => updateGoal(setMidTermGoals, midTermGoals, goal.id, "goal", e.target.value)}
                               placeholder="Goal description..."
-                              className="text-sm resize-none min-h-[60px]"
+                              className="text-sm min-h-[60px]"
                               rows={2}
+                              autoResize
                             />
                           </td>
                           <td className="p-2">
@@ -797,6 +848,33 @@ export default function CareerGoalsPage() {
               <div>
                 <h3 className="text-sm font-semibold mb-3">Current Focus Distribution</h3>
                 {renderPieChart(midTermGoals)}
+                {(() => {
+                  const currentDist = calculateGoalDistribution(midTermGoals)
+                  const mismatches: string[] = []
+
+                  midTermFocus.forEach((desired) => {
+                    const currentCount = currentDist[desired.category] || 0
+                    const currentPercent = midTermGoals.length > 0
+                      ? Math.round((currentCount / midTermGoals.length) * 100)
+                      : 0
+
+                    if (desired.focusPercent > 0 && currentPercent !== desired.focusPercent) {
+                      mismatches.push(`${desired.category}: ${currentPercent}% (target: ${desired.focusPercent}%)`)
+                    }
+                  })
+
+                  if (mismatches.length > 0) {
+                    return (
+                      <div className="mt-4 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-3">
+                        <strong>Note:</strong> Current focus differs from desired:
+                        <ul className="mt-1 ml-4 list-disc">
+                          {mismatches.map((msg, i) => <li key={i}>{msg}</li>)}
+                        </ul>
+                      </div>
+                    )
+                  }
+                  return null
+                })()}
               </div>
             </div>
           </div>
@@ -807,7 +885,7 @@ export default function CareerGoalsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Award className="h-5 w-5 text-purple-600" />
+            <Award className="h-5 w-5" />
             Long-term (8-12 months)
           </CardTitle>
           <p className="text-sm text-gray-600 mt-2">
@@ -821,17 +899,17 @@ export default function CareerGoalsPage() {
               <div>
                 <h3 className="text-sm font-semibold mb-3">Desired Focus Distribution</h3>
                 <div className="overflow-x-auto border rounded-lg bg-white">
-                  <table className="w-full border-collapse">
+                  <table className="w-full border-collapse table-fixed">
                     <thead>
                       <tr className="border-b">
-                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm text-gray-700">Category</th>
-                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm text-gray-700">Focus %</th>
-                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm text-gray-700">Why</th>
+                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[30%]">Category</th>
+                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[10%]">Focus %</th>
+                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[60%]">Why</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {longTermFocus.map((item, index) => (
-                        <tr key={item.category} className={`border-b hover:bg-gray-50 ${index % 2 === 0 ? '' : 'bg-gray-50/50'}`}>
+                      {longTermFocus.map((item) => (
+                        <tr key={item.category} className="border-b hover:bg-gray-50">
                           <td className="p-3 font-medium text-sm max-w-[300px] truncate" title={item.category}>{item.category}</td>
                           <td className="p-3">
                             <Input
@@ -861,6 +939,17 @@ export default function CareerGoalsPage() {
                     </tbody>
                   </table>
                 </div>
+                {(() => {
+                  const total = longTermFocus.reduce((sum, item) => sum + item.focusPercent, 0)
+                  if (total !== 100 && total > 0) {
+                    return (
+                      <div className="mt-2 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-3">
+                        <strong>Warning:</strong> Total focus percentage is {total}%. It should equal 100%.
+                      </div>
+                    )
+                  }
+                  return null
+                })()}
               </div>
             )}
 
@@ -893,8 +982,9 @@ export default function CareerGoalsPage() {
                               value={goal.goal}
                               onChange={(e) => updateGoal(setLongTermGoals, longTermGoals, goal.id, "goal", e.target.value)}
                               placeholder="Goal description..."
-                              className="text-sm resize-none min-h-[60px]"
+                              className="text-sm min-h-[60px]"
                               rows={2}
+                              autoResize
                             />
                           </td>
                           <td className="p-2">
@@ -960,6 +1050,33 @@ export default function CareerGoalsPage() {
               <div>
                 <h3 className="text-sm font-semibold mb-3">Current Focus Distribution</h3>
                 {renderPieChart(longTermGoals)}
+                {(() => {
+                  const currentDist = calculateGoalDistribution(longTermGoals)
+                  const mismatches: string[] = []
+
+                  longTermFocus.forEach((desired) => {
+                    const currentCount = currentDist[desired.category] || 0
+                    const currentPercent = longTermGoals.length > 0
+                      ? Math.round((currentCount / longTermGoals.length) * 100)
+                      : 0
+
+                    if (desired.focusPercent > 0 && currentPercent !== desired.focusPercent) {
+                      mismatches.push(`${desired.category}: ${currentPercent}% (target: ${desired.focusPercent}%)`)
+                    }
+                  })
+
+                  if (mismatches.length > 0) {
+                    return (
+                      <div className="mt-4 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-3">
+                        <strong>Note:</strong> Current focus differs from desired:
+                        <ul className="mt-1 ml-4 list-disc">
+                          {mismatches.map((msg, i) => <li key={i}>{msg}</li>)}
+                        </ul>
+                      </div>
+                    )
+                  }
+                  return null
+                })()}
               </div>
             </div>
           </div>

@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { createPortal } from "react-dom"
 import { Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -26,12 +27,31 @@ export function BadgeSelect({
   className,
 }: BadgeSelectProps) {
   const [isOpen, setIsOpen] = React.useState(false)
+  const [dropdownPosition, setDropdownPosition] = React.useState({ top: 0, left: 0, width: 0 })
   const containerRef = React.useRef<HTMLDivElement>(null)
+  const dropdownRef = React.useRef<HTMLDivElement>(null)
+
+  // Calculate dropdown position
+  React.useEffect(() => {
+    if (isOpen && containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect()
+      setDropdownPosition({
+        top: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+        width: rect.width,
+      })
+    }
+  }, [isOpen])
 
   // Close dropdown when clicking outside
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node) &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false)
       }
     }
@@ -48,23 +68,33 @@ export function BadgeSelect({
   const selectedOption = options.find((opt) => opt.value === value)
 
   return (
-    <div ref={containerRef} className={cn("relative", className)}>
-      {/* Badge Button */}
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className={cn(
-          "inline-flex items-center justify-center rounded-md px-3 py-1 text-xs font-medium transition-colors cursor-pointer",
-          "hover:opacity-80",
-          selectedOption?.className || "bg-gray-100 text-gray-700"
-        )}
-      >
-        {selectedOption?.label || placeholder}
-      </button>
+    <>
+      <div ref={containerRef} className={cn("relative", className)}>
+        {/* Badge Button */}
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className={cn(
+            "inline-flex items-center justify-center rounded-md px-3 py-1 text-xs font-medium transition-colors cursor-pointer",
+            "hover:opacity-80",
+            selectedOption?.className || "bg-gray-100 text-gray-700"
+          )}
+        >
+          {selectedOption?.label || placeholder}
+        </button>
+      </div>
 
-      {/* Dropdown Menu */}
-      {isOpen && (
-        <div className="absolute z-50 mt-1 min-w-[120px] rounded-md border border-gray-200 bg-white shadow-lg">
+      {/* Dropdown Menu - Rendered via Portal */}
+      {isOpen && typeof document !== 'undefined' && createPortal(
+        <div
+          ref={dropdownRef}
+          className="fixed z-[9999] min-w-[120px] rounded-md border border-gray-200 bg-white shadow-lg"
+          style={{
+            top: `${dropdownPosition.top}px`,
+            left: `${dropdownPosition.left}px`,
+            minWidth: `${Math.max(dropdownPosition.width, 120)}px`,
+          }}
+        >
           <div className="p-1">
             {options.map((option) => (
               <button
@@ -89,8 +119,9 @@ export function BadgeSelect({
               </button>
             ))}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
-    </div>
+    </>
   )
 }
