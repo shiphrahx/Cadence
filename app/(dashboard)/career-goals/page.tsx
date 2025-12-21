@@ -1126,11 +1126,12 @@ export default function CareerGoalsPage() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Book">📚 Book</SelectItem>
-                            <SelectItem value="Course">🎓 Course</SelectItem>
-                            <SelectItem value="Certification">🏆 Certification</SelectItem>
-                            <SelectItem value="Conference">🎤 Conference</SelectItem>
-                            <SelectItem value="Talk">💬 Talk</SelectItem>
+                            <SelectItem value="Book">Book</SelectItem>
+                            <SelectItem value="Course">Course</SelectItem>
+                            <SelectItem value="Certification">Certification</SelectItem>
+                            <SelectItem value="Conference">Conference</SelectItem>
+                            <SelectItem value="Talk">Talk</SelectItem>
+                            <SelectItem value="Other">Other</SelectItem>
                           </SelectContent>
                         </Select>
                       </td>

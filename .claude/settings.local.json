@@ -36,7 +36,16 @@
       "Bash(ls:*)",
       "Bash(gh issue list --author \"@me\" --repo shiphrahx/Cadence --json number,title --limit 50)",
       "Bash(for issue in 2 3 4 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 36)",
-      "Bash(do)"
+      "Bash(do)",
+      "Bash(del /F \".next\\dev\\lock\")",
+      "Bash(cmd //c taskkill //F //PID 37904)",
+      "Bash(cmd //c taskkill //F //PID 11148)",
+      "Bash(npx next dev --turbopack=false)",
+      "Bash(set:*)",
+      "Bash(cmd //c taskkill //F //PID 55780)",
+      "Bash(cmd //c taskkill //F //PID 68256)",
+      "Bash(gh issue list:*)",
+      "Bash(gh issue close:*)"
     ]
   }
 }
