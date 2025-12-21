@@ -86,8 +86,6 @@ Cadence is built for:
 
 
 ## Contact & Support
-
-- **Issues:** [GitHub Issues](https://github.com/shiphrahx/Cadence/issues)
 - **Project Board:** [GitHub Projects](https://github.com/users/shiphrahx/projects/2)
 
 ---
