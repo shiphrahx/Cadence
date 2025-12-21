@@ -58,3 +58,6 @@ next-env.d.ts
 # OS
 .DS_Store
 Thumbs.db
+.claude/settings.local.json
+nul
+.claude/settings.local.json
