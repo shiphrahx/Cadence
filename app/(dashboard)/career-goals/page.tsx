@@ -380,7 +380,6 @@ export default function CareerGoalsPage() {
               <p className="text-xs text-gray-500 mb-2">
                 Example: My goal in 12 months is to move into a more senior leadership role where my impact comes from setting direction rather than solving every problem myself. 
                 I aim to delegate more effectively and focus on longer-term technical and organisational decisions. 
-                Success means teams operate independently, delivery is predictable, and I can spend most of my time on strategy, risk, and alignment rather than execution.
               </p>
               <MarkdownTextarea
                 value={whereYouWantToGo}
