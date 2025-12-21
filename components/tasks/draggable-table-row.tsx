@@ -28,8 +28,18 @@ export function DraggableTableRow({ task, children }: DraggableTableRowProps) {
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
+    transition: transition || "transform 220ms cubic-bezier(0.2, 0, 0, 1)",
+  }
+
+  // Show minimal placeholder while dragging
+  if (isDragging) {
+    return (
+      <tr ref={setNodeRef} style={style} {...attributes} {...listeners} className="border-b">
+        <td colSpan={5} className="p-3">
+          <div className="h-8 border-2 border-dashed border-gray-300 rounded bg-gray-50/50" />
+        </td>
+      </tr>
+    )
   }
 
   return (
@@ -38,7 +48,7 @@ export function DraggableTableRow({ task, children }: DraggableTableRowProps) {
       style={style}
       {...attributes}
       {...listeners}
-      className="border-b hover:bg-gray-50 cursor-pointer"
+      className="border-b hover:bg-gray-50 cursor-grab active:cursor-grabbing"
     >
       {children}
     </tr>

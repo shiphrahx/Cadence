@@ -2,7 +2,22 @@
 
 import { useState, useEffect } from "react"
 import { Task, TaskStatus, TASK_STATUSES } from "@/lib/types/task"
-import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core"
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverEvent,
+  DragOverlay,
+  DragStartEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  closestCenter,
+  pointerWithin,
+  rectIntersection,
+  getFirstCollision,
+  CollisionDetection
+} from "@dnd-kit/core"
+import { arrayMove } from "@dnd-kit/sortable"
 import { BoardColumn } from "@/components/tasks/board-column"
 import { BacklogTable } from "@/components/tasks/backlog-table"
 import { TaskModal } from "@/components/tasks/task-modal"
@@ -120,10 +135,32 @@ export default function TasksPage() {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8,
+        distance: 5, // Small threshold to prevent accidental drags
+        delay: 0,
+        tolerance: 5,
       },
     })
   )
+
+  // Custom collision detection strategy - combines pointer and rect intersection
+  const collisionDetectionStrategy: CollisionDetection = (args) => {
+    // First, use pointer-based detection for precise insertion
+    const pointerCollisions = pointerWithin(args)
+
+    if (pointerCollisions.length > 0) {
+      return pointerCollisions
+    }
+
+    // Fallback to rectangle intersection
+    const rectCollisions = rectIntersection(args)
+
+    if (rectCollisions.length > 0) {
+      return rectCollisions
+    }
+
+    // Final fallback to closest center
+    return closestCenter(args)
+  }
 
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event
@@ -137,37 +174,94 @@ export default function TasksPage() {
     const { active, over } = event
     if (!over) return
 
-    const activeTask = tasks.find((t) => t.id === active.id)
+    const activeId = active.id
+    const overId = over.id
+
+    if (activeId === overId) return
+
+    const activeTask = tasks.find((t) => t.id === activeId)
     if (!activeTask) return
 
-    // Handle dropping over a column
-    if (over.data.current?.type === "column") {
-      const newStatus = over.data.current.status as TaskStatus
-      if (activeTask.status !== newStatus || activeTask.list !== "week") {
-        setTasks((tasks) =>
-          tasks.map((t) =>
-            t.id === activeTask.id
-              ? { ...t, status: newStatus, list: "week" }
-              : t
-          )
-        )
-      }
-    }
+    // Determine if we're over a task or a column
+    const overTask = tasks.find((t) => t.id === overId)
+    const overColumn = over.data.current?.type === "column" ? over.data.current.status : null
+    const overBacklog = over.data.current?.type === "backlog"
 
-    // Handle dropping over backlog
-    if (over.data.current?.type === "backlog") {
-      if (activeTask.list !== "backlog") {
-        setTasks((tasks) =>
-          tasks.map((t) =>
-            t.id === activeTask.id ? { ...t, list: "backlog" } : t
-          )
+    setTasks((tasks) => {
+      // Case 1: Dragging over another task (insert before/after)
+      if (overTask) {
+        // Determine target status and list
+        const targetStatus = overTask.status
+        const targetList = overTask.list
+
+        // Remove active task from array
+        const newTasks = tasks.filter((t) => t.id !== activeId)
+
+        // Update active task's status and list
+        const updatedActiveTask = {
+          ...activeTask,
+          status: targetStatus,
+          list: targetList
+        }
+
+        // Find new insertion index (accounting for removed item)
+        let insertIndex = newTasks.findIndex((t) => t.id === overId)
+
+        // Insert at the correct position
+        newTasks.splice(insertIndex, 0, updatedActiveTask)
+
+        return newTasks
+      }
+
+      // Case 2: Dragging over a column (append to end)
+      if (overColumn) {
+        return tasks.map((t) =>
+          t.id === activeId
+            ? { ...t, status: overColumn as TaskStatus, list: "week" }
+            : t
         )
       }
-    }
+
+      // Case 3: Dragging over backlog
+      if (overBacklog) {
+        return tasks.map((t) =>
+          t.id === activeId
+            ? { ...t, list: "backlog" }
+            : t
+        )
+      }
+
+      return tasks
+    })
   }
 
   const handleDragEnd = (event: DragEndEvent) => {
     setActiveTask(null)
+
+    const { active, over } = event
+    if (!over) return
+
+    const activeId = active.id
+    const overId = over.id
+
+    if (activeId === overId) return
+
+    // Final position adjustment on drop
+    const overTask = tasks.find((t) => t.id === overId)
+
+    if (overTask) {
+      setTasks((tasks) => {
+        const activeIndex = tasks.findIndex((t) => t.id === activeId)
+        const overIndex = tasks.findIndex((t) => t.id === overId)
+
+        // Use arrayMove for smooth reordering within same list
+        if (activeIndex !== overIndex) {
+          return arrayMove(tasks, activeIndex, overIndex)
+        }
+
+        return tasks
+      })
+    }
   }
 
   const handleUpdateTask = (taskId: string, updates: Partial<Task>) => {
@@ -252,6 +346,7 @@ export default function TasksPage() {
   return (
     <DndContext
       sensors={sensors}
+      collisionDetection={collisionDetectionStrategy}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
@@ -274,16 +369,18 @@ export default function TasksPage() {
               New task
             </Button>
           </div>
-          <div className="grid grid-cols-4 gap-4">
-            {TASK_STATUSES.map((status) => (
-              <BoardColumn
-                key={status}
-                status={status}
-                tasks={weekTasks.filter((t) => t.status === status)}
-                onEdit={handleEditTask}
-                onQuickAdd={handleQuickAddBoard}
-              />
-            ))}
+          <div className="bg-gray-50/30 rounded-lg p-4">
+            <div className="grid grid-cols-4 gap-6">
+              {TASK_STATUSES.map((status) => (
+                <BoardColumn
+                  key={status}
+                  status={status}
+                  tasks={weekTasks.filter((t) => t.status === status)}
+                  onEdit={handleEditTask}
+                  onQuickAdd={handleQuickAddBoard}
+                />
+              ))}
+            </div>
           </div>
         </div>
 
@@ -307,10 +404,12 @@ export default function TasksPage() {
           onDelete={selectedTask ? handleDeleteTask : undefined}
         />
 
-        {/* Drag Overlay */}
-        <DragOverlay>
+        {/* Drag Overlay - Floating card preview */}
+        <DragOverlay dropAnimation={null}>
           {activeTask ? (
-            <TaskCard task={activeTask} onEdit={() => {}} isDragging />
+            <div className="rotate-3 cursor-grabbing">
+              <TaskCard task={activeTask} onEdit={() => {}} isDragging />
+            </div>
           ) : null}
         </DragOverlay>
       </div>
