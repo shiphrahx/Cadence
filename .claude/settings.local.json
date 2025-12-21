@@ -45,7 +45,10 @@
       "Bash(cmd //c taskkill //F //PID 55780)",
       "Bash(cmd //c taskkill //F //PID 68256)",
       "Bash(gh issue list:*)",
-      "Bash(gh issue close:*)"
+      "Bash(gh issue close:*)",
+      "Bash(npx tsc:*)",
+      "Bash(cmd //c taskkill //F //PID 81904)",
+      "Bash(curl:*)"
     ]
   }
 }
