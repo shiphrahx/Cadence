@@ -2,6 +2,12 @@
 
 ![Cadence Banner](public/banner_01.png)
 
+![Next.js](https://img.shields.io/github/package-json/dependency-version/shiphrahx/Cadence/next?logo=nextdotjs)
+![React](https://img.shields.io/github/package-json/dependency-version/shiphrahx/Cadence/react?logo=react)
+![TypeScript](https://img.shields.io/github/package-json/dependency-version/shiphrahx/Cadence/dev/typescript?logo=typescript)
+![Tailwind CSS](https://img.shields.io/github/package-json/dependency-version/shiphrahx/Cadence/dev/tailwindcss?logo=tailwindcss)
+
+
 **A lightweight web platform for engineering managers to run their day-to-day work effectively.**
 
 Cadence is your control centre for management work—bringing together tasks, meetings, delivery data, and personal growth in one clear, organised place.
@@ -80,8 +86,6 @@ Cadence is built for:
 
 
 ## Contact & Support
-
-- **Issues:** [GitHub Issues](https://github.com/shiphrahx/Cadence/issues)
 - **Project Board:** [GitHub Projects](https://github.com/users/shiphrahx/projects/2)
 
 ---
