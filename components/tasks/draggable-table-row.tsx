@@ -3,14 +3,15 @@
 import { Task } from "@/lib/types/task"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { ReactNode } from "react"
+import { ReactNode, cloneElement, Children, isValidElement } from "react"
 
 interface DraggableTableRowProps {
   task: Task
   children: ReactNode
+  onDoubleClick?: () => void
 }
 
-export function DraggableTableRow({ task, children }: DraggableTableRowProps) {
+export function DraggableTableRow({ task, children, onDoubleClick }: DraggableTableRowProps) {
   const {
     attributes,
     listeners,
@@ -18,6 +19,7 @@ export function DraggableTableRow({ task, children }: DraggableTableRowProps) {
     transform,
     transition,
     isDragging,
+    setActivatorNodeRef,
   } = useSortable({
     id: task.id,
     data: {
@@ -34,23 +36,36 @@ export function DraggableTableRow({ task, children }: DraggableTableRowProps) {
   // Show minimal placeholder while dragging
   if (isDragging) {
     return (
-      <tr ref={setNodeRef} style={style} {...attributes} {...listeners} className="border-b">
-        <td colSpan={5} className="p-3">
+      <tr ref={setNodeRef} style={style} {...attributes} className="border-b">
+        <td colSpan={7} className="p-3">
           <div className="h-8 border-2 border-dashed border-gray-300 rounded bg-gray-50/50" />
         </td>
       </tr>
     )
   }
 
+  // Clone children and attach drag handle ref to the first td (which contains the drag handle)
+  const childrenArray = Children.toArray(children)
+  const modifiedChildren = childrenArray.map((child, index) => {
+    if (index === 0 && isValidElement(child)) {
+      // First cell - attach drag listeners to it
+      return cloneElement(child as React.ReactElement<any>, {
+        ref: setActivatorNodeRef,
+        ...listeners,
+      })
+    }
+    return child
+  })
+
   return (
     <tr
       ref={setNodeRef}
       style={style}
       {...attributes}
-      {...listeners}
-      className="border-b hover:bg-gray-50 cursor-grab active:cursor-grabbing"
+      onDoubleClick={onDoubleClick}
+      className="border-b hover:bg-gray-50 transition-colors"
     >
-      {children}
+      {modifiedChildren}
     </tr>
   )
 }

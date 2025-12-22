@@ -24,6 +24,14 @@ import { TaskModal } from "@/components/tasks/task-modal"
 import { TaskCard } from "@/components/tasks/task-card"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 // Mock data
 const INITIAL_TASKS: Task[] = [
@@ -126,6 +134,7 @@ export default function TasksPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [modalDefaults, setModalDefaults] = useState<Partial<Task>>({})
   const [isMounted, setIsMounted] = useState(false)
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
 
   // Only enable DnD on client to avoid hydration mismatch
   useEffect(() => {
@@ -179,23 +188,32 @@ export default function TasksPage() {
 
     if (activeId === overId) return
 
-    const activeTask = tasks.find((t) => t.id === activeId)
-    if (!activeTask) return
+    setTasks((currentTasks) => {
+      const activeTask = currentTasks.find((t) => t.id === activeId)
+      if (!activeTask) return currentTasks
 
-    // Determine if we're over a task or a column
-    const overTask = tasks.find((t) => t.id === overId)
-    const overColumn = over.data.current?.type === "column" ? over.data.current.status : null
-    const overBacklog = over.data.current?.type === "backlog"
+      // Determine if we're over a task or a column
+      const overTask = currentTasks.find((t) => t.id === overId)
+      const overColumn = over.data.current?.type === "column" ? over.data.current.status : null
+      const overBacklog = over.data.current?.type === "backlog"
 
-    setTasks((tasks) => {
       // Case 1: Dragging over another task (insert before/after)
       if (overTask) {
+        // Check if already in the correct position to prevent unnecessary updates
+        const activeIndex = currentTasks.findIndex((t) => t.id === activeId)
+        const overIndex = currentTasks.findIndex((t) => t.id === overId)
+
+        if (activeIndex === overIndex) return currentTasks
+        if (activeTask.status === overTask.status && activeTask.list === overTask.list && Math.abs(activeIndex - overIndex) === 1) {
+          return currentTasks
+        }
+
         // Determine target status and list
         const targetStatus = overTask.status
         const targetList = overTask.list
 
         // Remove active task from array
-        const newTasks = tasks.filter((t) => t.id !== activeId)
+        const newTasks = currentTasks.filter((t) => t.id !== activeId)
 
         // Update active task's status and list
         const updatedActiveTask = {
@@ -215,7 +233,12 @@ export default function TasksPage() {
 
       // Case 2: Dragging over a column (append to end)
       if (overColumn) {
-        return tasks.map((t) =>
+        // Prevent update if already in correct state
+        if (activeTask.status === overColumn && activeTask.list === "week") {
+          return currentTasks
+        }
+
+        return currentTasks.map((t) =>
           t.id === activeId
             ? { ...t, status: overColumn as TaskStatus, list: "week" }
             : t
@@ -224,14 +247,19 @@ export default function TasksPage() {
 
       // Case 3: Dragging over backlog
       if (overBacklog) {
-        return tasks.map((t) =>
+        // Prevent update if already in backlog
+        if (activeTask.list === "backlog") {
+          return currentTasks
+        }
+
+        return currentTasks.map((t) =>
           t.id === activeId
             ? { ...t, list: "backlog" }
             : t
         )
       }
 
-      return tasks
+      return currentTasks
     })
   }
 
@@ -284,8 +312,19 @@ export default function TasksPage() {
     }
   }
 
-  const handleDeleteTask = (taskId: string) => {
-    setTasks((tasks) => tasks.filter((t) => t.id !== taskId))
+  const handleDeleteRequest = (taskId: string) => {
+    setDeleteConfirmId(taskId)
+  }
+
+  const handleConfirmDelete = () => {
+    if (deleteConfirmId) {
+      setTasks((tasks) => tasks.filter((t) => t.id !== deleteConfirmId))
+      setDeleteConfirmId(null)
+    }
+  }
+
+  const handleCancelDelete = () => {
+    setDeleteConfirmId(null)
   }
 
   const handleEditTask = (task: Task) => {
@@ -369,17 +408,17 @@ export default function TasksPage() {
               New task
             </Button>
           </div>
-          <div className="bg-gray-50/30 rounded-lg p-4 overflow-x-auto">
-            <div className="flex gap-6 min-w-max">
+          <div className="bg-gray-50/30 rounded-lg p-4">
+            <div className="grid grid-cols-4 gap-6">
               {TASK_STATUSES.map((status) => (
-                <div key={status} className="w-80 min-w-[20rem] flex-shrink-0">
-                  <BoardColumn
-                    status={status}
-                    tasks={weekTasks.filter((t) => t.status === status)}
-                    onEdit={handleEditTask}
-                    onQuickAdd={handleQuickAddBoard}
-                  />
-                </div>
+                <BoardColumn
+                  key={status}
+                  status={status}
+                  tasks={weekTasks.filter((t) => t.status === status)}
+                  onEdit={handleEditTask}
+                  onDelete={handleDeleteRequest}
+                  onQuickAdd={handleQuickAddBoard}
+                />
               ))}
             </div>
           </div>
@@ -393,6 +432,7 @@ export default function TasksPage() {
             onUpdateTask={handleUpdateTask}
             onQuickAdd={handleQuickAddBacklog}
             onEdit={handleEditTask}
+            onDelete={handleDeleteRequest}
           />
         </div>
 
@@ -402,8 +442,28 @@ export default function TasksPage() {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onSave={handleSaveTask}
-          onDelete={selectedTask ? handleDeleteTask : undefined}
+          onDelete={selectedTask ? handleDeleteRequest : undefined}
         />
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={!!deleteConfirmId} onOpenChange={(open) => !open && handleCancelDelete()}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Delete Task</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this task? This action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={handleCancelDelete}>
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={handleConfirmDelete}>
+                Delete
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
         {/* Drag Overlay - Floating card preview */}
         <DragOverlay dropAnimation={null}>

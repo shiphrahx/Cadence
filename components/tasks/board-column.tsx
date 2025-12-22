@@ -11,10 +11,11 @@ interface BoardColumnProps {
   status: TaskStatus
   tasks: Task[]
   onEdit: (task: Task) => void
+  onDelete?: (taskId: string) => void
   onQuickAdd: (status: TaskStatus) => void
 }
 
-export function BoardColumn({ status, tasks, onEdit, onQuickAdd }: BoardColumnProps) {
+export function BoardColumn({ status, tasks, onEdit, onDelete, onQuickAdd }: BoardColumnProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: `column-${status}`,
     data: {
@@ -25,10 +26,10 @@ export function BoardColumn({ status, tasks, onEdit, onQuickAdd }: BoardColumnPr
 
   return (
     <div className="flex flex-col h-full">
-      {/* Column Header - Asana style */}
+      {/* Column Header  */}
       <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-200">
         <div className="flex items-center gap-1.5">
-          <span className="text-sm font-semibold text-gray-700">{status}</span>
+          <span className="text-sm font-semibold text-gray-700 p-2">{status}</span>
           <span className="text-sm text-gray-400">{tasks.length}</span>
         </div>
         <button
@@ -43,7 +44,7 @@ export function BoardColumn({ status, tasks, onEdit, onQuickAdd }: BoardColumnPr
       <div
         ref={setNodeRef}
         className={cn(
-          "flex-1 flex flex-col min-h-[400px] p-2 rounded-lg transition-all duration-200",
+          "flex-1 flex flex-col min-h-[400px]  p-2 rounded-lg transition-all duration-200",
           isOver && "bg-gray-50/80 ring-1 ring-gray-200"
         )}
       >
@@ -51,7 +52,7 @@ export function BoardColumn({ status, tasks, onEdit, onQuickAdd }: BoardColumnPr
         <div className="flex-1 space-y-2 min-h-[100px]">
           <SortableContext items={tasks.map((t) => t.id)} strategy={verticalListSortingStrategy}>
             {tasks.map((task) => (
-              <DraggableTaskCard key={task.id} task={task} onEdit={onEdit} />
+              <DraggableTaskCard key={task.id} task={task} onEdit={onEdit} onDelete={onDelete} />
             ))}
           </SortableContext>
 
