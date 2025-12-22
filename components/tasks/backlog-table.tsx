@@ -5,7 +5,7 @@ import { Task, TaskStatus, TaskPriority, TaskCategory, TASK_STATUSES, TASK_PRIOR
 import { BadgeSelect } from "@/components/ui/badge-select"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Search, Plus, ArrowUpDown, Filter } from "lucide-react"
+import { Search, Plus, ArrowUpDown, Filter, GripVertical, Trash2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useDroppable } from "@dnd-kit/core"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
@@ -16,12 +16,13 @@ interface BacklogTableProps {
   onUpdateTask: (taskId: string, updates: Partial<Task>) => void
   onQuickAdd: () => void
   onEdit: (task: Task) => void
+  onDelete?: (taskId: string) => void
 }
 
 type SortField = "title" | "dueDate" | "priority" | "status" | "category"
 type SortDirection = "asc" | "desc"
 
-export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit }: BacklogTableProps) {
+export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete }: BacklogTableProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<TaskStatus | "all">("all")
   const [priorityFilter, setPriorityFilter] = useState<TaskPriority | "all">("all")
@@ -229,7 +230,8 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit }: Backlo
         <table className="w-full border-collapse table-fixed">
           <thead>
             <tr className="border-b">
-              <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[42%]">
+              <th className="w-[40px] p-3 bg-gray-50"></th>
+              <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[38%]">
                 <button
                   onClick={() => handleSort("title")}
                   className="flex items-center gap-1 hover:text-primary-600"
@@ -274,15 +276,27 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit }: Backlo
                   <ArrowUpDown className="h-3 w-3" />
                 </button>
               </th>
+              <th className="w-[40px] p-3 bg-gray-50"></th>
             </tr>
           </thead>
           <tbody>
             <SortableContext items={filteredAndSortedTasks.map((t) => t.id)} strategy={verticalListSortingStrategy}>
               {filteredAndSortedTasks.map((task) => (
-                <DraggableTableRow key={task.id} task={task}>
+                <DraggableTableRow
+                  key={task.id}
+                  task={task}
+                  onDoubleClick={() => onEdit(task)}
+                >
+                  <td
+                    className="p-3 text-center"
+                    onDoubleClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="drag-handle cursor-grab active:cursor-grabbing inline-flex">
+                      <GripVertical className="h-4 w-4 text-gray-400" />
+                    </div>
+                  </td>
                   <td
                     className="p-3 font-medium text-sm break-words overflow-hidden"
-                    onClick={() => onEdit(task)}
                     title={task.title}
                   >
                     <div className="line-clamp-2">{task.title}</div>
@@ -298,7 +312,7 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit }: Backlo
                       }))}
                     />
                   </td>
-                  <td className="p-3 text-sm text-gray-700" onClick={() => onEdit(task)}>{formatDate(task.dueDate)}</td>
+                  <td className="p-3 text-sm text-gray-700">{formatDate(task.dueDate)}</td>
                   <td className="p-3" onClick={(e) => e.stopPropagation()}>
                     <BadgeSelect
                       value={task.priority}
@@ -321,11 +335,27 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit }: Backlo
                       }))}
                     />
                   </td>
+                  <td
+                    className="p-3 text-center"
+                    onClick={(e) => e.stopPropagation()}
+                    onDoubleClick={(e) => e.stopPropagation()}
+                  >
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        if (onDelete) onDelete(task.id)
+                      }}
+                      className="text-gray-400 hover:text-red-600 cursor-pointer transition-colors"
+                      aria-label="Delete task"
+                    >
+                      <Trash2 className="h-4 w-4 inline-block" />
+                    </button>
+                  </td>
                 </DraggableTableRow>
               ))}
             </SortableContext>
             <tr>
-              <td colSpan={5} className="p-0">
+              <td colSpan={7} className="p-0">
                 <button
                   onClick={onQuickAdd}
                   className="w-full text-left px-3 py-3 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2 border-t"
