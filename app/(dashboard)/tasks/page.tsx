@@ -369,16 +369,17 @@ export default function TasksPage() {
               New task
             </Button>
           </div>
-          <div className="bg-gray-50/30 rounded-lg p-4">
-            <div className="grid grid-cols-4 gap-6">
+          <div className="bg-gray-50/30 rounded-lg p-4 overflow-x-auto">
+            <div className="flex gap-6 min-w-max">
               {TASK_STATUSES.map((status) => (
-                <BoardColumn
-                  key={status}
-                  status={status}
-                  tasks={weekTasks.filter((t) => t.status === status)}
-                  onEdit={handleEditTask}
-                  onQuickAdd={handleQuickAddBoard}
-                />
+                <div key={status} className="w-80 min-w-[20rem] flex-shrink-0">
+                  <BoardColumn
+                    status={status}
+                    tasks={weekTasks.filter((t) => t.status === status)}
+                    onEdit={handleEditTask}
+                    onQuickAdd={handleQuickAddBoard}
+                  />
+                </div>
               ))}
             </div>
           </div>
