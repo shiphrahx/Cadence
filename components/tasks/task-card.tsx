@@ -14,24 +14,24 @@ export function TaskCard({ task, onEdit, isDragging = false }: TaskCardProps) {
   const getPriorityChipColor = (priority: Task["priority"]) => {
     switch (priority) {
       case "High":
-        return "bg-red-50 text-red-700 border-red-200"
+        return "bg-red-100 text-red-700"
       case "Medium":
-        return "bg-yellow-50 text-yellow-700 border-yellow-200"
+        return "bg-orange-100 text-orange-700"
       case "Low":
-        return "bg-green-50 text-green-700 border-green-200"
+        return "bg-green-100 text-green-700"
     }
   }
 
   const getStatusChipColor = (status: Task["status"]) => {
     switch (status) {
       case "Not started":
-        return "bg-gray-50 text-gray-600 border-gray-200"
+        return "bg-gray-100 text-gray-700"
       case "In progress":
-        return "bg-blue-50 text-blue-700 border-blue-200"
+        return "bg-blue-100 text-blue-700"
       case "Blocked":
-        return "bg-red-50 text-red-700 border-red-200"
+        return "bg-red-100 text-red-700"
       case "Done":
-        return "bg-green-50 text-green-700 border-green-200"
+        return "bg-green-100 text-green-700"
     }
   }
 
@@ -70,16 +70,16 @@ export function TaskCard({ task, onEdit, isDragging = false }: TaskCardProps) {
         ) : (
           <Circle className="h-4 w-4 text-gray-300 flex-shrink-0 mt-0.5" />
         )}
-        <h4 className="text-[15px] font-semibold text-gray-900 line-clamp-2 break-words overflow-hidden flex-1">
+        <h4 className="text-sm font-semibold text-gray-900 line-clamp-2 break-words overflow-hidden flex-1 leading-tight">
           {task.title}
         </h4>
       </div>
 
-      {/* Row 2: Priority + Status Chips */}
+      {/* Row 2: Priority + Status Chips - Asana pill style */}
       <div className="flex items-center gap-1.5 mb-2">
         <span
           className={cn(
-            "inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium border h-[22px]",
+            "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
             getPriorityChipColor(task.priority)
           )}
         >
@@ -87,7 +87,7 @@ export function TaskCard({ task, onEdit, isDragging = false }: TaskCardProps) {
         </span>
         <span
           className={cn(
-            "inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium border h-[22px]",
+            "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
             getStatusChipColor(task.status)
           )}
         >
@@ -98,7 +98,7 @@ export function TaskCard({ task, onEdit, isDragging = false }: TaskCardProps) {
       {/* Row 3: Meta (Due Date) */}
       {task.dueDate && (
         <div className="flex items-center">
-          <p className="text-[12px] text-gray-500">{formatDate(task.dueDate)}</p>
+          <p className="text-xs text-gray-500">{formatDate(task.dueDate)}</p>
         </div>
       )}
     </div>

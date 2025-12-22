@@ -28,8 +28,8 @@ export function BoardColumn({ status, tasks, onEdit, onQuickAdd }: BoardColumnPr
       {/* Column Header - Asana style */}
       <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-200">
         <div className="flex items-center gap-1.5">
-          <span className="text-[15px] font-semibold text-gray-700">{status}</span>
-          <span className="text-[13px] text-gray-400">{tasks.length}</span>
+          <span className="text-sm font-semibold text-gray-700">{status}</span>
+          <span className="text-sm text-gray-400">{tasks.length}</span>
         </div>
         <button
           onClick={() => onQuickAdd(status)}
@@ -66,7 +66,7 @@ export function BoardColumn({ status, tasks, onEdit, onQuickAdd }: BoardColumnPr
         {/* Add Task Button - Outside sortable context, at bottom */}
         <button
           onClick={() => onQuickAdd(status)}
-          className="w-full text-left px-2 py-1.5 text-[13px] text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-1.5 mt-2"
+          className="w-full text-left px-2 py-1.5 text-sm text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-1.5 mt-2"
         >
           <Plus className="h-3.5 w-3.5" />
           Add task
