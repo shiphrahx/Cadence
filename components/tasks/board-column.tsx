@@ -25,7 +25,7 @@ export function BoardColumn({ status, tasks, onEdit, onDelete, onQuickAdd }: Boa
   })
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full max-md:min-w-[300px] max-md:w-[300px] max-md:flex-shrink-0">
       {/* Column Header  */}
       <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-200">
         <div className="flex items-center gap-1.5">
