@@ -76,7 +76,7 @@ export function TaskModal({ task, isOpen, onClose, onSave, onDelete }: TaskModal
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="sm:max-w-[720px]">
         <DialogHeader>
           <DialogTitle>{task ? "Edit Task" : "New Task"}</DialogTitle>
           <DialogDescription>
@@ -84,7 +84,7 @@ export function TaskModal({ task, isOpen, onClose, onSave, onDelete }: TaskModal
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4 py-4">
+        <div className="grid gap-5 py-5">
           <div className="grid gap-2">
             <Label htmlFor="title">Title *</Label>
             <Input
@@ -124,10 +124,10 @@ export function TaskModal({ task, isOpen, onClose, onSave, onDelete }: TaskModal
                     key={priority}
                     type="button"
                     onClick={() => setFormData({ ...formData, priority })}
-                    className={`flex-1 px-2 py-1.5 text-xs font-medium rounded border-2 transition-colors ${
+                    className={`flex-1 px-2 py-1.5 text-xs font-medium rounded border-2 transition-colors whitespace-nowrap ${
                       formData.priority === priority
                         ? priority === "Very High"
-                          ? "bg-red-200 text-red-800 border-red-400"
+                          ? "text-white border-[rgb(139,30,30)]"
                           : priority === "High"
                           ? "bg-red-100 text-red-700 border-red-300"
                           : priority === "Medium"
@@ -135,6 +135,11 @@ export function TaskModal({ task, isOpen, onClose, onSave, onDelete }: TaskModal
                           : "bg-green-100 text-green-700 border-green-300"
                         : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
                     }`}
+                    style={
+                      formData.priority === priority && priority === "Very High"
+                        ? { backgroundColor: "lab(34 43.72 6.02)" }
+                        : undefined
+                    }
                   >
                     {priority}
                   </button>

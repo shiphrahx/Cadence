@@ -92,7 +92,7 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
   const getPriorityBadgeClass = (priority: TaskPriority) => {
     switch (priority) {
       case "Very High":
-        return "bg-red-200 text-red-800"
+        return "text-white"
       case "High":
         return "bg-red-100 text-red-700"
       case "Medium":
@@ -100,6 +100,13 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
       case "Low":
         return "bg-green-100 text-green-700"
     }
+  }
+
+  const getPriorityBadgeStyle = (priority: TaskPriority) => {
+    if (priority === "Very High") {
+      return { backgroundColor: "lab(34 43.72 6.02)" }
+    }
+    return undefined
   }
 
   const getStatusBadgeClass = (status: TaskStatus) => {
@@ -332,6 +339,7 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
                         value: priority,
                         label: priority,
                         className: getPriorityBadgeClass(priority),
+                        style: getPriorityBadgeStyle(priority),
                       }))}
                     />
                   </td>

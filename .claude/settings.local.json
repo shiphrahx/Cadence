@@ -48,7 +48,8 @@
       "Bash(gh issue close:*)",
       "Bash(npx tsc:*)",
       "Bash(cmd //c taskkill //F //PID 81904)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(git restore:*)"
     ]
   }
 }
