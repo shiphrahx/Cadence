@@ -9,6 +9,7 @@ interface BadgeSelectOption {
   value: string
   label: string
   className?: string
+  style?: React.CSSProperties
 }
 
 interface BadgeSelectProps {
@@ -79,6 +80,7 @@ export function BadgeSelect({
             "hover:opacity-80",
             selectedOption?.className || "bg-gray-100 text-gray-700"
           )}
+          style={selectedOption?.style}
         >
           {selectedOption?.label || placeholder}
         </button>

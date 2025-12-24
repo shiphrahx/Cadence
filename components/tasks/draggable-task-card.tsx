@@ -43,7 +43,16 @@ export function DraggableTaskCard({ task, onEdit, onDelete }: DraggableTaskCardP
   }
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      onDoubleClick={(e) => {
+        e.stopPropagation()
+        onEdit(task)
+      }}
+    >
       <TaskCard task={task} onEdit={onEdit} onDelete={onDelete} isDragging={false} />
     </div>
   )

@@ -43,6 +43,8 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
 
   const getPriorityChipColor = (priority: Task["priority"]) => {
     switch (priority) {
+      case "Very High":
+        return "text-white"
       case "High":
         return "bg-red-100 text-red-700"
       case "Medium":
@@ -50,6 +52,13 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
       case "Low":
         return "bg-green-100 text-green-700"
     }
+  }
+
+  const getPriorityChipStyle = (priority: Task["priority"]) => {
+    if (priority === "Very High") {
+      return { backgroundColor: "lab(34 43.72 6.02)" }
+    }
+    return undefined
   }
 
   const getStatusChipColor = (status: Task["status"]) => {
@@ -110,7 +119,6 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
         "hover:shadow-md hover:border-gray-200",
         isDragging && "shadow-lg scale-[1.02] opacity-90 border-gray-300 cursor-grabbing"
       )}
-      onClick={() => onEdit(task)}
     >
       {/* Kebab Menu - Top Right, visible on hover */}
       <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-20" ref={menuRef}>
@@ -167,6 +175,7 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
             "inline-flex items-center rounded-full px-2 py-0.5 mr-2 text-xs font-medium",
             getPriorityChipColor(task.priority)
           )}
+          style={getPriorityChipStyle(task.priority)}
         >
           {task.priority}
         </span>
