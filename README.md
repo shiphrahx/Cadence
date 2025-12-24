@@ -64,11 +64,6 @@ Cadence supports good management habits—it doesn't automate judgement.
 - Link goals to projects and learning activities
 
 
-## Contributing
-
-Contributions are welcome! Please see our [Contributing Guidelines](CONTRIBUTING.md) *(coming soon)* for details.
-
-
 ## License
 
 This project is currently under development. License information will be added soon.
