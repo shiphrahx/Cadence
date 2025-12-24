@@ -91,6 +91,8 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
 
   const getPriorityBadgeClass = (priority: TaskPriority) => {
     switch (priority) {
+      case "Very High":
+        return "bg-red-200 text-red-800"
       case "High":
         return "bg-red-100 text-red-700"
       case "Medium":

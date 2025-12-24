@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Task, TaskStatus, TaskPriority, TaskCategory, TaskList, TASK_STATUSES, TASK_PRIORITIES, TASK_CATEGORIES } from "@/lib/types/task"
+import { Task, TaskStatus, TaskCategory, TASK_STATUSES, TASK_PRIORITIES, TASK_CATEGORIES } from "@/lib/types/task"
 import {
   Dialog,
   DialogContent,
@@ -96,17 +96,6 @@ export function TaskModal({ task, isOpen, onClose, onSave, onDelete }: TaskModal
             />
           </div>
 
-          <div className="grid gap-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Task description..."
-              rows={3}
-            />
-          </div>
-
           <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
               <Label htmlFor="status">Status</Label>
@@ -128,42 +117,33 @@ export function TaskModal({ task, isOpen, onClose, onSave, onDelete }: TaskModal
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="list">List</Label>
-              <Select
-                value={formData.list}
-                onValueChange={(value) => setFormData({ ...formData, list: value as TaskList })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="week">This week</SelectItem>
-                  <SelectItem value="backlog">Backlog</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label htmlFor="priority">Priority</Label>
+              <div className="flex gap-1.5 h-10">
+                {TASK_PRIORITIES.map((priority) => (
+                  <button
+                    key={priority}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, priority })}
+                    className={`flex-1 px-2 py-1.5 text-xs font-medium rounded border-2 transition-colors ${
+                      formData.priority === priority
+                        ? priority === "Very High"
+                          ? "bg-red-200 text-red-800 border-red-400"
+                          : priority === "High"
+                          ? "bg-red-100 text-red-700 border-red-300"
+                          : priority === "Medium"
+                          ? "bg-yellow-100 text-yellow-700 border-yellow-300"
+                          : "bg-green-100 text-green-700 border-green-300"
+                        : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                    }`}
+                  >
+                    {priority}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="priority">Priority</Label>
-              <Select
-                value={formData.priority}
-                onValueChange={(value) => setFormData({ ...formData, priority: value as TaskPriority })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {TASK_PRIORITIES.map((priority) => (
-                    <SelectItem key={priority} value={priority}>
-                      {priority}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
+          <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
               <Label htmlFor="category">Category</Label>
               <Select
@@ -193,6 +173,17 @@ export function TaskModal({ task, isOpen, onClose, onSave, onDelete }: TaskModal
               />
             </div>
           </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              id="description"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              placeholder="Task description..."
+              rows={3}
+            />
+          </div>
         </div>
 
         <DialogFooter className="flex justify-between">
@@ -203,10 +194,7 @@ export function TaskModal({ task, isOpen, onClose, onSave, onDelete }: TaskModal
               </Button>
             )}
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={onClose}>
-              Cancel
-            </Button>
+          <div>
             <Button onClick={handleSave} disabled={!formData.title.trim()}>
               {task ? "Save Changes" : "Create Task"}
             </Button>

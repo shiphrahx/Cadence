@@ -1,5 +1,5 @@
 export type TaskStatus = "Not started" | "In progress" | "Blocked" | "Done"
-export type TaskPriority = "Low" | "Medium" | "High"
+export type TaskPriority = "Low" | "Medium" | "High" | "Very High"
 export type TaskCategory =
   | "Task"
   | "Meeting"
@@ -22,7 +22,7 @@ export interface Task {
 }
 
 export const TASK_STATUSES: TaskStatus[] = ["Not started", "In progress", "Blocked", "Done"]
-export const TASK_PRIORITIES: TaskPriority[] = ["Low", "Medium", "High"]
+export const TASK_PRIORITIES: TaskPriority[] = ["Low", "Medium", "High", "Very High"]
 export const TASK_CATEGORIES: TaskCategory[] = [
   "Task",
   "Meeting",

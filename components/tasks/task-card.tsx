@@ -43,6 +43,8 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
 
   const getPriorityChipColor = (priority: Task["priority"]) => {
     switch (priority) {
+      case "Very High":
+        return "bg-red-200 text-red-800"
       case "High":
         return "bg-red-100 text-red-700"
       case "Medium":
