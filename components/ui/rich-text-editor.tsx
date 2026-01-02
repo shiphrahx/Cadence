@@ -50,7 +50,7 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
       editorProps: {
         attributes: {
           class: cn(
-            "focus:outline-none px-3 py-2 text-sm text-gray-900",
+            "focus:outline-none px-3 py-2 text-sm text-gray-900 dark:text-gray-100",
             className
           ),
         },
@@ -92,11 +92,11 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
         title={title}
         className={cn(
           "p-2 rounded-md transition-all duration-200 cursor-pointer",
-          "hover:bg-primary-50 hover:text-primary-700",
-          "focus:outline-none focus:ring-2 focus:ring-primary-200",
+          "hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-700 dark:hover:text-primary-400",
+          "focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800",
           isActive
-            ? "bg-primary-100 text-primary-700 shadow-sm"
-            : "text-gray-600 hover:shadow-sm"
+            ? "bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 shadow-sm"
+            : "text-gray-600 dark:text-gray-300 hover:shadow-sm"
         )}
       >
         {children}
@@ -120,15 +120,15 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
     }
 
     const ToolbarDivider = () => (
-      <div className="w-px h-6 bg-gray-300 mx-1.5" />
+      <div className="w-px h-6 bg-gray-300 dark:bg-[#383838] mx-1.5" />
     )
 
     return (
-      <div ref={ref} className={cn("border border-gray-300 rounded-lg bg-white shadow-sm overflow-hidden transition-shadow duration-200 hover:shadow-md", className?.includes('h-full') ? 'h-full flex flex-col' : '')}>
+      <div ref={ref} className={cn("border border-gray-300 dark:border-[#383838] rounded-lg bg-white dark:bg-[#262626] shadow-sm overflow-hidden transition-shadow duration-200 hover:shadow-md", className?.includes('h-full') ? 'h-full flex flex-col' : '')}>
         {/* Toolbar */}
-        <div className="flex flex-wrap gap-1 p-3 border-b border-gray-200 bg-gradient-to-b from-gray-50 to-white">
+        <div className="flex flex-wrap gap-1 p-3 border-b border-gray-200 dark:border-[#383838] bg-gradient-to-b from-gray-50 to-white dark:from-[#2e2e2e] dark:to-[#262626]">
           {/* Text Formatting Group */}
-          <div className="flex gap-0.5 p-0.5 bg-white rounded-md border border-gray-200">
+          <div className="flex gap-0.5 p-0.5 bg-white dark:bg-[#1c1c1c] rounded-md border border-gray-200 dark:border-[#383838]">
             <ToolbarButton
               onClick={() => editor.chain().focus().toggleBold().run()}
               isActive={editor.isActive("bold")}
@@ -149,7 +149,7 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
           <ToolbarDivider />
 
           {/* Headings Group */}
-          <div className="flex gap-0.5 p-0.5 bg-white rounded-md border border-gray-200">
+          <div className="flex gap-0.5 p-0.5 bg-white dark:bg-[#1c1c1c] rounded-md border border-gray-200 dark:border-[#383838]">
             <ToolbarButton
               onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
               isActive={editor.isActive("heading", { level: 1 })}
@@ -178,7 +178,7 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
           <ToolbarDivider />
 
           {/* Lists Group */}
-          <div className="flex gap-0.5 p-0.5 bg-white rounded-md border border-gray-200">
+          <div className="flex gap-0.5 p-0.5 bg-white dark:bg-[#1c1c1c] rounded-md border border-gray-200 dark:border-[#383838]">
             <ToolbarButton
               onClick={() => editor.chain().focus().toggleBulletList().run()}
               isActive={editor.isActive("bulletList")}
@@ -199,7 +199,7 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
           <ToolbarDivider />
 
           {/* Special Formatting Group */}
-          <div className="flex gap-0.5 p-0.5 bg-white rounded-md border border-gray-200">
+          <div className="flex gap-0.5 p-0.5 bg-white dark:bg-[#1c1c1c] rounded-md border border-gray-200 dark:border-[#383838]">
             <ToolbarButton
               onClick={() => editor.chain().focus().toggleCodeBlock().run()}
               isActive={editor.isActive("codeBlock")}
@@ -229,8 +229,8 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
         {/* Editor */}
         <div
           className={cn(
-            "overflow-y-auto tiptap-editor bg-white",
-            "focus-within:bg-gray-50/30 transition-colors duration-200",
+            "overflow-y-auto tiptap-editor bg-white dark:bg-[#262626]",
+            "focus-within:bg-gray-50/30 dark:focus-within:bg-[#2a2a2a] transition-colors duration-200",
             className?.includes('h-full') ? 'flex-1' : ''
           )}
           style={className?.includes('h-full') ? undefined : { minHeight: `${rows * 1.5}rem` }}
@@ -244,6 +244,10 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
             line-height: 1.7;
             color: #1f2937;
             font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+          }
+
+          .dark .tiptap-editor .ProseMirror {
+            color: #ebebeb;
           }
 
           .tiptap-editor .ProseMirror:focus {
@@ -272,6 +276,10 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
             letter-spacing: -0.025em;
           }
 
+          .dark .tiptap-editor .ProseMirror h1 {
+            color: #ebebeb;
+          }
+
           .tiptap-editor .ProseMirror h1:first-child {
             margin-top: 0;
           }
@@ -285,6 +293,10 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
             letter-spacing: -0.02em;
           }
 
+          .dark .tiptap-editor .ProseMirror h2 {
+            color: #ebebeb;
+          }
+
           .tiptap-editor .ProseMirror h2:first-child {
             margin-top: 0;
           }
@@ -296,6 +308,10 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
             line-height: 1.4;
             color: #1f2937;
             letter-spacing: -0.01em;
+          }
+
+          .dark .tiptap-editor .ProseMirror h3 {
+            color: #ebebeb;
           }
 
           .tiptap-editor .ProseMirror h3:first-child {
@@ -342,6 +358,12 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
             border: 1px solid #e5e7eb;
           }
 
+          .dark .tiptap-editor .ProseMirror code {
+            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+            color: #fda4af;
+            border-color: #4b5563;
+          }
+
           .tiptap-editor .ProseMirror pre {
             background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
             color: #f9fafb;
@@ -372,6 +394,11 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
             border-radius: 0 0.375rem 0.375rem 0;
           }
 
+          .dark .tiptap-editor .ProseMirror blockquote {
+            background: linear-gradient(to right, rgba(174, 166, 253, 0.1), transparent);
+            color: #9ca3af;
+          }
+
           .tiptap-editor .ProseMirror blockquote p {
             margin: 0.5rem 0;
           }
@@ -389,9 +416,17 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
             color: #111827;
           }
 
+          .dark .tiptap-editor .ProseMirror strong {
+            color: #f3f4f6;
+          }
+
           .tiptap-editor .ProseMirror em {
             font-style: italic;
             color: #374151;
+          }
+
+          .dark .tiptap-editor .ProseMirror em {
+            color: #d1d5db;
           }
 
           .tiptap-editor .ProseMirror a {
@@ -416,6 +451,10 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
             font-style: normal;
             font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             font-weight: 400;
+          }
+
+          .dark .tiptap-editor .ProseMirror p.is-editor-empty:first-child::before {
+            color: #6b7280;
           }
 
           /* Selection styling */
