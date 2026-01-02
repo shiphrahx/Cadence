@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-primary-50: #F5F4FF;
   --color-primary-100: #EBE9FE;
@@ -36,22 +38,30 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
+    /* Blitzit-inspired dark theme - calm, focused, professional */
+    --background: 0 0% 9%;           /* #171717 - very dark charcoal page background */
+    --foreground: 0 0% 92%;          /* #ebebeb - soft off-white text, not harsh */
+
+    --card: 0 0% 13%;                /* #212121 - cards slightly lighter than background for elevation */
+    --card-foreground: 0 0% 92%;
+
+    --popover: 0 0% 11%;             /* #1c1c1c - popover/dropdown surfaces */
+    --popover-foreground: 0 0% 92%;
+
+    --secondary: 0 0% 16%;           /* #292929 - secondary surfaces, subtle contrast */
+    --secondary-foreground: 0 0% 92%;
+
+    --muted: 0 0% 20%;               /* #333333 - muted backgrounds for hover states */
+    --muted-foreground: 0 0% 58%;    /* #949494 - subdued text, clearly secondary */
+
+    --accent: 0 0% 18%;              /* #2e2e2e - accent surfaces */
+    --accent-foreground: 0 0% 92%;
+
+    --destructive: 0 68% 48%;        /* Muted red for destructive actions, not oversaturated */
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 22%;              /* #383838 - subtle borders, low contrast */
+    --input: 0 0% 15%;               /* #262626 - input backgrounds, slightly lighter than card */
   }
 }
 

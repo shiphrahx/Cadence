@@ -145,17 +145,34 @@ const mockTeamsForMeetings = ["Platform Engineering", "Product Development", "Mo
 const getLevelBadgeClass = (level: string) => {
   switch (level) {
     case "Junior":
-      return "bg-green-100 text-green-700 border-green-300"
+      return "!bg-green-100 !text-green-700 !border-green-300 hover:!bg-green-200"
     case "Mid":
-      return "bg-yellow-100 text-yellow-700 border-yellow-300"
+      return "!bg-yellow-100 !text-yellow-700 !border-yellow-300 hover:!bg-yellow-200"
     case "Senior":
-      return "bg-pink-100 text-pink-700 border-pink-300"
+      return "!bg-pink-100 !text-pink-700 !border-pink-300 hover:!bg-pink-200"
     case "Staff":
-      return "bg-purple-100 text-purple-700 border-purple-300"
+      return "!bg-purple-100 !text-purple-700 !border-purple-300 hover:!bg-purple-200"
     case "Principal":
-      return "bg-blue-100 text-blue-700 border-blue-300"
+      return "!bg-blue-100 !text-blue-700 !border-blue-300 hover:!bg-blue-200"
     default:
-      return "bg-gray-100 text-gray-700 border-gray-300"
+      return "!bg-gray-100 !text-gray-700 !border-gray-300 hover:!bg-gray-200"
+  }
+}
+
+const getLevelHoverClass = (level: string) => {
+  switch (level) {
+    case "Junior":
+      return "hover:!bg-green-50"
+    case "Mid":
+      return "hover:!bg-yellow-50"
+    case "Senior":
+      return "hover:!bg-pink-50"
+    case "Staff":
+      return "hover:!bg-purple-50"
+    case "Principal":
+      return "hover:!bg-blue-50"
+    default:
+      return "hover:!bg-gray-50"
   }
 }
 
@@ -417,8 +434,8 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to People
         </Button>
-        <h1 className="text-2xl font-bold">{formData.name}</h1>
-        <p className="text-sm text-gray-600">{formData.role}</p>
+        <h1 className="text-2xl font-bold dark:text-gray-100">{formData.name}</h1>
+        <p className="text-sm text-gray-600 dark:text-gray-400">{formData.role}</p>
       </div>
 
       <Card>
@@ -459,7 +476,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                       className={`text-xs border ${
                         formData.level === level
                           ? getLevelBadgeClass(level)
-                          : "bg-white text-gray-700 hover:bg-gray-50"
+                          : getLevelHoverClass(level)
                       }`}
                     >
                       {level}
@@ -502,23 +519,23 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                 <div className="flex gap-3 items-center">
                   {/* Available Teams */}
                   <div className="flex-1">
-                    <Label className="text-xs text-gray-600 mb-1">Available Teams</Label>
-                    <div className="border border-gray-300 rounded-md h-48 overflow-y-auto bg-white">
+                    <Label className="text-xs text-gray-600 dark:text-gray-400 mb-1">Available Teams</Label>
+                    <div className="border border-gray-300 dark:border-[#383838] rounded-md h-48 overflow-y-auto bg-white dark:bg-[#262626]">
                       {availableTeamsList.length > 0 ? (
                         availableTeamsList.map((team) => (
                           <div
                             key={team.id}
                             onClick={() => toggleAvailableSelection(team.id)}
                             onDoubleClick={() => handleDoubleClickAvailable(team.id)}
-                            className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 select-none ${
-                              selectedAvailable.includes(team.id) ? 'bg-primary-50 border-l-2 border-primary-600' : ''
+                            className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-[#292929] select-none dark:text-gray-200 ${
+                              selectedAvailable.includes(team.id) ? 'bg-primary-50 dark:bg-primary-900/30 border-l-2 border-primary-600 dark:border-primary-400' : ''
                             }`}
                           >
                             {team.name}
                           </div>
                         ))
                       ) : (
-                        <div className="flex items-center justify-center h-full text-sm text-gray-500">
+                        <div className="flex items-center justify-center h-full text-sm text-gray-500 dark:text-gray-400">
                           All teams assigned
                         </div>
                       )}
@@ -551,23 +568,23 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
 
                   {/* Assigned Teams */}
                   <div className="flex-1">
-                    <Label className="text-xs text-gray-600 mb-1">Assigned Teams ({assignedTeamsList.length})</Label>
-                    <div className="border border-gray-300 rounded-md h-48 overflow-y-auto bg-white">
+                    <Label className="text-xs text-gray-600 dark:text-gray-400 mb-1">Assigned Teams ({assignedTeamsList.length})</Label>
+                    <div className="border border-gray-300 dark:border-[#383838] rounded-md h-48 overflow-y-auto bg-white dark:bg-[#262626]">
                       {assignedTeamsList.length > 0 ? (
                         assignedTeamsList.map((team) => (
                           <div
                             key={team.id}
                             onClick={() => toggleTeamMemberSelection(team.id)}
                             onDoubleClick={() => handleDoubleClickTeamMember(team.id)}
-                            className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 select-none ${
-                              selectedTeamMembers.includes(team.id) ? 'bg-primary-50 border-l-2 border-primary-600' : ''
+                            className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-[#292929] select-none dark:text-gray-200 ${
+                              selectedTeamMembers.includes(team.id) ? 'bg-primary-50 dark:bg-primary-900/30 border-l-2 border-primary-600 dark:border-primary-400' : ''
                             }`}
                           >
                             {team.name}
                           </div>
                         ))
                       ) : (
-                        <div className="flex items-center justify-center h-full text-sm text-gray-500">
+                        <div className="flex items-center justify-center h-full text-sm text-gray-500 dark:text-gray-400">
                           No teams assigned
                         </div>
                       )}
@@ -604,25 +621,25 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
       <Card className="mt-6">
         <CardContent className="p-6">
           <div className="mb-4">
-            <h2 className="text-xl font-semibold">Meetings</h2>
-            <p className="text-sm text-gray-600 mt-1">All meetings involving {formData.name}</p>
+            <h2 className="text-xl font-semibold dark:text-gray-100">Meetings</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">All meetings involving {formData.name}</p>
           </div>
 
-          <div id="meetings-section" className="flex h-[900px] border rounded-lg overflow-hidden">
+          <div id="meetings-section" className="flex h-[900px] border dark:border-[#383838] rounded-lg overflow-hidden">
             {/* Left Panel - Tree View */}
             <div
-              className="border-r bg-white overflow-y-auto flex-shrink-0"
+              className="border-r dark:border-[#383838] bg-white dark:bg-[#262626] overflow-y-auto flex-shrink-0"
               style={{ width: `${leftPanelWidth}px` }}
             >
-              <div className="p-4 border-b bg-gray-50">
+              <div className="p-4 border-b dark:border-[#383838] bg-gray-50 dark:bg-[#1c1c1c]">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-semibold">Meeting History</h3>
+                  <h3 className="text-sm font-semibold dark:text-gray-100">Meeting History</h3>
                   <Button size="sm" onClick={() => setIsAddMeetingDialogOpen(true)}>
                     <Plus className="h-4 w-4 mr-1" />
                     Log
                   </Button>
                 </div>
-                <p className="text-xs text-gray-600 mt-1">
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                   {getPersonMeetings().length} {getPersonMeetings().length === 1 ? 'meeting' : 'meetings'}
                 </p>
               </div>
@@ -630,7 +647,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
               <div className="p-2">
                 {Object.keys(tree).length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-8 text-center">
-                    <p className="text-sm text-gray-500 mb-4">No meetings logged yet</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">No meetings logged yet</p>
                     <Button size="sm" onClick={() => setIsAddMeetingDialogOpen(true)}>
                       <Plus className="h-4 w-4 mr-1" />
                       Log First Meeting
@@ -642,7 +659,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                       {/* Meeting Type */}
                       <button
                         onClick={() => toggleType(type)}
-                        className="flex items-center gap-2 w-full px-2 py-1.5 text-sm font-medium text-gray-900 hover:bg-gray-100 rounded"
+                        className="flex items-center gap-2 w-full px-2 py-1.5 text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-[#292929] rounded"
                       >
                         {expandedTypes.has(type) ? (
                           <ChevronDown className="h-4 w-4 flex-shrink-0" />
@@ -661,8 +678,8 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                               onClick={() => setSelectedMeeting(meeting)}
                               className={`block w-full text-left px-2 py-1.5 text-xs rounded ${
                                 selectedMeeting?.id === meeting.id
-                                  ? "bg-primary-50 text-primary-700 font-medium"
-                                  : "text-gray-600 hover:bg-gray-100"
+                                  ? "bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 font-medium"
+                                  : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#292929]"
                               }`}
                             >
                               {formatDate(meeting.date)}
@@ -678,21 +695,21 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
 
             {/* Resizable Divider */}
             <div
-              className={`w-1 bg-gray-200 hover:bg-primary-400 cursor-col-resize flex-shrink-0 ${
+              className={`w-1 bg-gray-200 dark:bg-[#383838] hover:bg-primary-400 cursor-col-resize flex-shrink-0 ${
                 isResizing ? 'bg-primary-500' : ''
               }`}
               onMouseDown={handleMouseDown}
             />
 
             {/* Right Panel - Meeting Details */}
-            <div className="flex-1 overflow-y-auto bg-gray-50">
+            <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-[#1c1c1c]">
               {selectedMeeting ? (
                 <div className="p-6">
                   <div className="space-y-4">
                     {/* Date and Next Meeting Date */}
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label className="text-sm font-medium text-gray-700">Date</Label>
+                        <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Date</Label>
                         <Input
                           type="date"
                           value={selectedMeeting.date}
@@ -702,7 +719,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                       </div>
                       {selectedMeeting.type === "1:1" && selectedMeeting.recurrence && selectedMeeting.recurrence !== "none" && selectedMeeting.nextMeetingDate && (
                         <div>
-                          <Label className="text-sm font-medium text-gray-700">Next Meeting</Label>
+                          <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Next Meeting</Label>
                           <Input
                             type="date"
                             value={selectedMeeting.nextMeetingDate}
@@ -716,7 +733,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                     {/* Title and Attendees */}
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label className="text-sm font-medium text-gray-700">Title</Label>
+                        <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Title</Label>
                         <Input
                           value={selectedMeeting.title}
                           onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, title: e.target.value })}
@@ -725,7 +742,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                         />
                       </div>
                       <div>
-                        <Label className="text-sm font-medium text-gray-700">Attendees</Label>
+                        <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Attendees</Label>
                         <Input
                           value={selectedMeeting.attendees.join(", ")}
                           onChange={(e) => handleUpdateMeeting({
@@ -740,7 +757,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
 
                     {/* Action Items */}
                     <div>
-                      <Label className="text-sm font-medium text-gray-700">Action Items</Label>
+                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Action Items</Label>
                       <MarkdownTextarea
                         value={selectedMeeting.actionItems || ""}
                         onValueChange={(value) => handleUpdateMeeting({ ...selectedMeeting, actionItems: value })}
@@ -752,7 +769,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
 
                     {/* Meeting Notes */}
                     <div>
-                      <Label className="text-sm font-medium text-gray-700">Meeting Notes</Label>
+                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Meeting Notes</Label>
                       <MarkdownTextarea
                         value={selectedMeeting.notes || ""}
                         onValueChange={(value) => handleUpdateMeeting({ ...selectedMeeting, notes: value })}
@@ -766,8 +783,8 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
               ) : (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center">
-                    <p className="text-sm text-gray-500 mb-2">Select a meeting to view details</p>
-                    <p className="text-xs text-gray-400">or log a new meeting</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Select a meeting to view details</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500">or log a new meeting</p>
                   </div>
                 </div>
               )}

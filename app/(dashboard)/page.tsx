@@ -16,8 +16,8 @@ export default function DashboardPage() {
     <div className="flex flex-col gap-6 p-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600 mt-1">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
+        <p className="text-gray-600 dark:text-gray-400 mt-1">
           Week of {formatDate(weekStart)} - {formatDate(weekEnd)}
         </p>
       </div>
@@ -69,7 +69,7 @@ export default function DashboardPage() {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">Good</div>
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400">Good</div>
             <p className="text-xs text-muted-foreground">
               On track this sprint
             </p>
@@ -94,14 +94,14 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="mt-0.5 h-4 w-4 rounded-full border-2 border-gray-300" />
+                <div className="mt-0.5 h-4 w-4 rounded-full border-2 border-gray-300 dark:border-gray-600" />
                 <div className="flex-1">
                   <p className="text-sm font-medium">Prepare for 1:1 with Sarah</p>
                   <p className="text-xs text-muted-foreground">Due Wed, 18 Dec</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="mt-0.5 h-4 w-4 rounded-full border-2 border-gray-300" />
+                <div className="mt-0.5 h-4 w-4 rounded-full border-2 border-gray-300 dark:border-gray-600" />
                 <div className="flex-1">
                   <p className="text-sm font-medium">Sprint planning preparation</p>
                   <p className="text-xs text-muted-foreground">Due Thu, 19 Dec</p>
@@ -119,7 +119,7 @@ export default function DashboardPage() {
           <CardContent>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-700">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-400">
                   <span className="text-sm font-semibold">SM</span>
                 </div>
                 <div className="flex-1">
@@ -128,7 +128,7 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-700">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-400">
                   <span className="text-sm font-semibold">JD</span>
                 </div>
                 <div className="flex-1">
@@ -137,7 +137,7 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-700">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-400">
                   <span className="text-sm font-semibold">EW</span>
                 </div>
                 <div className="flex-1">
@@ -160,10 +160,10 @@ export default function DashboardPage() {
           <div className="space-y-4">
             <div className="flex gap-4">
               <div className="flex flex-col items-center">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
-                  <CheckSquare className="h-4 w-4 text-blue-600" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
+                  <CheckSquare className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                 </div>
-                <div className="w-px flex-1 bg-gray-200 mt-2" />
+                <div className="w-px flex-1 bg-gray-200 dark:bg-gray-700 mt-2" />
               </div>
               <div className="flex-1 pb-4">
                 <p className="text-sm font-medium">Task completed</p>
@@ -172,10 +172,10 @@ export default function DashboardPage() {
             </div>
             <div className="flex gap-4">
               <div className="flex flex-col items-center">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100">
-                  <Calendar className="h-4 w-4 text-green-600" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+                  <Calendar className="h-4 w-4 text-green-600 dark:text-green-400" />
                 </div>
-                <div className="w-px flex-1 bg-gray-200 mt-2" />
+                <div className="w-px flex-1 bg-gray-200 dark:bg-gray-700 mt-2" />
               </div>
               <div className="flex-1 pb-4">
                 <p className="text-sm font-medium">Meeting completed</p>
@@ -184,8 +184,8 @@ export default function DashboardPage() {
             </div>
             <div className="flex gap-4">
               <div className="flex flex-col items-center">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-100">
-                  <TrendingUp className="h-4 w-4 text-purple-600" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900/30">
+                  <TrendingUp className="h-4 w-4 text-purple-600 dark:text-purple-400" />
                 </div>
               </div>
               <div className="flex-1">

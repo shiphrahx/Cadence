@@ -46,11 +46,11 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
       case "Very High":
         return "text-white"
       case "High":
-        return "bg-red-100 text-red-700"
+        return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
       case "Medium":
-        return "bg-orange-100 text-orange-700"
+        return "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400"
       case "Low":
-        return "bg-green-100 text-green-700"
+        return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
     }
   }
 
@@ -64,13 +64,13 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
   const getStatusChipColor = (status: Task["status"]) => {
     switch (status) {
       case "Not started":
-        return "bg-gray-100 text-gray-700"
+        return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
       case "In progress":
-        return "bg-blue-100 text-blue-700"
+        return "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
       case "Blocked":
-        return "bg-red-100 text-red-700"
+        return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
       case "Done":
-        return "bg-green-100 text-green-700"
+        return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
     }
   }
 
@@ -115,9 +115,9 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
   return (
     <div
       className={cn(
-        "group relative bg-white border border-gray-100 rounded-[10px] p-3 cursor-grab transition-all duration-200",
-        "hover:shadow-md hover:border-gray-200",
-        isDragging && "shadow-lg scale-[1.02] opacity-90 border-gray-300 cursor-grabbing"
+        "group relative bg-white dark:bg-[#292929] border border-gray-100 dark:border-[#383838] rounded-[10px] p-3 cursor-grab transition-all duration-200",
+        "hover:shadow-md hover:border-gray-200 dark:hover:border-[#4a4a4a]",
+        isDragging && "shadow-lg scale-[1.02] opacity-90 border-gray-300 dark:border-gray-600 cursor-grabbing"
       )}
     >
       {/* Kebab Menu - Top Right, visible on hover */}
@@ -126,19 +126,19 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
           onClick={handleMenuClick}
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
-          className="p-1 hover:bg-gray-100 rounded cursor-pointer"
+          className="p-1 hover:bg-gray-100 dark:hover:bg-[#333333] rounded cursor-pointer"
           aria-label="Task actions"
         >
-          <MoreVertical className="h-4 w-4 text-gray-500" />
+          <MoreVertical className="h-4 w-4 text-gray-500 dark:text-gray-400" />
         </button>
 
         {menuOpen && (
-          <div className="absolute right-0 mt-1 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+          <div className="absolute right-0 mt-1 w-32 bg-white dark:bg-[#292929] border border-gray-200 dark:border-[#383838] rounded-lg shadow-lg z-50">
             <button
               onClick={handleEdit}
               onPointerDown={(e) => e.stopPropagation()}
               onMouseDown={(e) => e.stopPropagation()}
-              className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 cursor-pointer rounded-t-lg"
+              className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-[#333333] cursor-pointer rounded-t-lg dark:text-gray-200"
             >
               Edit
             </button>
@@ -147,7 +147,7 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
                 onClick={handleDelete}
                 onPointerDown={(e) => e.stopPropagation()}
                 onMouseDown={(e) => e.stopPropagation()}
-                className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer rounded-b-lg"
+                className="w-full text-left px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 cursor-pointer rounded-b-lg"
               >
                 Delete
               </button>
@@ -159,11 +159,11 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
       {/* Row 1: Status Icon + Title */}
       <div className="flex items-start gap-2 mb-2">
         {isDone ? (
-          <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+          <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
         ) : (
-          <Circle className="h-4 w-4 text-gray-300 flex-shrink-0 mt-0.5" />
+          <Circle className="h-4 w-4 text-gray-300 dark:text-gray-600 flex-shrink-0 mt-0.5" />
         )}
-        <h4 className="text-sm font-semibold text-gray-900 line-clamp-2 break-words overflow-hidden flex-1 leading-tight">
+        <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 line-clamp-2 break-words overflow-hidden flex-1 leading-tight">
           {task.title}
         </h4>
       </div>
@@ -192,7 +192,7 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
       {/* Row 3: Meta (Due Date) */}
       {task.dueDate && (
         <div className="flex items-center">
-          <p className="text-xs text-gray-500">{formatDate(task.dueDate)}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{formatDate(task.dueDate)}</p>
         </div>
       )}
     </div>
