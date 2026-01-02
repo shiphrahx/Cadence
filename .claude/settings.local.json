@@ -49,7 +49,14 @@
       "Bash(npx tsc:*)",
       "Bash(cmd //c taskkill //F //PID 81904)",
       "Bash(curl:*)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(timeout /t 5)",
+      "Bash(ping:*)",
+      "Bash(cmd //c taskkill //F //PID 16780)",
+      "Bash(cmd //c taskkill //F //PID 1956)",
+      "Bash(cmd //c \"if exist .next\\\\dev\\\\lock del /F .next\\\\dev\\\\lock\")",
+      "Bash(xargs:*)",
+      "Bash(cmd //c taskkill //F //PID 28736)"
     ]
   }
 }

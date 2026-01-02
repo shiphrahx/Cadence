@@ -37,7 +37,7 @@ export function DraggableTaskCard({ task, onEdit, onDelete }: DraggableTaskCardP
     return (
       <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
         {/* Dashed placeholder with fade */}
-        <div className="h-[120px] border-2 border-dashed border-gray-300 rounded-[10px] bg-gray-50/50 animate-in fade-in duration-100" />
+        <div className="h-[120px] border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-[10px] bg-gray-50/50 dark:bg-[#292929]/50 animate-in fade-in duration-100" />
       </div>
     )
   }

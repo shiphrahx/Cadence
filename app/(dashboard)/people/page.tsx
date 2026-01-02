@@ -198,8 +198,8 @@ export default function PeoplePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">People</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">People</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
             Manage your team members and their details
           </p>
         </div>
@@ -398,9 +398,9 @@ export default function PeoplePage() {
 
           {filteredPeople.length === 0 && (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <User className="h-12 w-12 text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-1">No people found</h3>
-              <p className="text-sm text-gray-600 mb-4">
+              <User className="h-12 w-12 text-gray-400 dark:text-gray-500 mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-1">No people found</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                 {showInactive
                   ? "You haven't added any team members yet."
                   : "No active people. Try showing inactive people."}

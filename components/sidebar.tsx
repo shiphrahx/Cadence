@@ -41,13 +41,13 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
   return (
     <div className={cn(
-      "flex h-full flex-col border-r bg-white transition-all duration-300",
+      "flex h-full flex-col border-r bg-white dark:bg-[#212121] dark:border-[#383838] transition-all duration-300",
       isOpen ? "w-64" : "w-16"
     )}>
       {/* Logo */}
-      <div className="flex h-16 items-center border-b">
+      <div className="flex h-16 items-center border-b dark:border-[#383838]">
         <Link href="/" className={cn(
-          "flex items-center gap-3 hover:bg-gray-50 transition-colors flex-1",
+          "flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-[#292929] transition-colors flex-1",
           isOpen ? "px-6" : "px-3 justify-center"
         )}>
           <Image
@@ -57,15 +57,15 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
             height={35}
             className="h-[35px] w-[35px] object-contain rounded-lg flex-shrink-0"
           />
-          {isOpen && <span className="text-xl font-semibold">Cadence</span>}
+          {isOpen && <span className="text-xl font-semibold dark:text-gray-100">Cadence</span>}
         </Link>
         {isOpen && (
           <button
             onClick={onToggle}
-            className="px-3 h-full hover:bg-gray-100 transition-colors"
+            className="px-3 h-full hover:bg-gray-100 dark:hover:bg-[#292929] transition-colors"
             aria-label="Collapse sidebar"
           >
-            <ChevronLeft className="h-5 w-5 text-gray-600" />
+            <ChevronLeft className="h-5 w-5 text-gray-600 dark:text-gray-400" />
           </button>
         )}
       </div>
@@ -75,12 +75,12 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
         {!isOpen && (
           <button
             onClick={onToggle}
-            className="flex items-center gap-3 hover:bg-gray-100 rounded-md px-2 py-2 text-sm font-medium transition-colors"
+            className="flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-[#292929] rounded-md px-2 py-2 text-sm font-medium transition-colors"
             aria-label="Expand sidebar"
           >
-            <ChevronRight className="h-5 w-5" />
+            <ChevronRight className="h-5 w-5 dark:text-gray-400" />
           </button>
-          
+
         )}
         {navigation.map((item) => {
           const isActive = pathname === item.href
@@ -91,8 +91,8 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
               className={cn(
                 "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-primary-50 text-primary-700"
-                  : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                  ? "bg-primary-50 text-primary-700 dark:bg-[#292929] dark:text-primary-400"
+                  : "text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-[#292929] dark:hover:text-gray-100",
                 !isOpen && "justify-center"
               )}
               title={!isOpen ? item.name : undefined}
@@ -105,7 +105,7 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
       </nav>
 
       {/* Bottom Navigation */}
-      <div className="border-t p-4">
+      <div className="border-t dark:border-[#383838] p-4">
         {bottomNavigation.map((item) => {
           const isActive = pathname === item.href
           return (
@@ -115,8 +115,8 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
               className={cn(
                 "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-primary-50 text-primary-700"
-                  : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                  ? "bg-primary-50 text-primary-700 dark:bg-[#292929] dark:text-primary-400"
+                  : "text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-[#292929] dark:hover:text-gray-100",
                 !isOpen && "justify-center"
               )}
               title={!isOpen ? item.name : undefined}
@@ -129,20 +129,20 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
       </div>
 
       {/* User Profile */}
-      <div className="border-t p-4">
+      <div className="border-t dark:border-[#383838] p-4">
         <button className={cn(
-          "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-gray-100",
+          "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-[#292929]",
           !isOpen && "justify-center"
         )}
         title={!isOpen ? "User Profile" : undefined}
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-primary-700 flex-shrink-0">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-400 flex-shrink-0">
             <span className="text-sm font-semibold">U</span>
           </div>
           {isOpen && (
             <div className="flex-1 text-left">
-              <div className="text-sm font-medium text-gray-900">User</div>
-              <div className="text-xs text-gray-500">View profile</div>
+              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">User</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">View profile</div>
             </div>
           )}
         </button>

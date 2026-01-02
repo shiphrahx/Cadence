@@ -26,6 +26,28 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var theme = localStorage.getItem('theme');
+                  var root = document.documentElement;
+
+                  // Always start clean - remove dark class
+                  root.classList.remove('dark');
+
+                  // Only add if explicitly set to dark
+                  if (theme === 'dark') {
+                    root.classList.add('dark');
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className={`${inter.variable} antialiased`}>
         {children}
       </body>

@@ -69,7 +69,7 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
           comparison = dateA - dateB
           break
         case "priority": {
-          const priorityOrder = { High: 3, Medium: 2, Low: 1 }
+          const priorityOrder: Record<TaskPriority, number> = { "Very High": 4, High: 3, Medium: 2, Low: 1 }
           comparison = priorityOrder[a.priority] - priorityOrder[b.priority]
           break
         }

@@ -141,8 +141,8 @@ export default function TeamsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Teams</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Teams</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
             Manage your teams and team members
           </p>
         </div>
@@ -273,7 +273,7 @@ export default function TeamsPage() {
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                       {team.id !== undefined && selectedTeamMenu === team.id && (
-                        <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                        <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-[#212121] ring-1 ring-black dark:ring-[#383838] ring-opacity-5 z-50">
                           <div className="py-1">
                             <button
                               onClick={(e) => {
@@ -281,7 +281,7 @@ export default function TeamsPage() {
                                 setEditingTeam(team)
                                 setSelectedTeamMenu(null)
                               }}
-                              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#292929] cursor-pointer"
                             >
                               <Pencil className="h-4 w-4" />
                               Edit
@@ -291,7 +291,7 @@ export default function TeamsPage() {
                                 e.stopPropagation()
                                 handleToggleStatus(team)
                               }}
-                              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#292929] cursor-pointer"
                             >
                               {team.status === "active" ? (
                                 <>
@@ -311,7 +311,7 @@ export default function TeamsPage() {
                                 setDeletingTeam(team)
                                 setSelectedTeamMenu(null)
                               }}
-                              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer"
+                              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 cursor-pointer"
                             >
                               <Trash2 className="h-4 w-4" />
                               Delete
@@ -328,9 +328,9 @@ export default function TeamsPage() {
 
           {filteredTeams.length === 0 && (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <UsersIcon className="h-12 w-12 text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-1">No teams found</h3>
-              <p className="text-sm text-gray-600 mb-4">
+              <UsersIcon className="h-12 w-12 text-gray-400 dark:text-gray-500 mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-1">No teams found</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                 {showInactive
                   ? "You don't have any teams yet."
                   : "No active teams. Try showing inactive teams."}
