@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -35,10 +35,7 @@ export default function RootLayout({
                   var theme = localStorage.getItem('theme');
                   var root = document.documentElement;
 
-                  // Always start clean - remove dark class
-                  root.classList.remove('dark');
-
-                  // Only add if explicitly set to dark
+                  // Only add dark class if explicitly set to dark
                   if (theme === 'dark') {
                     root.classList.add('dark');
                   }

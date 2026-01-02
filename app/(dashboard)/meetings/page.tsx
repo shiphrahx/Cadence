@@ -297,19 +297,19 @@ export default function MeetingsPage() {
     <div className="flex h-full">
       {/* Left Panel - Tree View */}
       <div
-        className="border-r bg-white overflow-y-auto flex-shrink-0"
+        className="border-r dark:border-[#383838] bg-white dark:bg-[#262626] overflow-y-auto flex-shrink-0"
         style={{ width: `${leftPanelWidth}px` }}
       >
-        <div className="p-4 border-b">
+        <div className="p-4 border-b dark:border-[#383838]">
           <div className="flex items-center justify-between mb-2">
-            <h2 className="text-lg font-semibold">Meetings</h2>
+            <h2 className="text-lg font-semibold dark:text-gray-100">Meetings</h2>
             <Button size="sm" onClick={() => setIsAddDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-1" />
               Log
             </Button>
           </div>
           <div className="flex items-center justify-between">
-            <p className="text-xs text-gray-600">
+            <p className="text-xs text-gray-600 dark:text-gray-400">
               Select a meeting to view details
             </p>
             <div className="flex gap-1">
@@ -341,7 +341,7 @@ export default function MeetingsPage() {
               {/* Meeting Type */}
               <button
                 onClick={() => toggleType(type)}
-                className="flex items-center gap-2 w-full px-2 py-1.5 text-sm font-medium text-gray-900 hover:bg-gray-100 rounded"
+                className="flex items-center gap-2 w-full px-2 py-1.5 text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-[#292929] rounded"
               >
                 {expandedTypes.has(type) ? (
                   <ChevronDown className="h-4 w-4 flex-shrink-0" />
@@ -359,7 +359,7 @@ export default function MeetingsPage() {
                     <div key={personName} className="mb-1">
                       <button
                         onClick={() => togglePerson(personName)}
-                        className="flex items-center gap-2 w-full px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                        className="flex items-center gap-2 w-full px-2 py-1.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#292929] rounded"
                       >
                         {expandedPeople.has(personName) ? (
                           <ChevronDown className="h-4 w-4 flex-shrink-0" />
@@ -378,8 +378,8 @@ export default function MeetingsPage() {
                               onClick={() => setSelectedMeeting(meeting)}
                               className={`block w-full text-left px-2 py-1.5 text-xs rounded ${
                                 selectedMeeting?.id === meeting.id
-                                  ? "bg-primary-50 text-primary-700 font-medium"
-                                  : "text-gray-600 hover:bg-gray-100"
+                                  ? "bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 font-medium"
+                                  : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#292929]"
                               }`}
                             >
                               {formatDate(meeting.date)}
@@ -395,7 +395,7 @@ export default function MeetingsPage() {
                     <div key={teamName} className="mb-1">
                       <button
                         onClick={() => toggleTeam(teamName)}
-                        className="flex items-center gap-2 w-full px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                        className="flex items-center gap-2 w-full px-2 py-1.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#292929] rounded"
                       >
                         {expandedTeams.has(teamName) ? (
                           <ChevronDown className="h-4 w-4 flex-shrink-0" />
@@ -414,8 +414,8 @@ export default function MeetingsPage() {
                               onClick={() => setSelectedMeeting(meeting)}
                               className={`block w-full text-left px-2 py-1.5 text-xs rounded ${
                                 selectedMeeting?.id === meeting.id
-                                  ? "bg-primary-50 text-primary-700 font-medium"
-                                  : "text-gray-600 hover:bg-gray-100"
+                                  ? "bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 font-medium"
+                                  : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#292929]"
                               }`}
                             >
                               {formatDate(meeting.date)}
@@ -433,8 +433,8 @@ export default function MeetingsPage() {
                       onClick={() => setSelectedMeeting(meeting)}
                       className={`block w-full text-left px-2 py-1.5 text-xs rounded ml-4 ${
                         selectedMeeting?.id === meeting.id
-                          ? "bg-primary-50 text-primary-700 font-medium"
-                          : "text-gray-600 hover:bg-gray-100"
+                          ? "bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 font-medium"
+                          : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#292929]"
                       }`}
                     >
                       {formatDate(meeting.date)}
@@ -456,7 +456,7 @@ export default function MeetingsPage() {
       />
 
       {/* Right Panel - Meeting Details */}
-      <div className="flex-1 overflow-y-auto bg-gray-50">
+      <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-[#1c1c1c]">
         {selectedMeeting ? (
           <div className="p-8">
             <Card>
@@ -465,7 +465,7 @@ export default function MeetingsPage() {
                   {/* Date and Next Meeting Date */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label className="text-sm font-medium text-gray-700">Date</Label>
+                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Date</Label>
                       <Input
                         type="date"
                         value={selectedMeeting.date}
@@ -475,7 +475,7 @@ export default function MeetingsPage() {
                     </div>
                     {selectedMeeting.type === "1:1" && selectedMeeting.recurrence && selectedMeeting.recurrence !== "none" && selectedMeeting.nextMeetingDate && (
                       <div>
-                        <Label className="text-sm font-medium text-gray-700">Next Meeting</Label>
+                        <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Next Meeting</Label>
                         <Input
                           type="date"
                           value={selectedMeeting.nextMeetingDate}
@@ -489,7 +489,7 @@ export default function MeetingsPage() {
                   {/* Title and Attendees */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label className="text-sm font-medium text-gray-700">Title</Label>
+                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Title</Label>
                       <Input
                         value={selectedMeeting.title}
                         onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, title: e.target.value })}
@@ -498,7 +498,7 @@ export default function MeetingsPage() {
                       />
                     </div>
                     <div>
-                      <Label className="text-sm font-medium text-gray-700">Attendees</Label>
+                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Attendees</Label>
                       <Input
                         value={selectedMeeting.attendees.join(", ")}
                         onChange={(e) => handleUpdateMeeting({
@@ -513,7 +513,7 @@ export default function MeetingsPage() {
 
                   {/* Action Items */}
                   <div>
-                    <Label className="text-sm font-medium text-gray-700">Action Items</Label>
+                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Action Items</Label>
                     <MarkdownTextarea
                       value={selectedMeeting.actionItems || ""}
                       onValueChange={(value) => handleUpdateMeeting({ ...selectedMeeting, actionItems: value })}
@@ -525,7 +525,7 @@ export default function MeetingsPage() {
 
                   {/* Meeting Notes */}
                   <div>
-                    <Label className="text-sm font-medium text-gray-700">Meeting Notes</Label>
+                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Meeting Notes</Label>
                     <MarkdownTextarea
                       value={selectedMeeting.notes || ""}
                       onValueChange={(value) => handleUpdateMeeting({ ...selectedMeeting, notes: value })}
