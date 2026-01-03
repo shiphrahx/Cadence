@@ -241,7 +241,7 @@ export default function CareerGoalsPage() {
 
     if (total === 0) {
       return (
-        <div className="flex items-center justify-center h-64 text-gray-400">
+        <div className="flex items-center justify-center h-64 text-gray-400 dark:text-gray-500">
           No goals yet
         </div>
       )
@@ -285,14 +285,13 @@ export default function CareerGoalsPage() {
             startAngle = endAngle
             return slice
           })}
-          <circle cx={centerX} cy={centerY} r="40" fill="white" />
+          <circle cx={centerX} cy={centerY} r="40" className="fill-white dark:fill-[#262626]" />
           <text
             x={centerX}
             y={centerY}
             textAnchor="middle"
             dominantBaseline="middle"
-            className="text-4xl font-bold"
-            fill="#1f2937"
+            className="text-4xl font-bold fill-[#1f2937] dark:fill-[#ebebeb]"
           >
             {total}
           </text>
@@ -301,8 +300,7 @@ export default function CareerGoalsPage() {
             y={centerY + 25}
             textAnchor="middle"
             dominantBaseline="middle"
-            className="text-xs"
-            fill="#6b7280"
+            className="text-xs fill-[#6b7280] dark:fill-[#9ca3af]"
           >
             Total
           </text>
@@ -320,8 +318,8 @@ export default function CareerGoalsPage() {
                   className="w-3 h-3 rounded-sm flex-shrink-0"
                   style={{ backgroundColor: getCategoryColor(category) }}
                 />
-                <span className="text-gray-700">{truncatedCategory}</span>
-                <span className="text-gray-500">({percentage}%)</span>
+                <span className="text-gray-700 dark:text-gray-300">{truncatedCategory}</span>
+                <span className="text-gray-500 dark:text-gray-400">({percentage}%)</span>
               </div>
             )
           })}
@@ -335,8 +333,8 @@ export default function CareerGoalsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Career Goals</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Career Goals</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
             Plan your career progression and track your goals
           </p>
         </div>
@@ -416,10 +414,10 @@ export default function CareerGoalsPage() {
         </CardHeader>
         <CardContent>
           {gapAnalysis.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center border rounded-lg bg-gray-50">
+            <div className="flex flex-col items-center justify-center py-12 text-center border dark:border-[#383838] rounded-lg bg-gray-50 dark:bg-[#262626]">
               <TrendingUp className="h-12 w-12 text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-1">No categories yet</h3>
-              <p className="text-sm text-gray-600 mb-4">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-1">No categories yet</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                 Add your first category to start your gap analysis
               </p>
               <Button onClick={openAddGapDialog}>
@@ -431,19 +429,19 @@ export default function CareerGoalsPage() {
             <div className="overflow-x-auto">
               <table className="w-full border-collapse table-fixed">
                 <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[20%]">Category</th>
-                    <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[35%]">Current State</th>
-                    <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[35%]">Desired State</th>
-                    <th className="text-center p-3 bg-gray-50 font-semibold text-sm w-[10%]">Actions</th>
+                  <tr className="border-b dark:border-[#383838]">
+                    <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[20%] dark:text-gray-100">Category</th>
+                    <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[35%] dark:text-gray-100">Current State</th>
+                    <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[35%] dark:text-gray-100">Desired State</th>
+                    <th className="text-center p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[10%] dark:text-gray-100">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {gapAnalysis.map((row) => (
-                    <tr key={row.id} className="border-b hover:bg-gray-50">
-                      <td className="p-3 font-medium text-sm break-words">{row.category}</td>
-                      <td className="p-3 text-sm text-gray-700 break-words">{row.currentState}</td>
-                      <td className="p-3 text-sm text-gray-700 break-words">{row.desiredState}</td>
+                    <tr key={row.id} className="border-b dark:border-[#383838] hover:bg-gray-50 dark:hover:bg-[#292929]">
+                      <td className="p-3 font-medium text-sm break-words dark:text-gray-100">{row.category}</td>
+                      <td className="p-3 text-sm text-gray-700 dark:text-gray-300 break-words">{row.currentState}</td>
+                      <td className="p-3 text-sm text-gray-700 dark:text-gray-300 break-words">{row.desiredState}</td>
                       <td className="p-3">
                         <div className="flex items-center justify-center gap-2">
                           <Button
@@ -490,20 +488,20 @@ export default function CareerGoalsPage() {
             {/* Desired Focus Distribution */}
             {categories.length > 0 && (
               <div>
-                <h3 className="text-sm font-semibold mb-3">Desired Focus Distribution</h3>
-                <div className="overflow-x-auto border rounded-lg bg-white">
+                <h3 className="text-sm font-semibold mb-3 dark:text-gray-100">Desired Focus Distribution</h3>
+                <div className="overflow-x-auto border dark:border-[#383838] rounded-lg bg-white dark:bg-[#262626]">
                   <table className="w-full border-collapse table-fixed">
                     <thead>
-                      <tr className="border-b">
-                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[30%]">Category</th>
-                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[10%]">Focus %</th>
-                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[60%]">Why</th>
+                      <tr className="border-b dark:border-[#383838]">
+                        <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[30%] dark:text-gray-100">Category</th>
+                        <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[10%] dark:text-gray-100">Focus %</th>
+                        <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[60%] dark:text-gray-100">Why</th>
                       </tr>
                     </thead>
                     <tbody>
                       {shortTermFocus.map((item) => (
-                        <tr key={item.category} className="border-b hover:bg-gray-50">
-                          <td className="p-3 font-medium text-sm max-w-[300px] truncate" title={item.category}>{item.category}</td>
+                        <tr key={item.category} className="border-b dark:border-[#383838] hover:bg-gray-50 dark:hover:bg-[#292929]">
+                          <td className="p-3 font-medium text-sm max-w-[300px] truncate dark:text-gray-100" title={item.category}>{item.category}</td>
                           <td className="p-3">
                             <Input
                               type="number"
@@ -550,26 +548,26 @@ export default function CareerGoalsPage() {
             <div className="grid grid-cols-[60%_40%] gap-6">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold">Goals</h3>
+                  <h3 className="text-sm font-semibold dark:text-gray-100">Goals</h3>
                   <Button size="sm" onClick={() => addGoal(setShortTermGoals, shortTermGoals)}>
                     <Plus className="h-4 w-4 mr-1" />
                     Add Goal
                   </Button>
                 </div>
-                <div className="overflow-x-auto border rounded-lg">
+                <div className="overflow-x-auto border dark:border-[#383838] rounded-lg bg-white dark:bg-[#262626]">
                   <table className="w-full border-collapse">
                     <thead>
-                      <tr className="border-b bg-gray-50">
-                        <th className="text-left p-2 font-semibold text-sm w-[45%]">Goal</th>
-                        <th className="text-left p-2 font-semibold text-sm w-[12%]">Type</th>
-                        <th className="text-left p-2 font-semibold text-sm w-[18%]">Category</th>
-                        <th className="text-left p-2 font-semibold text-sm w-[15%]">Status</th>
+                      <tr className="border-b dark:border-[#383838] bg-gray-50 dark:bg-[#262626]">
+                        <th className="text-left p-2 font-semibold text-sm w-[45%] dark:text-gray-100">Goal</th>
+                        <th className="text-left p-2 font-semibold text-sm w-[12%] dark:text-gray-100">Type</th>
+                        <th className="text-left p-2 font-semibold text-sm w-[18%] dark:text-gray-100">Category</th>
+                        <th className="text-left p-2 font-semibold text-sm w-[15%] dark:text-gray-100">Status</th>
                         <th className="text-left p-2 font-semibold text-sm w-10"></th>
                       </tr>
                     </thead>
                     <tbody>
                       {shortTermGoals.map((goal) => (
-                        <tr key={goal.id} className="border-b">
+                        <tr key={goal.id} className="border-b dark:border-[#383838]">
                           <td className="p-2">
                             <Textarea
                               value={goal.goal}
@@ -641,7 +639,7 @@ export default function CareerGoalsPage() {
               </div>
 
               <div>
-                <h3 className="text-sm font-semibold mb-3">Current Focus Distribution</h3>
+                <h3 className="text-sm font-semibold mb-3 dark:text-gray-100">Current Focus Distribution</h3>
                 {renderPieChart(shortTermGoals)}
                 {(() => {
                   const currentDist = calculateGoalDistribution(shortTermGoals)
@@ -695,20 +693,20 @@ export default function CareerGoalsPage() {
             {/* Desired Focus Distribution */}
             {categories.length > 0 && (
               <div>
-                <h3 className="text-sm font-semibold mb-3">Desired Focus Distribution</h3>
-                <div className="overflow-x-auto border rounded-lg bg-white">
+                <h3 className="text-sm font-semibold mb-3 dark:text-gray-100">Desired Focus Distribution</h3>
+                <div className="overflow-x-auto border dark:border-[#383838] rounded-lg bg-white dark:bg-[#262626]">
                   <table className="w-full border-collapse table-fixed">
                     <thead>
-                      <tr className="border-b">
-                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[30%]">Category</th>
-                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[10%]">Focus %</th>
-                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[60%]">Why</th>
+                      <tr className="border-b dark:border-[#383838]">
+                        <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[30%] dark:text-gray-100">Category</th>
+                        <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[10%] dark:text-gray-100">Focus %</th>
+                        <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[60%] dark:text-gray-100">Why</th>
                       </tr>
                     </thead>
                     <tbody>
                       {midTermFocus.map((item) => (
-                        <tr key={item.category} className="border-b hover:bg-gray-50">
-                          <td className="p-3 font-medium text-sm max-w-[300px] truncate" title={item.category}>{item.category}</td>
+                        <tr key={item.category} className="border-b dark:border-[#383838] hover:bg-gray-50 dark:hover:bg-[#292929]">
+                          <td className="p-3 font-medium text-sm max-w-[300px] truncate dark:text-gray-100" title={item.category}>{item.category}</td>
                           <td className="p-3">
                             <Input
                               type="number"
@@ -755,26 +753,26 @@ export default function CareerGoalsPage() {
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold">Goals</h3>
+                  <h3 className="text-sm font-semibold dark:text-gray-100">Goals</h3>
                   <Button size="sm" onClick={() => addGoal(setMidTermGoals, midTermGoals)}>
                     <Plus className="h-4 w-4 mr-1" />
                     Add Goal
                   </Button>
                 </div>
-                <div className="overflow-x-auto border rounded-lg">
+                <div className="overflow-x-auto border dark:border-[#383838] rounded-lg bg-white dark:bg-[#262626]">
                   <table className="w-full border-collapse">
                     <thead>
-                      <tr className="border-b bg-gray-50">
-                        <th className="text-left p-2 font-semibold text-sm w-[45%]">Goal</th>
-                        <th className="text-left p-2 font-semibold text-sm w-[12%]">Type</th>
-                        <th className="text-left p-2 font-semibold text-sm w-[18%]">Category</th>
-                        <th className="text-left p-2 font-semibold text-sm w-[15%]">Status</th>
+                      <tr className="border-b dark:border-[#383838] bg-gray-50 dark:bg-[#262626]">
+                        <th className="text-left p-2 font-semibold text-sm w-[45%] dark:text-gray-100">Goal</th>
+                        <th className="text-left p-2 font-semibold text-sm w-[12%] dark:text-gray-100">Type</th>
+                        <th className="text-left p-2 font-semibold text-sm w-[18%] dark:text-gray-100">Category</th>
+                        <th className="text-left p-2 font-semibold text-sm w-[15%] dark:text-gray-100">Status</th>
                         <th className="text-left p-2 font-semibold text-sm w-10"></th>
                       </tr>
                     </thead>
                     <tbody>
                       {midTermGoals.map((goal) => (
-                        <tr key={goal.id} className="border-b">
+                        <tr key={goal.id} className="border-b dark:border-[#383838]">
                           <td className="p-2">
                             <Textarea
                               value={goal.goal}
@@ -846,7 +844,7 @@ export default function CareerGoalsPage() {
               </div>
 
               <div>
-                <h3 className="text-sm font-semibold mb-3">Current Focus Distribution</h3>
+                <h3 className="text-sm font-semibold mb-3 dark:text-gray-100">Current Focus Distribution</h3>
                 {renderPieChart(midTermGoals)}
                 {(() => {
                   const currentDist = calculateGoalDistribution(midTermGoals)
@@ -897,20 +895,20 @@ export default function CareerGoalsPage() {
             {/* Desired Focus Distribution */}
             {categories.length > 0 && (
               <div>
-                <h3 className="text-sm font-semibold mb-3">Desired Focus Distribution</h3>
-                <div className="overflow-x-auto border rounded-lg bg-white">
+                <h3 className="text-sm font-semibold mb-3 dark:text-gray-100">Desired Focus Distribution</h3>
+                <div className="overflow-x-auto border dark:border-[#383838] rounded-lg bg-white dark:bg-[#262626]">
                   <table className="w-full border-collapse table-fixed">
                     <thead>
-                      <tr className="border-b">
-                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[30%]">Category</th>
-                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[10%]">Focus %</th>
-                        <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-[60%]">Why</th>
+                      <tr className="border-b dark:border-[#383838]">
+                        <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[30%] dark:text-gray-100">Category</th>
+                        <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[10%] dark:text-gray-100">Focus %</th>
+                        <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[60%] dark:text-gray-100">Why</th>
                       </tr>
                     </thead>
                     <tbody>
                       {longTermFocus.map((item) => (
-                        <tr key={item.category} className="border-b hover:bg-gray-50">
-                          <td className="p-3 font-medium text-sm max-w-[300px] truncate" title={item.category}>{item.category}</td>
+                        <tr key={item.category} className="border-b dark:border-[#383838] hover:bg-gray-50 dark:hover:bg-[#292929]">
+                          <td className="p-3 font-medium text-sm max-w-[300px] truncate dark:text-gray-100" title={item.category}>{item.category}</td>
                           <td className="p-3">
                             <Input
                               type="number"
@@ -957,26 +955,26 @@ export default function CareerGoalsPage() {
             <div className="grid grid-cols-[60%_40%] gap-6">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold">Goals</h3>
+                  <h3 className="text-sm font-semibold dark:text-gray-100">Goals</h3>
                   <Button size="sm" onClick={() => addGoal(setLongTermGoals, longTermGoals)}>
                     <Plus className="h-4 w-4 mr-1" />
                     Add Goal
                   </Button>
                 </div>
-                <div className="overflow-x-auto border rounded-lg">
+                <div className="overflow-x-auto border dark:border-[#383838] rounded-lg bg-white dark:bg-[#262626]">
                   <table className="w-full border-collapse">
                     <thead>
-                      <tr className="border-b bg-gray-50">
-                        <th className="text-left p-2 font-semibold text-sm w-[45%]">Goal</th>
-                        <th className="text-left p-2 font-semibold text-sm w-[12%]">Type</th>
-                        <th className="text-left p-2 font-semibold text-sm w-[18%]">Category</th>
-                        <th className="text-left p-2 font-semibold text-sm w-[15%]">Status</th>
+                      <tr className="border-b dark:border-[#383838] bg-gray-50 dark:bg-[#262626]">
+                        <th className="text-left p-2 font-semibold text-sm w-[45%] dark:text-gray-100">Goal</th>
+                        <th className="text-left p-2 font-semibold text-sm w-[12%] dark:text-gray-100">Type</th>
+                        <th className="text-left p-2 font-semibold text-sm w-[18%] dark:text-gray-100">Category</th>
+                        <th className="text-left p-2 font-semibold text-sm w-[15%] dark:text-gray-100">Status</th>
                         <th className="text-left p-2 font-semibold text-sm w-10"></th>
                       </tr>
                     </thead>
                     <tbody>
                       {longTermGoals.map((goal) => (
-                        <tr key={goal.id} className="border-b">
+                        <tr key={goal.id} className="border-b dark:border-[#383838]">
                           <td className="p-2">
                             <Textarea
                               value={goal.goal}
@@ -1048,7 +1046,7 @@ export default function CareerGoalsPage() {
               </div>
 
               <div>
-                <h3 className="text-sm font-semibold mb-3">Current Focus Distribution</h3>
+                <h3 className="text-sm font-semibold mb-3 dark:text-gray-100">Current Focus Distribution</h3>
                 {renderPieChart(longTermGoals)}
                 {(() => {
                   const currentDist = calculateGoalDistribution(longTermGoals)
@@ -1103,20 +1101,20 @@ export default function CareerGoalsPage() {
               </Button>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto border dark:border-[#383838] rounded-lg bg-white dark:bg-[#262626]">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-3 bg-gray-50 font-semibold text-sm">Type</th>
-                    <th className="text-left p-3 bg-gray-50 font-semibold text-sm">Description</th>
-                    <th className="text-left p-3 bg-gray-50 font-semibold text-sm">Date</th>
-                    <th className="text-left p-3 bg-gray-50 font-semibold text-sm">Key Takeaway</th>
-                    <th className="text-left p-3 bg-gray-50 font-semibold text-sm w-10"></th>
+                  <tr className="border-b dark:border-[#383838]">
+                    <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100">Type</th>
+                    <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100">Description</th>
+                    <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100">Date</th>
+                    <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100">Key Takeaway</th>
+                    <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-10"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {achievements.map((achievement) => (
-                    <tr key={achievement.id} className="border-b">
+                    <tr key={achievement.id} className="border-b dark:border-[#383838]">
                       <td className="p-3">
                         <Select
                           value={achievement.type}
