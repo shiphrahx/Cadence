@@ -38,7 +38,6 @@
   }
 
   .dark {
-    /* Blitzit-inspired dark theme - calm, focused, professional */
     --background: 0 0% 9%;           /* #171717 - very dark charcoal page background */
     --foreground: 0 0% 92%;          /* #ebebeb - soft off-white text, not harsh */
 
@@ -62,6 +61,8 @@
 
     --border: 0 0% 22%;              /* #383838 - subtle borders, low contrast */
     --input: 0 0% 15%;               /* #262626 - input backgrounds, slightly lighter than card */
+
+    --paragraph: lab(75 -1.44 -8.32); /* Paragraph text color in dark mode */
   }
 }
 
@@ -73,4 +74,8 @@ body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
   font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+.dark p {
+  color: var(--paragraph);
 }
