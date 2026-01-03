@@ -14,15 +14,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { getTodayDate } from "@/lib/utils"
+import { type Meeting as BaseMeeting } from "@/lib/mock-data"
 
-interface Meeting {
+// Extended Meeting interface for forms that includes additional fields
+interface Meeting extends Omit<BaseMeeting, 'id' | 'time' | 'status'> {
   id?: number
-  title: string
-  type: string
-  date: string
-  attendees: string[]
   actionItems?: string
-  notes?: string
   personName?: string
   recurrence?: string
   nextMeetingDate?: string
@@ -36,14 +34,6 @@ interface MeetingFormDialogProps {
   availablePeople?: string[]
   availableTeams?: string[]
   defaultPerson?: string
-}
-
-const getTodayDate = () => {
-  const today = new Date()
-  const year = today.getFullYear()
-  const month = String(today.getMonth() + 1).padStart(2, '0')
-  const day = String(today.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
 }
 
 const calculateNextMeetingDate = (lastMeetingDate: string, recurrence: string): string => {

@@ -5,18 +5,9 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { MoreHorizontal, Pencil, Trash2, UserX, UserCheck } from "lucide-react"
 import { useState, useEffect } from "react"
+import { type Team } from "@/lib/mock-data"
 
-export interface Team {
-  id?: number
-  name: string
-  description: string
-  status: "active" | "inactive"
-  memberCount: number
-  createdAt: string
-  memberIds?: number[]
-  notes?: string
-  documentationUrl?: string
-}
+export type { Team }
 
 interface TeamsTableProps {
   teams: Team[]

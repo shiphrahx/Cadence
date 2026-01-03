@@ -9,107 +9,34 @@ import { Label } from "@/components/ui/label"
 import { MarkdownTextarea } from "@/components/ui/markdown-textarea"
 import { ChevronRight, ChevronLeft, ArrowLeft, ChevronDown, Plus } from "lucide-react"
 import { MeetingFormDialog } from "@/components/meeting-form-dialog"
+import { type Team, type Person, type Meeting, mockTeams, mockPeople, mockMeetings as centralizedMockMeetings } from "@/lib/mock-data"
 
-interface Team {
-  id: number
-  name: string
-}
-
-interface Person {
-  id: number
-  name: string
-  role: string
-  level: string
-  startDate: string
-  status: "active" | "inactive"
-  teams: string[]
-  notes?: string
-}
-
-interface Meeting {
-  id: number
-  title: string
+interface TreeNode {
   type: string
-  date: string
-  attendees: string[]
-  actionItems?: string
-  notes?: string
+  meetings: ExtendedMeeting[]
+}
+
+const seniorityLevels = ["Junior", "Mid", "Senior", "Staff", "Principal"]
+
+// Extended Meeting interface for person detail page (has additional fields beyond centralized type)
+interface ExtendedMeeting extends Meeting {
   personName?: string
   teamName?: string
   recurrence?: string
   nextMeetingDate?: string
+  actionItems?: string
 }
 
-interface TreeNode {
-  type: string
-  meetings: Meeting[]
-}
-
-// Mock data - this should come from a shared data source or API
-const mockTeams: Team[] = [
-  { id: 1, name: "Platform Engineering" },
-  { id: 2, name: "Product Development" },
-  { id: 3, name: "Mobile Team" },
-]
-
-const initialPeople: Person[] = [
-  {
-    id: 1,
-    name: "Sarah Miller",
-    role: "Senior Software Engineer",
-    level: "Senior",
-    startDate: "2023-01-15",
-    status: "active",
-    teams: ["Platform Engineering"],
-  },
-  {
-    id: 2,
-    name: "John Doe",
-    role: "Software Engineer",
-    level: "Mid",
-    startDate: "2023-06-01",
-    status: "active",
-    teams: ["Platform Engineering", "Product Development"],
-  },
-  {
-    id: 3,
-    name: "Emily Wong",
-    role: "Tech Lead",
-    level: "Staff",
-    startDate: "2022-11-10",
-    status: "active",
-    teams: ["Product Development"],
-  },
-  {
-    id: 4,
-    name: "Mike Chen",
-    role: "Software Engineer",
-    level: "Junior",
-    startDate: "2024-01-08",
-    status: "active",
-    teams: ["Product Development"],
-  },
-  {
-    id: 5,
-    name: "Alex Johnson",
-    role: "iOS Developer",
-    level: "Mid",
-    startDate: "2023-03-20",
-    status: "inactive",
-    teams: ["Mobile Team"],
-  },
-]
-
-const seniorityLevels = ["Junior", "Mid", "Senior", "Staff", "Principal"]
-
-// Mock meetings data - should come from shared source
-const mockMeetings: Meeting[] = [
+// Extended mock meetings with additional fields for person detail page
+const mockMeetingsExtended: ExtendedMeeting[] = [
   {
     id: 1,
     title: "1:1 with Sarah Miller",
     type: "1:1",
     date: "2024-12-20",
+    time: "14:00",
     attendees: ["Sarah Miller"],
+    status: "completed",
     personName: "Sarah Miller",
     recurrence: "weekly",
     nextMeetingDate: "2024-12-27",
@@ -121,7 +48,9 @@ const mockMeetings: Meeting[] = [
     title: "1:1 with Sarah Miller",
     type: "1:1",
     date: "2024-12-13",
+    time: "14:00",
     attendees: ["Sarah Miller"],
+    status: "completed",
     personName: "Sarah Miller",
     recurrence: "weekly",
     notes: "Weekly check-in. Discussed current sprint progress.",
@@ -131,7 +60,9 @@ const mockMeetings: Meeting[] = [
     title: "Team Sync - Platform Engineering",
     type: "Team Sync",
     date: "2024-12-18",
+    time: "10:00",
     attendees: ["Platform Engineering"],
+    status: "completed",
     teamName: "Platform Engineering",
     actionItems: "- Deploy new infrastructure\n- Update documentation",
     notes: "Discussed Q1 roadmap and priorities.",
@@ -139,7 +70,7 @@ const mockMeetings: Meeting[] = [
 ]
 
 // Mock people and teams for meeting form
-const mockPeople = ["Sarah Miller", "John Doe", "Jane Smith"]
+const mockPeopleNames = ["Sarah Miller", "John Doe", "Jane Smith"]
 const mockTeamsForMeetings = ["Platform Engineering", "Product Development", "Mobile Team"]
 
 const getLevelBadgeClass = (level: string) => {
@@ -184,8 +115,8 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
   const [selectedTeamMembers, setSelectedTeamMembers] = useState<number[]>([])
 
   // Meeting states
-  const [meetings, setMeetings] = useState<Meeting[]>(mockMeetings)
-  const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null)
+  const [meetings, setMeetings] = useState<ExtendedMeeting[]>(mockMeetingsExtended)
+  const [selectedMeeting, setSelectedMeeting] = useState<ExtendedMeeting | null>(null)
   const [expandedTypes, setExpandedTypes] = useState<Set<string>>(new Set(["1:1"]))
   const [isAddMeetingDialogOpen, setIsAddMeetingDialogOpen] = useState(false)
   const [leftPanelWidth, setLeftPanelWidth] = useState(280)
@@ -201,7 +132,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
   useEffect(() => {
     // Find the person by ID once personId is set
     if (personId !== null) {
-      const person = initialPeople.find(p => p.id === personId)
+      const person = mockPeople.find(p => p.id === personId)
       if (person) {
         setFormData(person)
       }
@@ -282,7 +213,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
     }
   }, [isResizing])
 
-  const getPersonMeetings = (): Meeting[] => {
+  const getPersonMeetings = (): ExtendedMeeting[] => {
     return Object.values(tree).flatMap(node => node.meetings)
   }
 
@@ -314,7 +245,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
 
   const handleAddToTeams = () => {
     const teamsToAdd = mockTeams
-      .filter(team => selectedAvailable.includes(team.id))
+      .filter(team => team.id !== undefined && selectedAvailable.includes(team.id))
       .map(team => team.name)
 
     setFormData({
@@ -326,7 +257,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
 
   const handleRemoveFromTeams = () => {
     const teamsToRemove = mockTeams
-      .filter(team => selectedTeamMembers.includes(team.id))
+      .filter(team => team.id !== undefined && selectedTeamMembers.includes(team.id))
       .map(team => team.name)
 
     setFormData({
@@ -392,19 +323,21 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
     })
   }
 
-  const handleAddMeeting = (newMeeting: Omit<Meeting, "id">) => {
+  const handleAddMeeting = (newMeeting: any) => {
     const teamBasedTypes = ["Team Sync", "Retro", "Planning", "Review", "Standup"]
-    const meeting: Meeting = {
+    const meeting: ExtendedMeeting = {
       ...newMeeting,
       id: Math.max(...meetings.map(m => m.id), 0) + 1,
-      personName: newMeeting.type === "1:1" ? newMeeting.attendees[0] : undefined,
+      time: "10:00", // Default time
+      status: "completed", // Default to completed since these are logged meetings
+      personName: newMeeting.personName || (newMeeting.type === "1:1" ? newMeeting.attendees[0] : undefined),
       teamName: teamBasedTypes.includes(newMeeting.type) ? newMeeting.attendees[0] : undefined,
     }
     setMeetings([...meetings, meeting])
     setSelectedMeeting(meeting)
   }
 
-  const handleUpdateMeeting = (updatedMeeting: Meeting) => {
+  const handleUpdateMeeting = (updatedMeeting: ExtendedMeeting) => {
     if (updatedMeeting.nextMeetingDate && updatedMeeting.date) {
       const meetingDate = new Date(updatedMeeting.date)
       const nextMeetingDate = new Date(updatedMeeting.nextMeetingDate)
@@ -525,10 +458,10 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                         availableTeamsList.map((team) => (
                           <div
                             key={team.id}
-                            onClick={() => toggleAvailableSelection(team.id)}
-                            onDoubleClick={() => handleDoubleClickAvailable(team.id)}
+                            onClick={() => toggleAvailableSelection(team.id!)}
+                            onDoubleClick={() => handleDoubleClickAvailable(team.id!)}
                             className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-[#292929] select-none dark:text-gray-200 ${
-                              selectedAvailable.includes(team.id) ? 'bg-primary-50 dark:bg-primary-900/30 border-l-2 border-primary-600 dark:border-primary-400' : ''
+                              selectedAvailable.includes(team.id!) ? 'bg-primary-50 dark:bg-primary-900/30 border-l-2 border-primary-600 dark:border-primary-400' : ''
                             }`}
                           >
                             {team.name}
@@ -574,10 +507,10 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                         assignedTeamsList.map((team) => (
                           <div
                             key={team.id}
-                            onClick={() => toggleTeamMemberSelection(team.id)}
-                            onDoubleClick={() => handleDoubleClickTeamMember(team.id)}
+                            onClick={() => toggleTeamMemberSelection(team.id!)}
+                            onDoubleClick={() => handleDoubleClickTeamMember(team.id!)}
                             className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-[#292929] select-none dark:text-gray-200 ${
-                              selectedTeamMembers.includes(team.id) ? 'bg-primary-50 dark:bg-primary-900/30 border-l-2 border-primary-600 dark:border-primary-400' : ''
+                              selectedTeamMembers.includes(team.id!) ? 'bg-primary-50 dark:bg-primary-900/30 border-l-2 border-primary-600 dark:border-primary-400' : ''
                             }`}
                           >
                             {team.name}
@@ -798,7 +731,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
         open={isAddMeetingDialogOpen}
         onOpenChange={setIsAddMeetingDialogOpen}
         onSave={handleAddMeeting}
-        availablePeople={mockPeople}
+        availablePeople={mockPeopleNames}
         availableTeams={mockTeamsForMeetings}
         defaultPerson={formData.name}
       />

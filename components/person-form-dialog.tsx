@@ -7,22 +7,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ChevronRight, ChevronLeft } from "lucide-react"
-
-interface Team {
-  id: number
-  name: string
-}
-
-interface Person {
-  id?: number
-  name: string
-  role: string
-  level: string
-  startDate: string
-  status: "active" | "inactive"
-  teams: string[]
-  notes?: string
-}
+import { getTodayDate } from "@/lib/utils"
+import { type Team, type Person } from "@/lib/mock-data"
 
 interface PersonFormDialogProps {
   open: boolean
@@ -30,14 +16,6 @@ interface PersonFormDialogProps {
   person?: Person | null
   onSave: (person: Person) => void
   availableTeams?: Team[]
-}
-
-const getTodayDate = () => {
-  const today = new Date()
-  const year = today.getFullYear()
-  const month = String(today.getMonth() + 1).padStart(2, '0')
-  const day = String(today.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
 }
 
 const emptyPerson: Person = {

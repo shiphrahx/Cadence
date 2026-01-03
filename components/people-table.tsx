@@ -5,17 +5,9 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { MoreHorizontal, Pencil, Trash2, UserX, UserCheck } from "lucide-react"
 import { useState, useEffect } from "react"
+import { type Person } from "@/lib/mock-data"
 
-export interface Person {
-  id?: number
-  name: string
-  role: string
-  level: string
-  startDate: string
-  status: "active" | "inactive"
-  teams: string[]
-  notes?: string
-}
+export type { Person }
 
 interface PeopleTableProps {
   people: Person[]

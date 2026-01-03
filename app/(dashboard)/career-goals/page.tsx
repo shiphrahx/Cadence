@@ -347,7 +347,7 @@ export default function CareerGoalsPage() {
             <Target className="h-5 w-5" />
             Starting Point & Destination
           </CardTitle>
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
             Reflect on your current role, responsibilities, and capabilities.
             Be honest about your strengths, areas for improvement, and what motivates you at work.
             This section helps you establish your baseline before setting goals.
@@ -681,10 +681,10 @@ export default function CareerGoalsPage() {
             <TrendingUp className="h-5 w-5" />
             Mid-term (4-8 months)
           </CardTitle>
-          <p className="text-sm text-gray-600 mt-2">
-            Focus on goals that show deeper growth and sustained progress. 
-            At this stage, you should be applying your foundational skills to more complex situations, 
-            building consistency, and demonstrating broader impact. These goals should reflect maturity, 
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+            Focus on goals that show deeper growth and sustained progress.
+            At this stage, you should be applying your foundational skills to more complex situations,
+            building consistency, and demonstrating broader impact. These goals should reflect maturity,
             expanding your scope, strengthening your expertise, and improving how you collaborate and influence others.
           </p>
         </CardHeader>
@@ -886,7 +886,7 @@ export default function CareerGoalsPage() {
             <Award className="h-5 w-5" />
             Long-term (8-12 months)
           </CardTitle>
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
             These goals should represent the next level of growth in your role. Focus on demonstrating autonomy, technical depth, and influence across teams. Long-term goals often involve shaping technical direction, mentoring others, and driving improvements that have a lasting impact. Think about how your work connects to broader business or customer outcomes, not just technical execution.
           </p>
         </CardHeader>
@@ -1088,7 +1088,7 @@ export default function CareerGoalsPage() {
             <Award className="h-5 w-5" />
             Extra Achievements & Learning
           </CardTitle>
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
             Use this section to record any additional accomplishments, learning experiences, or initiatives you completed outside your planned goals. These might include certifications, courses, conferences, books, talks, mentoring, or side projects — anything that meaningfully contributed to your professional growth.
           </p>
         </CardHeader>

@@ -9,23 +9,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { MarkdownTextarea } from "@/components/ui/markdown-textarea"
 import { Badge } from "@/components/ui/badge"
 import { ChevronRight, ChevronLeft } from "lucide-react"
-
-interface Person {
-  id: number
-  name: string
-}
-
-interface Team {
-  id?: number
-  name: string
-  description: string
-  status: "active" | "inactive"
-  memberCount: number
-  createdAt: string
-  memberIds?: number[]
-  notes?: string
-  documentationUrl?: string
-}
+import { getTodayDate } from "@/lib/utils"
+import { type Team, type Person } from "@/lib/mock-data"
 
 interface TeamFormDialogProps {
   open: boolean
@@ -33,14 +18,6 @@ interface TeamFormDialogProps {
   team?: Team | null
   onSave: (team: Team) => void
   availablePeople?: Person[]
-}
-
-const getTodayDate = () => {
-  const today = new Date()
-  const year = today.getFullYear()
-  const month = String(today.getMonth() + 1).padStart(2, '0')
-  const day = String(today.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
 }
 
 const emptyTeam: Team = {
@@ -81,11 +58,11 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
   const isEditing = !!team
 
   const availablePeopleList = availablePeople.filter(person =>
-    !formData.memberIds?.includes(person.id)
+    person.id !== undefined && !formData.memberIds?.includes(person.id)
   )
 
   const teamMembersList = availablePeople.filter(person =>
-    formData.memberIds?.includes(person.id)
+    person.id !== undefined && formData.memberIds?.includes(person.id)
   )
 
   const handleAddToTeam = () => {
@@ -190,10 +167,10 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
                         availablePeopleList.map((person) => (
                           <div
                             key={person.id}
-                            onClick={() => toggleAvailableSelection(person.id)}
-                            onDoubleClick={() => handleDoubleClickAvailable(person.id)}
+                            onClick={() => toggleAvailableSelection(person.id!)}
+                            onDoubleClick={() => handleDoubleClickAvailable(person.id!)}
                             className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 select-none ${
-                              selectedAvailable.includes(person.id) ? 'bg-primary-50 border-l-2 border-primary-600' : ''
+                              selectedAvailable.includes(person.id!) ? 'bg-primary-50 border-l-2 border-primary-600' : ''
                             }`}
                           >
                             {person.name}
@@ -239,10 +216,10 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
                         teamMembersList.map((person) => (
                           <div
                             key={person.id}
-                            onClick={() => toggleMemberSelection(person.id)}
-                            onDoubleClick={() => handleDoubleClickMember(person.id)}
+                            onClick={() => toggleMemberSelection(person.id!)}
+                            onDoubleClick={() => handleDoubleClickMember(person.id!)}
                             className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 select-none ${
-                              selectedMembers.includes(person.id) ? 'bg-primary-50 border-l-2 border-primary-600' : ''
+                              selectedMembers.includes(person.id!) ? 'bg-primary-50 border-l-2 border-primary-600' : ''
                             }`}
                           >
                             {person.name}
