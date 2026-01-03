@@ -4,71 +4,17 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Plus, Users as UsersIcon } from "lucide-react"
 import { TeamFormDialog } from "@/components/team-form-dialog"
 import { TeamsTable, Team } from "@/components/teams-table"
-
-interface Person {
-  id: number
-  name: string
-}
-
-// Mock data - simplified person list for team assignment
-const mockPeople: Person[] = [
-  { id: 1, name: "Sarah Miller" },
-  { id: 2, name: "John Doe" },
-  { id: 3, name: "Emily Wong" },
-  { id: 4, name: "Mike Chen" },
-  { id: 5, name: "Alex Johnson" },
-]
-
-// Mock data
-const initialTeams: Team[] = [
-  {
-    id: 1,
-    name: "Platform Engineering",
-    description: "Core platform and infrastructure team",
-    status: "active",
-    memberCount: 2,
-    createdAt: "2024-01-15",
-    memberIds: [1, 2],
-  },
-  {
-    id: 2,
-    name: "Product Development",
-    description: "Customer-facing product features",
-    status: "active",
-    memberCount: 2,
-    createdAt: "2024-02-01",
-    memberIds: [2, 3],
-  },
-  {
-    id: 3,
-    name: "Mobile Team",
-    description: "iOS and Android applications",
-    status: "inactive",
-    memberCount: 1,
-    createdAt: "2023-11-10",
-    memberIds: [5],
-  },
-]
+import { DeleteConfirmDialog } from "@/components/delete-confirm-dialog"
+import { mockTeams, mockPeople } from "@/lib/mock-data"
 
 export default function TeamsPage() {
-  const [teams, setTeams] = useState<Team[]>(initialTeams)
+  const [teams, setTeams] = useState<Team[]>(mockTeams)
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [editingTeam, setEditingTeam] = useState<Team | null>(null)
   const [deletingTeam, setDeletingTeam] = useState<Team | null>(null)
-  const [deleteConfirmation, setDeleteConfirmation] = useState("")
 
   const handleAddTeam = (newTeam: Team) => {
     const team: Team = {
@@ -93,10 +39,9 @@ export default function TeamsPage() {
   }
 
   const handleDeleteTeam = () => {
-    if (deletingTeam && deleteConfirmation === deletingTeam.name) {
+    if (deletingTeam) {
       setTeams(teams.filter(t => t.id !== deletingTeam.id))
       setDeletingTeam(null)
-      setDeleteConfirmation("")
     }
   }
 
@@ -112,7 +57,7 @@ export default function TeamsPage() {
         </div>
         <Button onClick={() => setIsAddDialogOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
-          Create Team
+          Add Team
         </Button>
       </div>
 
@@ -191,44 +136,14 @@ export default function TeamsPage() {
       />
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={!!deletingTeam} onOpenChange={(open) => !open && setDeletingTeam(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Team</DialogTitle>
-            <DialogDescription>
-              This action cannot be undone. This will permanently delete this team and remove all associated data.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="confirmDelete">
-                Type <strong>{deletingTeam?.name}</strong> to confirm
-              </Label>
-              <Input
-                id="confirmDelete"
-                value={deleteConfirmation}
-                onChange={(e) => setDeleteConfirmation(e.target.value)}
-                placeholder="Type team name to confirm"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => {
-              setDeletingTeam(null)
-              setDeleteConfirmation("")
-            }}>
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDeleteTeam}
-              disabled={deleteConfirmation !== deletingTeam?.name}
-            >
-              Delete Team
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DeleteConfirmDialog
+        open={!!deletingTeam}
+        onOpenChange={(open) => !open && setDeletingTeam(null)}
+        onConfirm={handleDeleteTeam}
+        itemName={deletingTeam?.name || ""}
+        itemType="Team"
+        description="This action cannot be undone. This will permanently delete this team and remove all associated data."
+      />
     </div>
   )
 }

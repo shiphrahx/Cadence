@@ -5,88 +5,18 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Plus, User } from "lucide-react"
 import { PersonFormDialog } from "@/components/person-form-dialog"
 import { PeopleTable, Person } from "@/components/people-table"
-
-interface Team {
-  id: number
-  name: string
-}
-
-// Mock data - simplified team list for person assignment
-const mockTeams: Team[] = [
-  { id: 1, name: "Platform Engineering" },
-  { id: 2, name: "Product Development" },
-  { id: 3, name: "Mobile Team" },
-]
-
-// Mock data
-const initialPeople: Person[] = [
-  {
-    id: 1,
-    name: "Sarah Miller",
-    role: "Senior Software Engineer",
-    level: "Senior",
-    startDate: "2023-01-15",
-    status: "active",
-    teams: ["Platform Engineering"],
-  },
-  {
-    id: 2,
-    name: "John Doe",
-    role: "Software Engineer",
-    level: "Mid",
-    startDate: "2023-06-01",
-    status: "active",
-    teams: ["Platform Engineering", "Product Development"],
-  },
-  {
-    id: 3,
-    name: "Emily Wong",
-    role: "Tech Lead",
-    level: "Staff",
-    startDate: "2022-11-10",
-    status: "active",
-    teams: ["Product Development"],
-  },
-  {
-    id: 4,
-    name: "Mike Chen",
-    role: "Software Engineer",
-    level: "Junior",
-    startDate: "2024-01-08",
-    status: "active",
-    teams: ["Product Development"],
-  },
-  {
-    id: 5,
-    name: "Alex Johnson",
-    role: "iOS Developer",
-    level: "Mid",
-    startDate: "2023-03-20",
-    status: "inactive",
-    teams: ["Mobile Team"],
-  },
-]
+import { DeleteConfirmDialog } from "@/components/delete-confirm-dialog"
+import { mockPeople, mockTeams } from "@/lib/mock-data"
 
 export default function PeoplePage() {
   const router = useRouter()
-  const [people, setPeople] = useState<Person[]>(initialPeople)
+  const [people, setPeople] = useState<Person[]>(mockPeople)
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [editingPerson, setEditingPerson] = useState<Person | null>(null)
   const [deletingPerson, setDeletingPerson] = useState<Person | null>(null)
-  const [deleteConfirmation, setDeleteConfirmation] = useState("")
 
   // Calculate stats
   const getLevelCounts = () => {
@@ -131,14 +61,12 @@ export default function PeoplePage() {
     setPeople(people.map(p =>
       p.id === person.id ? { ...p, status: p.status === "active" ? "inactive" : "active" } : p
     ))
-    setSelectedPersonMenu(null)
   }
 
   const handleDeletePerson = () => {
-    if (deletingPerson && deleteConfirmation === deletingPerson.name) {
+    if (deletingPerson) {
       setPeople(people.filter(p => p.id !== deletingPerson.id))
       setDeletingPerson(null)
-      setDeleteConfirmation("")
     }
   }
 
@@ -233,44 +161,14 @@ export default function PeoplePage() {
       />
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={!!deletingPerson} onOpenChange={(open) => !open && setDeletingPerson(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Person</DialogTitle>
-            <DialogDescription>
-              This action cannot be undone. This will permanently delete this person and remove all associated data.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="confirmDelete">
-                Type <strong>{deletingPerson?.name}</strong> to confirm
-              </Label>
-              <Input
-                id="confirmDelete"
-                value={deleteConfirmation}
-                onChange={(e) => setDeleteConfirmation(e.target.value)}
-                placeholder="Type person name to confirm"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => {
-              setDeletingPerson(null)
-              setDeleteConfirmation("")
-            }}>
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDeletePerson}
-              disabled={deleteConfirmation !== deletingPerson?.name}
-            >
-              Delete Person
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DeleteConfirmDialog
+        open={!!deletingPerson}
+        onOpenChange={(open) => !open && setDeletingPerson(null)}
+        onConfirm={handleDeletePerson}
+        itemName={deletingPerson?.name || ""}
+        itemType="Person"
+        description="This action cannot be undone. This will permanently delete this person and remove all associated data."
+      />
     </div>
   )
 }

@@ -82,7 +82,14 @@
       "Bash(cmd /c \"tasklist /FI \"\"PID eq 7088\"\" /V\")",
       "Bash(cmd /c \"del .\\\\nul\")",
       "Bash(cmd /c \"del \\\\\\\\?\\\\c:\\\\Users\\\\Shiph\\\\Documents\\\\Code\\\\Cadence\\\\nul\")",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(cmd /c \"del /F .next\\\\dev\\\\lock 2>nul\")",
+      "Bash(cmd /c \"timeout /t 2 /nobreak >nul && netstat -ano | findstr :3000\")",
+      "Bash(cmd /c \"taskkill /F /IM node.exe /T && timeout /t 2 /nobreak >nul && rmdir /s /q .next && npm run dev\")",
+      "Bash(cmd /c \"taskkill /F /IM node.exe /T 2>nul & exit 0\")",
+      "Bash(cmd /c \"if exist .next\\\\dev rmdir /s /q .next\\\\dev\")",
+      "Bash(npm start)",
+      "Bash(cmd /c \"netstat -ano | findstr LISTENING | findstr 3000\")"
     ]
   }
 }
