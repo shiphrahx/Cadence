@@ -180,9 +180,9 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
       </div>
 
       {showFilters && (
-        <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border">
+        <div className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-[#262626] rounded-lg border dark:border-[#383838]">
           <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700">Status:</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-100">Status:</label>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as TaskStatus | "all")}
@@ -197,7 +197,7 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
             </select>
           </div>
           <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700">Priority:</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-100">Priority:</label>
             <select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value as TaskPriority | "all")}
@@ -212,7 +212,7 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
             </select>
           </div>
           <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700">Category:</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-100">Category:</label>
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value as TaskCategory | "all")}
@@ -232,8 +232,8 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
       <div
         ref={setNodeRef}
         className={cn(
-          "border rounded-lg bg-white transition-colors max-md:overflow-x-auto",
-          isOver && "ring-2 ring-primary-500 bg-primary-50"
+          "border dark:border-[#383838] rounded-lg bg-white dark:bg-[#262626] transition-colors max-md:overflow-x-auto",
+          isOver && "ring-2 ring-primary-500 bg-primary-50 dark:bg-primary-900/30"
         )}
       >
         <table className="w-full border-collapse">
@@ -247,54 +247,54 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
             <col className="w-12 max-md:w-10" />
           </colgroup>
           <thead>
-            <tr className="border-b">
-              <th className="p-3 bg-gray-50"></th>
-              <th className="text-left p-3 bg-gray-50 font-semibold text-sm">
+            <tr className="border-b dark:border-[#383838]">
+              <th className="p-3 bg-gray-50 dark:bg-[#262626]"></th>
+              <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100">
                 <button
                   onClick={() => handleSort("title")}
-                  className="flex items-center gap-1 hover:text-primary-600"
+                  className="flex items-center gap-1 hover:text-primary-600 dark:hover:text-primary-400"
                 >
                   Name
                   <ArrowUpDown className="h-3 w-3" />
                 </button>
               </th>
-              <th className="text-left p-3 bg-gray-50 font-semibold text-sm">
+              <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100">
                 <button
                   onClick={() => handleSort("status")}
-                  className="flex items-center gap-1 hover:text-primary-600"
+                  className="flex items-center gap-1 hover:text-primary-600 dark:hover:text-primary-400"
                 >
                   Status
                   <ArrowUpDown className="h-3 w-3" />
                 </button>
               </th>
-              <th className="text-left p-3 bg-gray-50 font-semibold text-sm">
+              <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100">
                 <button
                   onClick={() => handleSort("dueDate")}
-                  className="flex items-center gap-1 hover:text-primary-600"
+                  className="flex items-center gap-1 hover:text-primary-600 dark:hover:text-primary-400"
                 >
                   Due Date
                   <ArrowUpDown className="h-3 w-3" />
                 </button>
               </th>
-              <th className="text-left p-3 bg-gray-50 font-semibold text-sm">
+              <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100">
                 <button
                   onClick={() => handleSort("priority")}
-                  className="flex items-center gap-1 hover:text-primary-600"
+                  className="flex items-center gap-1 hover:text-primary-600 dark:hover:text-primary-400"
                 >
                   Priority
                   <ArrowUpDown className="h-3 w-3" />
                 </button>
               </th>
-              <th className="text-left p-3 bg-gray-50 font-semibold text-sm">
+              <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100">
                 <button
                   onClick={() => handleSort("category")}
-                  className="flex items-center gap-1 hover:text-primary-600"
+                  className="flex items-center gap-1 hover:text-primary-600 dark:hover:text-primary-400"
                 >
                   Category
                   <ArrowUpDown className="h-3 w-3" />
                 </button>
               </th>
-              <th className="p-3 bg-gray-50"></th>
+              <th className="p-3 bg-gray-50 dark:bg-[#262626]"></th>
             </tr>
           </thead>
           <tbody>
@@ -314,7 +314,7 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
                     </div>
                   </td>
                   <td
-                    className="p-3 font-medium text-sm overflow-hidden"
+                    className="p-3 font-medium text-sm dark:text-gray-100 overflow-hidden"
                     title={task.title}
                   >
                     <div className="line-clamp-2 break-all max-md:break-words">{task.title}</div>
@@ -330,7 +330,7 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
                       }))}
                     />
                   </td>
-                  <td className="p-3 text-sm text-gray-700">{formatDate(task.dueDate)}</td>
+                  <td className="p-3 text-sm text-gray-700 dark:text-gray-300">{formatDate(task.dueDate)}</td>
                   <td className="p-3" onClick={(e) => e.stopPropagation()}>
                     <BadgeSelect
                       value={task.priority}
@@ -377,7 +377,7 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
               <td colSpan={7} className="p-0">
                 <button
                   onClick={onQuickAdd}
-                  className="w-full text-left px-3 py-3 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2 border-t"
+                  className="w-full text-left px-3 py-3 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#292929] transition-colors flex items-center gap-2 border-t dark:border-[#383838]"
                 >
                   <Plus className="h-4 w-4" />
                   New task
