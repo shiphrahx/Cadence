@@ -152,10 +152,6 @@ export default function PeoplePage() {
             Manage your team members and their details
           </p>
         </div>
-        <Button onClick={() => setIsAddDialogOpen(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Person
-        </Button>
       </div>
 
       {/* Stats */}

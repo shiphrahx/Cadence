@@ -203,7 +203,7 @@ export function DataTable<T extends { id?: number | string }>({
                 <tr
                   key={item.id}
                   onClick={() => onRowClick?.(item)}
-                  className={`border-b dark:border-[#383838] hover:bg-gray-50 dark:hover:bg-[#292929] transition-colors ${onRowClick ? "cursor-pointer" : ""}`}
+                  className="border-b dark:border-[#383838] hover:bg-gray-50 dark:hover:bg-[#292929] transition-colors cursor-pointer"
                 >
                   {columns.map((column) => (
                     <td
