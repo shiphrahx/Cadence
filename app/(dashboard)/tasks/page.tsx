@@ -408,7 +408,7 @@ export default function TasksPage() {
               New task
             </Button>
           </div>
-          <div className="bg-gray-50/30 dark:bg-[#212121] rounded-lg p-4 max-md:p-2">
+          <div className="rounded-lg p-4 max-md:p-2">
             {/* Desktop: grid layout unchanged, Mobile: horizontal scroll */}
             <div className="grid grid-cols-4 gap-6 max-md:grid-cols-none max-md:flex max-md:flex-nowrap max-md:overflow-x-auto max-md:gap-3 max-md:-mx-2 max-md:px-2">
               {TASK_STATUSES.map((status) => (

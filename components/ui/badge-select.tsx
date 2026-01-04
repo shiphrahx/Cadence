@@ -90,7 +90,7 @@ export function BadgeSelect({
       {isOpen && typeof document !== 'undefined' && createPortal(
         <div
           ref={dropdownRef}
-          className="fixed z-[9999] min-w-[120px] rounded-md border border-gray-200 bg-white shadow-lg"
+          className="fixed z-[9999] min-w-[120px] rounded-md border border-gray-200 dark:border-[#383838] bg-white dark:bg-[#262626] shadow-lg"
           style={{
             top: `${dropdownPosition.top}px`,
             left: `${dropdownPosition.left}px`,
@@ -108,7 +108,7 @@ export function BadgeSelect({
                 }}
                 className={cn(
                   "relative flex w-full items-center rounded-sm px-2 py-1.5 text-xs outline-none cursor-pointer",
-                  "hover:bg-gray-100",
+                  "hover:bg-gray-100 dark:hover:bg-[#292929]",
                   "transition-colors"
                 )}
               >

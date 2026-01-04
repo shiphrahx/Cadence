@@ -61,19 +61,6 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
     return undefined
   }
 
-  const getPriorityBorderColor = (priority: Task["priority"]) => {
-    switch (priority) {
-      case "Very High":
-        return "#f40101"
-      case "High":
-        return "#fb5489"
-      case "Medium":
-        return "#f7f271"
-      case "Low":
-        return "#5ffb54"
-    }
-  }
-
   const getStatusChipColor = (status: Task["status"]) => {
     switch (status) {
       case "Not started":
@@ -128,13 +115,10 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
   return (
     <div
       className={cn(
-        "group relative bg-white dark:bg-[#292929] border rounded-[10px] p-3 cursor-grab transition-all duration-200",
-        "hover:shadow-md",
-        isDragging && "shadow-lg scale-[1.02] opacity-90 cursor-grabbing"
+        "group relative bg-white dark:bg-[#292929] border border-gray-100 dark:border-[#383838] rounded-[10px] p-3 cursor-grab transition-all duration-200",
+        "hover:shadow-md hover:border-gray-200 dark:hover:border-[#4a4a4a]",
+        isDragging && "shadow-lg scale-[1.02] opacity-90 border-gray-300 dark:border-gray-600 cursor-grabbing"
       )}
-      style={{
-        borderColor: getPriorityBorderColor(task.priority)
-      }}
     >
       {/* Kebab Menu - Top Right, visible on hover */}
       <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-20" ref={menuRef}>
