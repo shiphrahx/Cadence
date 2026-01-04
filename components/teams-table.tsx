@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { MoreHorizontal, Pencil, Trash2, UserX, UserCheck } from "lucide-react"
 import { useState, useEffect } from "react"
-import { type Team } from "@/lib/mock-data"
+import { type Team } from "@/lib/services/teams"
 
 export type { Team }
 
@@ -24,7 +24,7 @@ export function TeamsTable({
   onToggleStatus,
   onQuickAdd,
 }: TeamsTableProps) {
-  const [selectedTeamMenu, setSelectedTeamMenu] = useState<number | null>(null)
+  const [selectedTeamMenu, setSelectedTeamMenu] = useState<string | null>(null)
 
   // Close popup when clicking outside
   useEffect(() => {
@@ -109,16 +109,14 @@ export function TeamsTable({
             size="icon"
             onClick={(e) => {
               e.stopPropagation()
-              if (team.id !== undefined) {
-                setSelectedTeamMenu(
-                  selectedTeamMenu === team.id ? null : team.id
-                )
-              }
+              setSelectedTeamMenu(
+                selectedTeamMenu === team.id ? null : team.id
+              )
             }}
           >
             <MoreHorizontal className="h-4 w-4" />
           </Button>
-          {team.id !== undefined && selectedTeamMenu === team.id && (
+          {selectedTeamMenu === team.id && (
             <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-[#262626] ring-1 ring-black ring-opacity-5 dark:ring-gray-700 z-50">
               <div className="py-1">
                 <button

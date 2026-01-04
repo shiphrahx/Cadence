@@ -199,7 +199,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
                             onClick={() => toggleAvailableSelection(team.name)}
                             onDoubleClick={() => handleDoubleClickAvailable(team.name)}
                             className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 select-none ${
-                              selectedAvailable.includes(team.name) ? 'bg-primary-50 border-l-2 border-primary-600' : ''
+                              selectedAvailable.includes(team.name) ? 'bg-primary-50 dark:bg-primary-dark-900/30 border-l-2 border-primary-600' : ''
                             }`}
                           >
                             {team.name}
@@ -248,7 +248,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
                             onClick={() => toggleTeamSelection(team.name)}
                             onDoubleClick={() => handleDoubleClickTeam(team.name)}
                             className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 select-none ${
-                              selectedTeams.includes(team.name) ? 'bg-primary-50 border-l-2 border-primary-600' : ''
+                              selectedTeams.includes(team.name) ? 'bg-primary-50 dark:bg-primary-dark-900/30 border-l-2 border-primary-600' : ''
                             }`}
                           >
                             {team.name}

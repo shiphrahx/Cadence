@@ -233,7 +233,7 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
         ref={setNodeRef}
         className={cn(
           "border dark:border-[#383838] rounded-lg bg-white dark:bg-[#262626] transition-colors max-md:overflow-x-auto",
-          isOver && "ring-2 ring-primary-500 bg-primary-50 dark:bg-primary-900/30"
+          isOver && "ring-2 ring-primary-500 dark:ring-primary-dark-500 bg-primary-50 dark:bg-primary-dark-900/30 dark:bg-primary-dark-900/30"
         )}
       >
         <table className="w-full border-collapse">
@@ -252,7 +252,7 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
               <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100">
                 <button
                   onClick={() => handleSort("title")}
-                  className="flex items-center gap-1 hover:text-primary-600 dark:hover:text-primary-400"
+                  className="flex items-center gap-1 hover:text-primary-600 dark:text-primary-dark-400 dark:hover:text-primary-dark-400 dark:hover:text-primary-400"
                 >
                   Name
                   <ArrowUpDown className="h-3 w-3" />
@@ -261,7 +261,7 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
               <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100">
                 <button
                   onClick={() => handleSort("status")}
-                  className="flex items-center gap-1 hover:text-primary-600 dark:hover:text-primary-400"
+                  className="flex items-center gap-1 hover:text-primary-600 dark:text-primary-dark-400 dark:hover:text-primary-dark-400 dark:hover:text-primary-400"
                 >
                   Status
                   <ArrowUpDown className="h-3 w-3" />
@@ -270,7 +270,7 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
               <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100">
                 <button
                   onClick={() => handleSort("dueDate")}
-                  className="flex items-center gap-1 hover:text-primary-600 dark:hover:text-primary-400"
+                  className="flex items-center gap-1 hover:text-primary-600 dark:text-primary-dark-400 dark:hover:text-primary-dark-400 dark:hover:text-primary-400"
                 >
                   Due Date
                   <ArrowUpDown className="h-3 w-3" />
@@ -279,7 +279,7 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
               <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100">
                 <button
                   onClick={() => handleSort("priority")}
-                  className="flex items-center gap-1 hover:text-primary-600 dark:hover:text-primary-400"
+                  className="flex items-center gap-1 hover:text-primary-600 dark:text-primary-dark-400 dark:hover:text-primary-dark-400 dark:hover:text-primary-400"
                 >
                   Priority
                   <ArrowUpDown className="h-3 w-3" />
@@ -288,7 +288,7 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
               <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100">
                 <button
                   onClick={() => handleSort("category")}
-                  className="flex items-center gap-1 hover:text-primary-600 dark:hover:text-primary-400"
+                  className="flex items-center gap-1 hover:text-primary-600 dark:text-primary-dark-400 dark:hover:text-primary-dark-400 dark:hover:text-primary-400"
                 >
                   Category
                   <ArrowUpDown className="h-3 w-3" />

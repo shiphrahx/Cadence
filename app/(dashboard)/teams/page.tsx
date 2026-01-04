@@ -1,47 +1,78 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Plus, Users as UsersIcon } from "lucide-react"
 import { TeamFormDialog } from "@/components/team-form-dialog"
-import { TeamsTable, Team } from "@/components/teams-table"
+import { TeamsTable } from "@/components/teams-table"
 import { DeleteConfirmDialog } from "@/components/delete-confirm-dialog"
-import { mockTeams, mockPeople } from "@/lib/mock-data"
+import { mockPeople } from "@/lib/mock-data"
+import { getTeams, createTeam, updateTeam, deleteTeam as deleteTeamService, toggleTeamStatus, type Team } from "@/lib/services/teams"
 
 export default function TeamsPage() {
-  const [teams, setTeams] = useState<Team[]>(mockTeams)
+  const [teams, setTeams] = useState<Team[]>([])
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [editingTeam, setEditingTeam] = useState<Team | null>(null)
   const [deletingTeam, setDeletingTeam] = useState<Team | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
-  const handleAddTeam = (newTeam: Team) => {
-    const team: Team = {
-      ...newTeam,
-      id: Math.max(...teams.map(t => t.id || 0), 0) + 1,
-      status: "active",
+  // Load teams from Supabase on mount
+  useEffect(() => {
+    loadTeams()
+  }, [])
+
+  const loadTeams = async () => {
+    try {
+      setIsLoading(true)
+      const data = await getTeams()
+      setTeams(data)
+    } catch (error) {
+      console.error('Failed to load teams:', error)
+    } finally {
+      setIsLoading(false)
     }
-    setTeams([...teams, team])
   }
 
-  const handleEditTeam = (updatedTeam: Team) => {
-    if (updatedTeam.id) {
-      setTeams(teams.map(t => t.id === updatedTeam.id ? { ...updatedTeam, id: updatedTeam.id } as Team : t))
+  const handleAddTeam = async (newTeam: Team) => {
+    try {
+      const team = await createTeam(newTeam)
+      setTeams([...teams, team])
+      setIsAddDialogOpen(false)
+    } catch (error) {
+      console.error('Failed to create team:', error)
     }
-    setEditingTeam(null)
   }
 
-  const handleToggleStatus = (team: Team) => {
-    setTeams(teams.map(t =>
-      t.id === team.id ? { ...t, status: t.status === "active" ? "inactive" : "active" } : t
-    ))
+  const handleEditTeam = async (updatedTeam: Team) => {
+    try {
+      const team = await updateTeam(updatedTeam.id, updatedTeam)
+      setTeams(teams.map(t => t.id === team.id ? team : t))
+      setEditingTeam(null)
+    } catch (error) {
+      console.error('Failed to update team:', error)
+    }
   }
 
-  const handleDeleteTeam = () => {
+  const handleToggleStatus = async (team: Team) => {
+    try {
+      const updatedTeam = await toggleTeamStatus(team.id, team.status)
+      setTeams(teams.map(t => t.id === updatedTeam.id ? updatedTeam : t))
+    } catch (error) {
+      console.error('Failed to toggle team status:', error)
+    }
+  }
+
+  const handleDeleteTeam = async () => {
     if (deletingTeam) {
-      setTeams(teams.filter(t => t.id !== deletingTeam.id))
-      setDeletingTeam(null)
+      try {
+        await deleteTeamService(deletingTeam.id)
+        setTeams(teams.filter(t => t.id !== deletingTeam.id))
+        setDeletingTeam(null)
+      } catch (error) {
+        console.error('Failed to delete team:', error)
+      }
     }
   }
 

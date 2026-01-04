@@ -378,7 +378,7 @@ export default function MeetingsPage() {
                               onClick={() => setSelectedMeeting(meeting)}
                               className={`block w-full text-left px-2 py-1.5 text-xs rounded ${
                                 selectedMeeting?.id === meeting.id
-                                  ? "bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 font-medium"
+                                  ? "bg-primary-50 dark:bg-primary-dark-900/30 dark:bg-primary-dark-900/30 text-primary-700 dark:text-primary-dark-400 dark:text-primary-dark-400 font-medium"
                                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#292929]"
                               }`}
                             >
@@ -414,7 +414,7 @@ export default function MeetingsPage() {
                               onClick={() => setSelectedMeeting(meeting)}
                               className={`block w-full text-left px-2 py-1.5 text-xs rounded ${
                                 selectedMeeting?.id === meeting.id
-                                  ? "bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 font-medium"
+                                  ? "bg-primary-50 dark:bg-primary-dark-900/30 dark:bg-primary-dark-900/30 text-primary-700 dark:text-primary-dark-400 dark:text-primary-dark-400 font-medium"
                                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#292929]"
                               }`}
                             >
@@ -433,7 +433,7 @@ export default function MeetingsPage() {
                       onClick={() => setSelectedMeeting(meeting)}
                       className={`block w-full text-left px-2 py-1.5 text-xs rounded ml-4 ${
                         selectedMeeting?.id === meeting.id
-                          ? "bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 font-medium"
+                          ? "bg-primary-50 dark:bg-primary-dark-900/30 dark:bg-primary-dark-900/30 text-primary-700 dark:text-primary-dark-400 dark:text-primary-dark-400 font-medium"
                           : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#292929]"
                       }`}
                     >
@@ -449,7 +449,7 @@ export default function MeetingsPage() {
 
       {/* Resizable Divider */}
       <div
-        className={`w-1 bg-gray-200 hover:bg-primary-400 cursor-col-resize flex-shrink-0 ${
+        className={`w-1 bg-gray-200 hover:bg-primary-400 dark:hover:bg-primary-dark-400 cursor-col-resize flex-shrink-0 ${
           isResizing ? 'bg-primary-500' : ''
         }`}
         onMouseDown={handleMouseDown}

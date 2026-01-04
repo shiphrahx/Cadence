@@ -560,7 +560,7 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                         onClick={() => setSelectedTemplate(template)}
                         className={`text-xs border ${
                           selectedTemplate === template
-                            ? "bg-primary-100 text-primary-700 border-primary-300"
+                            ? "bg-primary-100 dark:bg-primary-dark-900 text-primary-700 dark:text-primary-dark-400 border-primary-300"
                             : "bg-white text-gray-700 hover:bg-gray-50"
                         }`}
                       >

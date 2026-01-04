@@ -39,7 +39,7 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
         Link.configure({
           openOnClick: false,
           HTMLAttributes: {
-            class: "text-primary-600 hover:underline cursor-pointer",
+            class: "text-primary-600 dark:text-primary-dark-400 hover:underline cursor-pointer",
           },
         }),
         Placeholder.configure({
@@ -92,10 +92,10 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
         title={title}
         className={cn(
           "p-2 rounded-md transition-all duration-200 cursor-pointer",
-          "hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-700 dark:hover:text-primary-400",
+          "hover:bg-primary-50 dark:bg-primary-dark-900/30 dark:hover:bg-primary-dark-900/30 dark:hover:bg-primary-900/30 hover:text-primary-700 dark:text-primary-dark-400 dark:hover:text-primary-dark-400 dark:hover:text-primary-400",
           "focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800",
           isActive
-            ? "bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 shadow-sm"
+            ? "bg-primary-100 dark:bg-primary-dark-900 dark:bg-primary-dark-900/30 text-primary-700 dark:text-primary-dark-400 dark:text-primary-dark-400 shadow-sm"
             : "text-gray-600 dark:text-gray-300 hover:shadow-sm"
         )}
       >

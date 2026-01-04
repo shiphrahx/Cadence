@@ -185,7 +185,7 @@ export function DataTable<T extends { id?: number | string }>({
                   {column.sortable !== false ? (
                     <button
                       onClick={() => handleSort(column.id)}
-                      className="flex items-center gap-1 hover:text-primary-600 dark:hover:text-primary-400"
+                      className="flex items-center gap-1 hover:text-primary-600 dark:text-primary-dark-400 dark:hover:text-primary-dark-400 dark:hover:text-primary-400"
                     >
                       {column.header}
                       <ArrowUpDown className="h-3 w-3" />
