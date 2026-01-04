@@ -8,7 +8,8 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ChevronRight, ChevronLeft } from "lucide-react"
 import { getTodayDate } from "@/lib/utils"
-import { type Team, type Person } from "@/lib/mock-data"
+import { type Person } from "@/lib/services/people"
+import { type Team } from "@/lib/mock-data"
 
 interface PersonFormDialogProps {
   open: boolean
@@ -18,7 +19,7 @@ interface PersonFormDialogProps {
   availableTeams?: Team[]
 }
 
-const emptyPerson: Person = {
+const emptyPerson: Omit<Person, 'id' | 'createdAt'> & { id?: string; createdAt?: string } = {
   name: "",
   role: "",
   level: "",
@@ -29,7 +30,7 @@ const emptyPerson: Person = {
 }
 
 export function PersonFormDialog({ open, onOpenChange, person, onSave, availableTeams = [] }: PersonFormDialogProps) {
-  const [formData, setFormData] = useState<Person>(person || emptyPerson)
+  const [formData, setFormData] = useState<Person | typeof emptyPerson>(person || emptyPerson)
   const [selectedAvailable, setSelectedAvailable] = useState<string[]>([])
   const [selectedTeams, setSelectedTeams] = useState<string[]>([])
 
@@ -44,7 +45,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSave(formData)
+    onSave(formData as Person)
     onOpenChange(false)
   }
 
