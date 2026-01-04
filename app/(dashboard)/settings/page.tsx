@@ -119,8 +119,8 @@ export default function SettingsPage() {
                     className="h-20 w-20 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="h-20 w-20 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
-                    <span className="text-2xl font-semibold text-primary-700 dark:text-primary-400">
+                  <div className="h-20 w-20 rounded-full bg-primary-100 dark:bg-primary-dark-900 dark:bg-primary-dark-900 flex items-center justify-center">
+                    <span className="text-2xl font-semibold text-primary-700 dark:text-primary-dark-400 dark:text-primary-dark-400">
                       {getInitials(preferredName)}
                     </span>
                   </div>

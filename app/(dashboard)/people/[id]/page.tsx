@@ -461,7 +461,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                             onClick={() => toggleAvailableSelection(team.id!)}
                             onDoubleClick={() => handleDoubleClickAvailable(team.id!)}
                             className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-[#292929] select-none dark:text-gray-200 ${
-                              selectedAvailable.includes(team.id!) ? 'bg-primary-50 dark:bg-primary-900/30 border-l-2 border-primary-600 dark:border-primary-400' : ''
+                              selectedAvailable.includes(team.id!) ? 'bg-primary-50 dark:bg-primary-dark-900/30 dark:bg-primary-dark-900/30 border-l-2 border-primary-600 dark:border-primary-dark-600 dark:border-primary-dark-400' : ''
                             }`}
                           >
                             {team.name}
@@ -510,7 +510,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                             onClick={() => toggleTeamMemberSelection(team.id!)}
                             onDoubleClick={() => handleDoubleClickTeamMember(team.id!)}
                             className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-[#292929] select-none dark:text-gray-200 ${
-                              selectedTeamMembers.includes(team.id!) ? 'bg-primary-50 dark:bg-primary-900/30 border-l-2 border-primary-600 dark:border-primary-400' : ''
+                              selectedTeamMembers.includes(team.id!) ? 'bg-primary-50 dark:bg-primary-dark-900/30 dark:bg-primary-dark-900/30 border-l-2 border-primary-600 dark:border-primary-dark-600 dark:border-primary-dark-400' : ''
                             }`}
                           >
                             {team.name}
@@ -611,7 +611,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                               onClick={() => setSelectedMeeting(meeting)}
                               className={`block w-full text-left px-2 py-1.5 text-xs rounded ${
                                 selectedMeeting?.id === meeting.id
-                                  ? "bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 font-medium"
+                                  ? "bg-primary-50 dark:bg-primary-dark-900/30 dark:bg-primary-dark-900/30 text-primary-700 dark:text-primary-dark-400 dark:text-primary-dark-400 font-medium"
                                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#292929]"
                               }`}
                             >
@@ -628,7 +628,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
 
             {/* Resizable Divider */}
             <div
-              className={`w-1 bg-gray-200 dark:bg-[#383838] hover:bg-primary-400 cursor-col-resize flex-shrink-0 ${
+              className={`w-1 bg-gray-200 dark:bg-[#383838] hover:bg-primary-400 dark:hover:bg-primary-dark-400 cursor-col-resize flex-shrink-0 ${
                 isResizing ? 'bg-primary-500' : ''
               }`}
               onMouseDown={handleMouseDown}

@@ -91,7 +91,7 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
               className={cn(
                 "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-primary-50 text-primary-700 dark:bg-[#292929] dark:text-primary-400"
+                  ? "bg-primary-50 dark:bg-[#292929] text-primary-700 dark:text-[#84ffc4]"
                   : "text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-[#292929] dark:hover:text-gray-100",
                 !isOpen && "justify-center"
               )}
@@ -115,7 +115,7 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
               className={cn(
                 "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-primary-50 text-primary-700 dark:bg-[#292929] dark:text-primary-400"
+                  ? "bg-primary-50 dark:bg-[#292929] text-primary-700 dark:text-[#84ffc4]"
                   : "text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-[#292929] dark:hover:text-gray-100",
                 !isOpen && "justify-center"
               )}
@@ -136,7 +136,7 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
         )}
         title={!isOpen ? "User Profile" : undefined}
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-400 flex-shrink-0">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 dark:bg-primary-dark-900 text-primary-700 dark:text-[#84ffc4] flex-shrink-0">
             <span className="text-sm font-semibold">U</span>
           </div>
           {isOpen && (

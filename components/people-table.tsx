@@ -73,7 +73,7 @@ export function PeopleTable({
       accessorKey: "name",
       cell: (person) => (
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 dark:bg-primary-dark-900 dark:bg-primary-dark-900/30 text-primary-700 dark:text-primary-dark-400 dark:text-primary-dark-400">
             <span className="text-sm font-semibold">{getInitials(person.name)}</span>
           </div>
           <span className="font-medium dark:text-gray-100">{person.name}</span>

@@ -119,7 +119,7 @@ export default function DashboardPage() {
           <CardContent>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-400">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 dark:bg-primary-dark-900 text-primary-700 dark:text-primary-dark-400 dark:bg-primary-dark-900 dark:text-primary-dark-400">
                   <span className="text-sm font-semibold">SM</span>
                 </div>
                 <div className="flex-1">
@@ -128,7 +128,7 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-400">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 dark:bg-primary-dark-900 text-primary-700 dark:text-primary-dark-400 dark:bg-primary-dark-900 dark:text-primary-dark-400">
                   <span className="text-sm font-semibold">JD</span>
                 </div>
                 <div className="flex-1">
@@ -137,7 +137,7 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-400">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 dark:bg-primary-dark-900 text-primary-700 dark:text-primary-dark-400 dark:bg-primary-dark-900 dark:text-primary-dark-400">
                   <span className="text-sm font-semibold">EW</span>
                 </div>
                 <div className="flex-1">
