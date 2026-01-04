@@ -90,7 +90,10 @@
       "Bash(cmd /c \"if exist .next\\\\dev rmdir /s /q .next\\\\dev\")",
       "Bash(npm start)",
       "Bash(cmd /c \"netstat -ano | findstr LISTENING | findstr 3000\")",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(npm run test:run:*)",
+      "Bash(npx vitest:*)",
+      "Bash(node:*)"
     ]
   }
 }
