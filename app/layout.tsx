@@ -35,9 +35,13 @@ export default function RootLayout({
                   var theme = localStorage.getItem('theme');
                   var root = document.documentElement;
 
-                  // Only add dark class if explicitly set to dark
                   if (theme === 'dark') {
                     root.classList.add('dark');
+                  } else if (theme === 'system') {
+                    // Check system preference
+                    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                      root.classList.add('dark');
+                    }
                   }
                 } catch (e) {}
               })();
