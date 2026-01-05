@@ -93,21 +93,21 @@ export async function createTask(task: Omit<Task, 'id'>): Promise<Task> {
       status: mapUiStatusToDb(task.status),
       source: 'manual',
       owning_user_id: user.id,
-    })
+    } as any)
     .select()
     .single()
 
   if (error) throw error
 
   return {
-    id: data.id,
-    title: data.title,
-    description: data.description || undefined,
-    dueDate: data.due_date,
-    priority: mapDbPriorityToUi(data.priority),
+    id: (data as any).id,
+    title: (data as any).title,
+    description: (data as any).description || undefined,
+    dueDate: (data as any).due_date,
+    priority: mapDbPriorityToUi((data as any).priority),
     category: 'Task',
-    status: mapDbStatusToUi(data.status),
-    list: data.due_date ? 'week' : 'backlog',
+    status: mapDbStatusToUi((data as any).status),
+    list: (data as any).due_date ? 'week' : 'backlog',
   }
 }
 
@@ -132,8 +132,8 @@ export async function updateTask(id: string, updates: Partial<Task>): Promise<Ta
     }
   }
 
-  const { data, error } = await supabase
-    .from('tasks')
+  const { data, error } = await (supabase
+    .from('tasks') as any)
     .update(dbUpdates)
     .eq('id', id)
     .select()
@@ -142,14 +142,14 @@ export async function updateTask(id: string, updates: Partial<Task>): Promise<Ta
   if (error) throw error
 
   return {
-    id: data.id,
-    title: data.title,
-    description: data.description || undefined,
-    dueDate: data.due_date,
-    priority: mapDbPriorityToUi(data.priority),
+    id: (data as any).id,
+    title: (data as any).title,
+    description: (data as any).description || undefined,
+    dueDate: (data as any).due_date,
+    priority: mapDbPriorityToUi((data as any).priority),
     category: 'Task',
-    status: mapDbStatusToUi(data.status),
-    list: data.due_date ? 'week' : 'backlog',
+    status: mapDbStatusToUi((data as any).status),
+    list: (data as any).due_date ? 'week' : 'backlog',
   }
 }
 
@@ -184,13 +184,13 @@ export async function moveTask(id: string, toList: 'week' | 'backlog'): Promise<
   if (error) throw error
 
   return {
-    id: data.id,
-    title: data.title,
-    description: data.description || undefined,
-    dueDate: data.due_date,
-    priority: mapDbPriorityToUi(data.priority),
+    id: (data as any).id,
+    title: (data as any).title,
+    description: (data as any).description || undefined,
+    dueDate: (data as any).due_date,
+    priority: mapDbPriorityToUi((data as any).priority),
     category: 'Task',
-    status: mapDbStatusToUi(data.status),
+    status: mapDbStatusToUi((data as any).status),
     list: toList,
   }
 }

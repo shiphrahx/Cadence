@@ -52,6 +52,7 @@ export default function PeoplePage() {
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
     return people.filter(person => {
+      if (!person.startDate) return false
       const startDate = new Date(person.startDate)
       return startDate >= thirtyDaysAgo
     }).length

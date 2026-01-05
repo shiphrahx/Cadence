@@ -284,6 +284,190 @@ CREATE TRIGGER cascade_delete_team_tasks
   EXECUTE FUNCTION delete_orphaned_tasks('team');
 
 -- ============================================================================
+-- CAREER GOALS PROFILE TABLE
+-- ============================================================================
+-- Stores the high-level career journey (where you are, where you want to go)
+CREATE TABLE IF NOT EXISTS public.career_goals_profiles (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  where_you_are TEXT,
+  where_you_want_to_go TEXT,
+  owning_user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  -- One profile per user
+  UNIQUE(owning_user_id)
+);
+
+-- ============================================================================
+-- GAP ANALYSIS TABLE
+-- ============================================================================
+-- Categories that identify gaps between current and desired state
+CREATE TABLE IF NOT EXISTS public.gap_analysis_categories (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  category TEXT NOT NULL,
+  current_state TEXT,
+  desired_state TEXT,
+  display_order INTEGER DEFAULT 0,
+  owning_user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+-- ============================================================================
+-- FOCUS DISTRIBUTIONS TABLE
+-- ============================================================================
+-- Desired focus percentages per category for each time period
+CREATE TABLE IF NOT EXISTS public.focus_distributions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  time_period TEXT NOT NULL CHECK (time_period IN ('short_term', 'mid_term', 'long_term')),
+  category_id UUID NOT NULL REFERENCES public.gap_analysis_categories(id) ON DELETE CASCADE,
+  focus_percent INTEGER DEFAULT 0 CHECK (focus_percent >= 0 AND focus_percent <= 100),
+  why TEXT,
+  owning_user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  -- One distribution per category per time period
+  UNIQUE(category_id, time_period)
+);
+
+-- ============================================================================
+-- CAREER GOALS TABLE
+-- ============================================================================
+-- Individual goals organized by time period
+CREATE TABLE IF NOT EXISTS public.career_goals (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  time_period TEXT NOT NULL CHECK (time_period IN ('short_term', 'mid_term', 'long_term')),
+  goal TEXT NOT NULL,
+  type TEXT NOT NULL CHECK (type IN ('Core', 'Stretch')),
+  category_id UUID NOT NULL REFERENCES public.gap_analysis_categories(id) ON DELETE CASCADE,
+  status TEXT NOT NULL DEFAULT 'Not started' CHECK (status IN ('Not started', 'In progress', 'Completed')),
+  display_order INTEGER DEFAULT 0,
+  owning_user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+-- ============================================================================
+-- ACHIEVEMENTS TABLE
+-- ============================================================================
+-- Track extra learning and accomplishments
+CREATE TABLE IF NOT EXISTS public.achievements (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  type TEXT NOT NULL CHECK (type IN ('Book', 'Course', 'Certification', 'Conference', 'Talk', 'Other')),
+  description TEXT NOT NULL,
+  achievement_date DATE NOT NULL,
+  key_takeaway TEXT,
+  owning_user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+-- ============================================================================
+-- INDEXES for Career Goals Performance
+-- ============================================================================
+CREATE INDEX IF NOT EXISTS idx_career_goals_profiles_user ON public.career_goals_profiles(owning_user_id);
+CREATE INDEX IF NOT EXISTS idx_gap_analysis_user ON public.gap_analysis_categories(owning_user_id);
+CREATE INDEX IF NOT EXISTS idx_focus_distributions_user ON public.focus_distributions(owning_user_id);
+CREATE INDEX IF NOT EXISTS idx_focus_distributions_category ON public.focus_distributions(category_id);
+CREATE INDEX IF NOT EXISTS idx_career_goals_user ON public.career_goals(owning_user_id);
+CREATE INDEX IF NOT EXISTS idx_career_goals_category ON public.career_goals(category_id);
+CREATE INDEX IF NOT EXISTS idx_achievements_user ON public.achievements(owning_user_id);
+
+-- ============================================================================
+-- TRIGGERS for Career Goals updated_at timestamps
+-- ============================================================================
+CREATE TRIGGER update_career_goals_profiles_updated_at BEFORE UPDATE ON public.career_goals_profiles
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_gap_analysis_categories_updated_at BEFORE UPDATE ON public.gap_analysis_categories
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_focus_distributions_updated_at BEFORE UPDATE ON public.focus_distributions
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_career_goals_updated_at BEFORE UPDATE ON public.career_goals
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_achievements_updated_at BEFORE UPDATE ON public.achievements
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- ============================================================================
+-- ROW LEVEL SECURITY (RLS) POLICIES for Career Goals
+-- ============================================================================
+
+-- Enable RLS on all career goals tables
+ALTER TABLE public.career_goals_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.gap_analysis_categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.focus_distributions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.career_goals ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.achievements ENABLE ROW LEVEL SECURITY;
+
+-- Career Goals Profiles: Users can only access their own profile
+CREATE POLICY "Users can view own career profile" ON public.career_goals_profiles
+  FOR SELECT USING (auth.uid() = owning_user_id);
+
+CREATE POLICY "Users can insert own career profile" ON public.career_goals_profiles
+  FOR INSERT WITH CHECK (auth.uid() = owning_user_id);
+
+CREATE POLICY "Users can update own career profile" ON public.career_goals_profiles
+  FOR UPDATE USING (auth.uid() = owning_user_id);
+
+CREATE POLICY "Users can delete own career profile" ON public.career_goals_profiles
+  FOR DELETE USING (auth.uid() = owning_user_id);
+
+-- Gap Analysis Categories: Users can only access their own categories
+CREATE POLICY "Users can view own gap categories" ON public.gap_analysis_categories
+  FOR SELECT USING (auth.uid() = owning_user_id);
+
+CREATE POLICY "Users can insert own gap categories" ON public.gap_analysis_categories
+  FOR INSERT WITH CHECK (auth.uid() = owning_user_id);
+
+CREATE POLICY "Users can update own gap categories" ON public.gap_analysis_categories
+  FOR UPDATE USING (auth.uid() = owning_user_id);
+
+CREATE POLICY "Users can delete own gap categories" ON public.gap_analysis_categories
+  FOR DELETE USING (auth.uid() = owning_user_id);
+
+-- Focus Distributions: Users can only access their own distributions
+CREATE POLICY "Users can view own focus distributions" ON public.focus_distributions
+  FOR SELECT USING (auth.uid() = owning_user_id);
+
+CREATE POLICY "Users can insert own focus distributions" ON public.focus_distributions
+  FOR INSERT WITH CHECK (auth.uid() = owning_user_id);
+
+CREATE POLICY "Users can update own focus distributions" ON public.focus_distributions
+  FOR UPDATE USING (auth.uid() = owning_user_id);
+
+CREATE POLICY "Users can delete own focus distributions" ON public.focus_distributions
+  FOR DELETE USING (auth.uid() = owning_user_id);
+
+-- Career Goals: Users can only access their own goals
+CREATE POLICY "Users can view own career goals" ON public.career_goals
+  FOR SELECT USING (auth.uid() = owning_user_id);
+
+CREATE POLICY "Users can insert own career goals" ON public.career_goals
+  FOR INSERT WITH CHECK (auth.uid() = owning_user_id);
+
+CREATE POLICY "Users can update own career goals" ON public.career_goals
+  FOR UPDATE USING (auth.uid() = owning_user_id);
+
+CREATE POLICY "Users can delete own career goals" ON public.career_goals
+  FOR DELETE USING (auth.uid() = owning_user_id);
+
+-- Achievements: Users can only access their own achievements
+CREATE POLICY "Users can view own achievements" ON public.achievements
+  FOR SELECT USING (auth.uid() = owning_user_id);
+
+CREATE POLICY "Users can insert own achievements" ON public.achievements
+  FOR INSERT WITH CHECK (auth.uid() = owning_user_id);
+
+CREATE POLICY "Users can update own achievements" ON public.achievements
+  FOR UPDATE USING (auth.uid() = owning_user_id);
+
+CREATE POLICY "Users can delete own achievements" ON public.achievements
+  FOR DELETE USING (auth.uid() = owning_user_id);
+
+-- ============================================================================
 -- SEED DATA (Optional - for development)
 -- ============================================================================
 -- Uncomment to add sample data after first user logs in

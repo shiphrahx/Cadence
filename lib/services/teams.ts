@@ -66,20 +66,20 @@ export async function createTeam(team: Omit<Team, 'id' | 'memberCount' | 'create
       description: team.description || null,
       status: team.status || 'active',
       owning_user_id: user.id,
-    })
+    } as any)
     .select()
     .single()
 
   if (error) throw error
 
   return {
-    id: data.id,
-    name: data.name,
-    description: data.description || '',
-    status: data.status,
+    id: (data as any).id,
+    name: (data as any).name,
+    description: (data as any).description || '',
+    status: (data as any).status,
     memberCount: 0,
-    createdAt: data.created_at,
-    notes: data.description,
+    createdAt: (data as any).created_at,
+    notes: (data as any).description,
   }
 }
 
@@ -89,8 +89,8 @@ export async function createTeam(team: Omit<Team, 'id' | 'memberCount' | 'create
 export async function updateTeam(id: string, updates: Partial<Team>): Promise<Team> {
   const supabase = createClient()
 
-  const { data, error } = await supabase
-    .from('teams')
+  const { data, error } = await (supabase
+    .from('teams') as any)
     .update({
       name: updates.name,
       description: updates.description || null,
@@ -106,13 +106,13 @@ export async function updateTeam(id: string, updates: Partial<Team>): Promise<Te
   if (error) throw error
 
   return {
-    id: data.id,
-    name: data.name,
-    description: data.description || '',
-    status: data.status,
+    id: (data as any).id,
+    name: (data as any).name,
+    description: (data as any).description || '',
+    status: (data as any).status,
     memberCount: (data as any).team_memberships[0]?.count || 0,
-    createdAt: data.created_at,
-    notes: data.description,
+    createdAt: (data as any).created_at,
+    notes: (data as any).description,
   }
 }
 

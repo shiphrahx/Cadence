@@ -93,7 +93,7 @@ export function PeopleTable({
       header: "Level",
       accessorKey: "level",
       cell: (person) => (
-        <Badge variant="outline" className={getLevelBadgeClass(person.level)}>
+        <Badge variant="outline" className={getLevelBadgeClass(person.level || '')}>
           {person.level}
         </Badge>
       ),
@@ -122,11 +122,11 @@ export function PeopleTable({
       accessorKey: "startDate",
       cell: (person) => (
         <span className="text-gray-700 dark:text-gray-300">
-          {new Date(person.startDate).toLocaleDateString("en-GB", {
+          {person.startDate ? new Date(person.startDate).toLocaleDateString("en-GB", {
             day: "2-digit",
             month: "short",
             year: "numeric",
-          })}
+          }) : '-'}
         </span>
       ),
     },

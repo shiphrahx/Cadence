@@ -134,7 +134,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
                 <Label htmlFor="role">Role / Title</Label>
                 <Input
                   id="role"
-                  value={formData.role}
+                  value={formData.role || ''}
                   onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                   placeholder="e.g. Senior Software Engineer"
                 />
@@ -172,7 +172,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
                 </div>
                 <Input
                   id="level"
-                  value={formData.level}
+                  value={formData.level || ''}
                   onChange={(e) => setFormData({ ...formData, level: e.target.value })}
                   placeholder="Or enter custom level..."
                 />
@@ -182,7 +182,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
                 <Input
                   id="startDate"
                   type="date"
-                  value={formData.startDate}
+                  value={formData.startDate || ''}
                   onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                 />
               </div>
@@ -271,7 +271,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
               <Label htmlFor="notes" className="mb-2">Notes</Label>
               <Textarea
                 id="notes"
-                value={formData.notes}
+                value={formData.notes || ''}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 placeholder="Any additional notes..."
                 className="flex-1 resize-none"

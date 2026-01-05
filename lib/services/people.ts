@@ -74,22 +74,22 @@ export async function createPerson(person: Omit<Person, 'id' | 'createdAt' | 'te
       notes: person.notes || null,
       status: person.status || 'active',
       owning_user_id: user.id,
-    })
+    } as any)
     .select()
     .single()
 
   if (error) throw error
 
   return {
-    id: data.id,
-    name: data.full_name,
-    role: data.role,
-    level: data.level,
-    startDate: data.start_date,
-    notes: data.notes,
-    status: data.status,
+    id: (data as any).id,
+    name: (data as any).full_name,
+    role: (data as any).role,
+    level: (data as any).level,
+    startDate: (data as any).start_date,
+    notes: (data as any).notes,
+    status: (data as any).status,
     teams: [],
-    createdAt: data.created_at,
+    createdAt: (data as any).created_at,
   }
 }
 
@@ -99,8 +99,8 @@ export async function createPerson(person: Omit<Person, 'id' | 'createdAt' | 'te
 export async function updatePerson(id: string, updates: Partial<Person>): Promise<Person> {
   const supabase = createClient()
 
-  const { data, error } = await supabase
-    .from('people')
+  const { data, error } = await (supabase
+    .from('people') as any)
     .update({
       full_name: updates.name,
       role: updates.role || null,
@@ -122,15 +122,15 @@ export async function updatePerson(id: string, updates: Partial<Person>): Promis
   if (error) throw error
 
   return {
-    id: data.id,
-    name: data.full_name,
-    role: data.role,
-    level: data.level,
-    startDate: data.start_date,
-    notes: data.notes,
-    status: data.status,
+    id: (data as any).id,
+    name: (data as any).full_name,
+    role: (data as any).role,
+    level: (data as any).level,
+    startDate: (data as any).start_date,
+    notes: (data as any).notes,
+    status: (data as any).status,
     teams: (data as any).team_memberships?.map((tm: any) => tm.teams?.name).filter(Boolean) || [],
-    createdAt: data.created_at,
+    createdAt: (data as any).created_at,
   }
 }
 
@@ -167,7 +167,7 @@ export async function addPersonToTeam(personId: string, teamId: string): Promise
     .insert({
       person_id: personId,
       team_id: teamId,
-    })
+    } as any)
 
   if (error) throw error
 }
