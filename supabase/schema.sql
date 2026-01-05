@@ -468,6 +468,59 @@ CREATE POLICY "Users can delete own achievements" ON public.achievements
   FOR DELETE USING (auth.uid() = owning_user_id);
 
 -- ============================================================================
+-- MEETINGS TABLE
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS public.meetings (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  title TEXT NOT NULL,
+  meeting_type TEXT NOT NULL CHECK (meeting_type IN ('1:1', 'Team Sync', 'Retro', 'Planning', 'Review', 'Standup', 'Other')),
+  meeting_date DATE NOT NULL,
+  next_meeting_date DATE,
+  recurrence TEXT CHECK (recurrence IN ('none', 'weekly', 'fortnightly', 'monthly', 'custom')),
+  action_items TEXT,
+  notes TEXT,
+  person_id UUID REFERENCES public.people(id) ON DELETE SET NULL,
+  team_id UUID REFERENCES public.teams(id) ON DELETE SET NULL,
+  owning_user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  CONSTRAINT valid_next_meeting_date CHECK (next_meeting_date IS NULL OR next_meeting_date > meeting_date),
+  CONSTRAINT valid_association CHECK (
+    (meeting_type = '1:1' AND person_id IS NOT NULL AND team_id IS NULL) OR
+    (meeting_type IN ('Team Sync', 'Retro', 'Planning', 'Review', 'Standup') AND team_id IS NOT NULL AND person_id IS NULL) OR
+    (meeting_type = 'Other')
+  )
+);
+
+-- Create index for faster queries
+CREATE INDEX idx_meetings_owning_user_id ON public.meetings(owning_user_id);
+CREATE INDEX idx_meetings_meeting_date ON public.meetings(meeting_date DESC);
+CREATE INDEX idx_meetings_person_id ON public.meetings(person_id);
+CREATE INDEX idx_meetings_team_id ON public.meetings(team_id);
+CREATE INDEX idx_meetings_type ON public.meetings(meeting_type);
+
+-- Trigger to update updated_at timestamp
+CREATE TRIGGER update_meetings_updated_at
+  BEFORE UPDATE ON public.meetings
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+
+-- Row Level Security Policies
+ALTER TABLE public.meetings ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own meetings" ON public.meetings
+  FOR SELECT USING (auth.uid() = owning_user_id);
+
+CREATE POLICY "Users can insert own meetings" ON public.meetings
+  FOR INSERT WITH CHECK (auth.uid() = owning_user_id);
+
+CREATE POLICY "Users can update own meetings" ON public.meetings
+  FOR UPDATE USING (auth.uid() = owning_user_id);
+
+CREATE POLICY "Users can delete own meetings" ON public.meetings
+  FOR DELETE USING (auth.uid() = owning_user_id);
+
+-- ============================================================================
 -- SEED DATA (Optional - for development)
 -- ============================================================================
 -- Uncomment to add sample data after first user logs in

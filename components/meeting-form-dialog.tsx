@@ -19,11 +19,14 @@ import { type Meeting as BaseMeeting } from "@/lib/mock-data"
 
 // Extended Meeting interface for forms that includes additional fields
 interface Meeting extends Omit<BaseMeeting, 'id' | 'time' | 'status'> {
-  id?: number
+  id?: string
   actionItems?: string
   personName?: string
+  teamName?: string
   recurrence?: string
   nextMeetingDate?: string
+  personId?: string
+  teamId?: string
 }
 
 interface MeetingFormDialogProps {
@@ -34,6 +37,8 @@ interface MeetingFormDialogProps {
   availablePeople?: string[]
   availableTeams?: string[]
   defaultPerson?: string
+  peopleWithIds?: Array<{ id: string; name: string }>
+  teamsWithIds?: Array<{ id: string; name: string }>
 }
 
 const calculateNextMeetingDate = (lastMeetingDate: string, recurrence: string): string => {
@@ -100,7 +105,7 @@ const oneOnOneTemplates = [
   "Peer 1:1"
 ]
 
-export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availablePeople = [], availableTeams = [], defaultPerson }: MeetingFormDialogProps) {
+export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availablePeople = [], availableTeams = [], defaultPerson, peopleWithIds = [], teamsWithIds = [] }: MeetingFormDialogProps) {
   const [formData, setFormData] = useState<Meeting>(meeting || emptyMeeting)
   const [personInput, setPersonInput] = useState("")
   const [filteredPeople, setFilteredPeople] = useState<string[]>([])
@@ -219,14 +224,26 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
   }
 
   const handlePersonSelect = (person: string) => {
+    const personData = peopleWithIds.find(p => p.name === person)
     setPersonInput(person)
-    setFormData({ ...formData, personName: person, attendees: [person] })
+    setFormData({
+      ...formData,
+      personName: person,
+      personId: personData?.id,
+      attendees: [person]
+    })
     setShowSuggestions(false)
   }
 
   const handleTeamSelect = (team: string) => {
+    const teamData = teamsWithIds.find(t => t.name === team)
     setTeamInput(team)
-    setFormData({ ...formData, attendees: [team] })
+    setFormData({
+      ...formData,
+      teamName: team,
+      teamId: teamData?.id,
+      attendees: [team]
+    })
     setShowTeamSuggestions(false)
   }
 

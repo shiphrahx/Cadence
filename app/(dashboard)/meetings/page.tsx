@@ -9,83 +9,32 @@ import { MarkdownTextarea } from "@/components/ui/markdown-textarea"
 import { Input } from "@/components/ui/input"
 import { Plus, ChevronRight, ChevronDown, ChevronsRight, ChevronsDown } from "lucide-react"
 import { MeetingFormDialog } from "@/components/meeting-form-dialog"
+import {
+  getMeetings,
+  createMeeting,
+  updateMeeting,
+  type Meeting as BackendMeeting,
+  type MeetingType,
+  type RecurrenceType,
+} from "@/lib/services/meetings"
+import { getPeople } from "@/lib/services/people"
+import { getTeams } from "@/lib/services/teams"
 
 interface Meeting {
-  id: number
+  id: string
   title: string
   type: string
   date: string
   attendees: string[]
   actionItems?: string
   notes?: string
-  personName?: string // For 1:1 meetings
-  teamName?: string // For team-based meetings
+  personName?: string
+  teamName?: string
   recurrence?: string
   nextMeetingDate?: string
+  personId?: string
+  teamId?: string
 }
-
-// Mock data
-const initialMeetings: Meeting[] = [
-  {
-    id: 1,
-    title: "1:1 with Sarah Miller",
-    type: "1:1",
-    date: "2024-12-20",
-    attendees: ["Sarah Miller"],
-    personName: "Sarah Miller",
-    recurrence: "weekly",
-    nextMeetingDate: "2024-12-27",
-    actionItems: "- Follow up on Q1 roadmap\n- Schedule design review",
-    notes: "Discussed career progression and upcoming projects. Sarah is interested in taking on more leadership responsibilities.",
-  },
-  {
-    id: 2,
-    title: "1:1 with Sarah Miller",
-    type: "1:1",
-    date: "2024-12-13",
-    attendees: ["Sarah Miller"],
-    personName: "Sarah Miller",
-    recurrence: "weekly",
-    notes: "Weekly check-in. Discussed current sprint progress.",
-  },
-  {
-    id: 3,
-    title: "Team Sync - Platform Engineering",
-    type: "Team Sync",
-    date: "2024-12-18",
-    attendees: ["Platform Engineering"],
-    teamName: "Platform Engineering",
-    actionItems: "- Deploy new infrastructure\n- Update documentation",
-    notes: "Discussed Q1 roadmap and priorities. Team is on track for the release.",
-  },
-  {
-    id: 4,
-    title: "Sprint Retrospective",
-    type: "Retro",
-    date: "2024-12-15",
-    attendees: ["Product Development"],
-    teamName: "Product Development",
-    notes: "Reviewed sprint performance. Identified areas for improvement.",
-  },
-]
-
-// Mock people for autocomplete
-const mockPeople = [
-  "Sarah Miller",
-  "John Doe",
-  "Jane Smith",
-  "Mike Johnson",
-  "Emily Chen"
-]
-
-// Mock teams for autocomplete
-const mockTeams = [
-  "Platform Engineering",
-  "Product Development",
-  "Design Team",
-  "Data Science",
-  "Mobile Team"
-]
 
 interface TreeNode {
   type: string
@@ -99,14 +48,67 @@ interface TreeNode {
 }
 
 export default function MeetingsPage() {
-  const [meetings, setMeetings] = useState<Meeting[]>(initialMeetings)
+  const [meetings, setMeetings] = useState<Meeting[]>([])
+  const [people, setPeople] = useState<string[]>([])
+  const [teams, setTeams] = useState<string[]>([])
+  const [peopleWithIds, setPeopleWithIds] = useState<Array<{ id: string; name: string }>>([])
+  const [teamsWithIds, setTeamsWithIds] = useState<Array<{ id: string; name: string }>>([])
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
-  const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(initialMeetings[0])
+  const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null)
   const [expandedTypes, setExpandedTypes] = useState<Set<string>>(new Set(["1:1"]))
-  const [expandedPeople, setExpandedPeople] = useState<Set<string>>(new Set(["Sarah Miller"]))
+  const [expandedPeople, setExpandedPeople] = useState<Set<string>>(new Set())
   const [expandedTeams, setExpandedTeams] = useState<Set<string>>(new Set())
   const [leftPanelWidth, setLeftPanelWidth] = useState(320)
   const [isResizing, setIsResizing] = useState(false)
+
+  // Load meetings, people, and teams from backend
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [meetingsData, peopleData, teamsData] = await Promise.all([
+          getMeetings(),
+          getPeople(),
+          getTeams(),
+        ])
+
+        // Map backend meetings to UI format
+        const uiMeetings: Meeting[] = meetingsData.map((m) => ({
+          id: m.id,
+          title: m.title,
+          type: m.meetingType,
+          date: m.meetingDate,
+          attendees: m.attendees,
+          actionItems: m.actionItems || undefined,
+          notes: m.notes || undefined,
+          personName: m.personName || undefined,
+          teamName: m.teamName || undefined,
+          recurrence: m.recurrence || undefined,
+          nextMeetingDate: m.nextMeetingDate || undefined,
+          personId: m.personId || undefined,
+          teamId: m.teamId || undefined,
+        }))
+
+        setMeetings(uiMeetings)
+
+        const activePeople = peopleData.filter(p => p.status === 'active')
+        const activeTeams = teamsData.filter(t => t.status === 'active')
+
+        setPeople(activePeople.map(p => p.name))
+        setTeams(activeTeams.map(t => t.name))
+        setPeopleWithIds(activePeople.map(p => ({ id: p.id, name: p.name })))
+        setTeamsWithIds(activeTeams.map(t => ({ id: t.id, name: t.name })))
+
+        // Auto-select first meeting if available
+        if (uiMeetings.length > 0) {
+          setSelectedMeeting(uiMeetings[0])
+        }
+      } catch (error) {
+        console.error('Failed to load data:', error)
+      }
+    }
+
+    loadData()
+  }, [])
 
   // Organize meetings into tree structure
   const organizeTree = (): { [type: string]: TreeNode } => {
@@ -225,19 +227,47 @@ export default function MeetingsPage() {
     })
   }
 
-  const handleAddMeeting = (newMeeting: Omit<Meeting, "id">) => {
-    const teamBasedTypes = ["Team Sync", "Retro", "Planning", "Review", "Standup"]
-    const meeting: Meeting = {
-      ...newMeeting,
-      id: Math.max(...meetings.map(m => m.id), 0) + 1,
-      personName: newMeeting.type === "1:1" ? newMeeting.attendees[0] : undefined,
-      teamName: teamBasedTypes.includes(newMeeting.type) ? newMeeting.attendees[0] : undefined,
+  const handleAddMeeting = async (newMeeting: Omit<Meeting, "id">) => {
+    try {
+      // Map UI format to backend format
+      const backendMeeting = await createMeeting({
+        title: newMeeting.title,
+        meetingType: newMeeting.type as MeetingType,
+        meetingDate: newMeeting.date,
+        nextMeetingDate: newMeeting.nextMeetingDate || null,
+        recurrence: (newMeeting.recurrence as RecurrenceType) || null,
+        actionItems: newMeeting.actionItems || null,
+        notes: newMeeting.notes || null,
+        personId: newMeeting.personId || null,
+        teamId: newMeeting.teamId || null,
+      })
+
+      // Map backend format back to UI format
+      const uiMeeting: Meeting = {
+        id: backendMeeting.id,
+        title: backendMeeting.title,
+        type: backendMeeting.meetingType,
+        date: backendMeeting.meetingDate,
+        attendees: backendMeeting.attendees,
+        actionItems: backendMeeting.actionItems || undefined,
+        notes: backendMeeting.notes || undefined,
+        personName: backendMeeting.personName || undefined,
+        teamName: backendMeeting.teamName || undefined,
+        recurrence: backendMeeting.recurrence || undefined,
+        nextMeetingDate: backendMeeting.nextMeetingDate || undefined,
+        personId: backendMeeting.personId || undefined,
+        teamId: backendMeeting.teamId || undefined,
+      }
+
+      setMeetings([uiMeeting, ...meetings])
+      setSelectedMeeting(uiMeeting)
+    } catch (error) {
+      console.error('Failed to create meeting:', error)
+      alert('Failed to create meeting. Please try again.')
     }
-    setMeetings([...meetings, meeting])
-    setSelectedMeeting(meeting)
   }
 
-  const handleUpdateMeeting = (updatedMeeting: Meeting) => {
+  const handleUpdateMeeting = async (updatedMeeting: Meeting) => {
     // Validate next meeting date is after meeting date
     if (updatedMeeting.nextMeetingDate && updatedMeeting.date) {
       const meetingDate = new Date(updatedMeeting.date)
@@ -248,8 +278,43 @@ export default function MeetingsPage() {
       }
     }
 
-    setMeetings(meetings.map(m => m.id === updatedMeeting.id ? updatedMeeting : m))
-    setSelectedMeeting(updatedMeeting)
+    try {
+      // Map UI format to backend format
+      const backendMeeting = await updateMeeting(updatedMeeting.id, {
+        title: updatedMeeting.title,
+        meetingType: updatedMeeting.type as MeetingType,
+        meetingDate: updatedMeeting.date,
+        nextMeetingDate: updatedMeeting.nextMeetingDate || null,
+        recurrence: (updatedMeeting.recurrence as RecurrenceType) || null,
+        actionItems: updatedMeeting.actionItems || null,
+        notes: updatedMeeting.notes || null,
+        personId: updatedMeeting.personId || null,
+        teamId: updatedMeeting.teamId || null,
+      })
+
+      // Map backend format back to UI format
+      const uiMeeting: Meeting = {
+        id: backendMeeting.id,
+        title: backendMeeting.title,
+        type: backendMeeting.meetingType,
+        date: backendMeeting.meetingDate,
+        attendees: backendMeeting.attendees,
+        actionItems: backendMeeting.actionItems || undefined,
+        notes: backendMeeting.notes || undefined,
+        personName: backendMeeting.personName || undefined,
+        teamName: backendMeeting.teamName || undefined,
+        recurrence: backendMeeting.recurrence || undefined,
+        nextMeetingDate: backendMeeting.nextMeetingDate || undefined,
+        personId: backendMeeting.personId || undefined,
+        teamId: backendMeeting.teamId || undefined,
+      }
+
+      setMeetings(meetings.map(m => m.id === uiMeeting.id ? uiMeeting : m))
+      setSelectedMeeting(uiMeeting)
+    } catch (error) {
+      console.error('Failed to update meeting:', error)
+      alert('Failed to update meeting. Please try again.')
+    }
   }
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -552,8 +617,10 @@ export default function MeetingsPage() {
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
         onSave={handleAddMeeting}
-        availablePeople={mockPeople}
-        availableTeams={mockTeams}
+        availablePeople={people}
+        availableTeams={teams}
+        peopleWithIds={peopleWithIds}
+        teamsWithIds={teamsWithIds}
       />
     </div>
   )
