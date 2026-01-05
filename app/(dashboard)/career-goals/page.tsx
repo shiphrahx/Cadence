@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -24,9 +24,30 @@ import {
 import { Plus, Trash2, Target, TrendingUp, Zap, Award, Pencil } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 import { BadgeSelect } from "@/components/ui/badge-select"
+import {
+  getCareerGoalsProfile,
+  upsertCareerGoalsProfile,
+  getGapAnalysisCategories,
+  createGapAnalysisCategory,
+  updateGapAnalysisCategory,
+  deleteGapAnalysisCategory,
+  getFocusDistributions,
+  upsertFocusDistribution,
+  getCareerGoals,
+  createCareerGoal,
+  updateCareerGoal,
+  deleteCareerGoal,
+  getAchievements,
+  createAchievement,
+  updateAchievement,
+  deleteAchievement,
+  type GapAnalysisCategory,
+  type CareerGoal,
+  type Achievement,
+} from "@/lib/services/career-goals"
 
 interface GapAnalysisRow {
-  id: number
+  id: string
   category: string
   currentState: string
   desiredState: string
@@ -34,21 +55,23 @@ interface GapAnalysisRow {
 
 interface FocusDistribution {
   category: string
+  categoryId: string
   focusPercent: number
   why: string
 }
 
 interface Goal {
-  id: number
+  id: string
   goal: string
   type: "Core" | "Stretch"
   category: string
+  categoryId: string
   status: "Not started" | "In progress" | "Completed"
 }
 
-interface Achievement {
-  id: number
-  type: "Book" | "Course" | "Certification" | "Conference" | "Talk"
+interface AchievementRow {
+  id: string
+  type: "Book" | "Course" | "Certification" | "Conference" | "Talk" | "Other"
   description: string
   date: string
   keyTakeaway: string
@@ -73,6 +96,7 @@ export default function CareerGoalsPage() {
 
   // Derive categories from gap analysis
   const categories = gapAnalysis.map(row => row.category)
+  const categoryMap = new Map(gapAnalysis.map(row => [row.category, row.id]))
 
   // Short-term (0-4 months)
   const [shortTermFocus, setShortTermFocus] = useState<FocusDistribution[]>([])
@@ -87,17 +111,144 @@ export default function CareerGoalsPage() {
   const [longTermGoals, setLongTermGoals] = useState<Goal[]>([])
 
   // Achievements
-  const [achievements, setAchievements] = useState<Achievement[]>([])
+  const [achievements, setAchievements] = useState<AchievementRow[]>([])
+
+  // Loading state
+  const [isLoading, setIsLoading] = useState(true)
+
+  // Load all data on mount
+  useEffect(() => {
+    loadAllData()
+  }, [])
+
+  const loadAllData = async () => {
+    try {
+      setIsLoading(true)
+
+      // Load profile
+      const profile = await getCareerGoalsProfile()
+      if (profile) {
+        setWhereYouAre(profile.whereYouAre)
+        setWhereYouWantToGo(profile.whereYouWantToGo)
+      }
+
+      // Load gap analysis categories
+      const categories = await getGapAnalysisCategories()
+      setGapAnalysis(categories.map(cat => ({
+        id: cat.id,
+        category: cat.category,
+        currentState: cat.currentState,
+        desiredState: cat.desiredState,
+      })))
+
+      // Load focus distributions for all periods
+      const [shortFocus, midFocus, longFocus] = await Promise.all([
+        getFocusDistributions('short_term'),
+        getFocusDistributions('mid_term'),
+        getFocusDistributions('long_term'),
+      ])
+
+      setShortTermFocus(shortFocus.map(f => ({
+        category: f.category,
+        categoryId: f.categoryId,
+        focusPercent: f.focusPercent,
+        why: f.why,
+      })))
+      setMidTermFocus(midFocus.map(f => ({
+        category: f.category,
+        categoryId: f.categoryId,
+        focusPercent: f.focusPercent,
+        why: f.why,
+      })))
+      setLongTermFocus(longFocus.map(f => ({
+        category: f.category,
+        categoryId: f.categoryId,
+        focusPercent: f.focusPercent,
+        why: f.why,
+      })))
+
+      // Load goals for all periods
+      const [shortGoals, midGoals, longGoals] = await Promise.all([
+        getCareerGoals('short_term'),
+        getCareerGoals('mid_term'),
+        getCareerGoals('long_term'),
+      ])
+
+      setShortTermGoals(shortGoals.map(g => ({
+        id: g.id,
+        goal: g.goal,
+        type: g.type,
+        category: g.category,
+        categoryId: g.categoryId,
+        status: g.status,
+      })))
+      setMidTermGoals(midGoals.map(g => ({
+        id: g.id,
+        goal: g.goal,
+        type: g.type,
+        category: g.category,
+        categoryId: g.categoryId,
+        status: g.status,
+      })))
+      setLongTermGoals(longGoals.map(g => ({
+        id: g.id,
+        goal: g.goal,
+        type: g.type,
+        category: g.category,
+        categoryId: g.categoryId,
+        status: g.status,
+      })))
+
+      // Load achievements
+      const achievementsData = await getAchievements()
+      setAchievements(achievementsData.map(a => ({
+        id: a.id,
+        type: a.type,
+        description: a.description,
+        date: a.achievementDate,
+        keyTakeaway: a.keyTakeaway,
+      })))
+    } catch (error) {
+      console.error('Failed to load career goals data:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Debounced profile update
+  const handleProfileUpdate = useCallback(async () => {
+    try {
+      await upsertCareerGoalsProfile({
+        whereYouAre,
+        whereYouWantToGo,
+      })
+    } catch (error) {
+      console.error('Failed to update profile:', error)
+    }
+  }, [whereYouAre, whereYouWantToGo])
+
+  // Debounce profile updates (update database 1 second after user stops typing)
+  useEffect(() => {
+    if (!isLoading && (whereYouAre || whereYouWantToGo)) {
+      const timer = setTimeout(() => {
+        handleProfileUpdate()
+      }, 1000)
+      return () => clearTimeout(timer)
+    }
+  }, [whereYouAre, whereYouWantToGo, isLoading, handleProfileUpdate])
 
   // Sync focus distributions when gap analysis changes
   useEffect(() => {
+    if (isLoading) return
+
     const updateFocusDistributions = (
       currentFocus: FocusDistribution[],
       setter: React.Dispatch<React.SetStateAction<FocusDistribution[]>>
     ) => {
       const updatedFocus = categories.map(category => {
+        const categoryId = categoryMap.get(category) || ''
         const existing = currentFocus.find(f => f.category === category)
-        return existing || { category, focusPercent: 0, why: "" }
+        return existing || { category, categoryId, focusPercent: 0, why: "" }
       })
       setter(updatedFocus)
     }
@@ -105,7 +256,7 @@ export default function CareerGoalsPage() {
     updateFocusDistributions(shortTermFocus, setShortTermFocus)
     updateFocusDistributions(midTermFocus, setMidTermFocus)
     updateFocusDistributions(longTermFocus, setLongTermFocus)
-  }, [gapAnalysis])
+  }, [gapAnalysis, isLoading])
 
   // Gap Analysis Functions
   const openAddGapDialog = () => {
@@ -128,94 +279,195 @@ export default function CareerGoalsPage() {
     setIsGapDialogOpen(true)
   }
 
-  const handleSaveGap = () => {
+  const handleSaveGap = async () => {
     if (!gapFormData.category.trim()) return
 
-    if (editingGap) {
-      // Update existing
-      setGapAnalysis(gapAnalysis.map(row =>
-        row.id === editingGap.id
-          ? { ...editingGap, ...gapFormData }
-          : row
-      ))
-    } else {
-      // Add new
-      const newGap: GapAnalysisRow = {
-        id: Math.max(...gapAnalysis.map(g => g.id), 0) + 1,
-        ...gapFormData,
+    try {
+      if (editingGap) {
+        // Update existing
+        await updateGapAnalysisCategory(editingGap.id, gapFormData)
+      } else {
+        // Add new
+        await createGapAnalysisCategory({
+          ...gapFormData,
+          displayOrder: gapAnalysis.length,
+        })
       }
-      setGapAnalysis([...gapAnalysis, newGap])
+
+      // Reload all data to get updated categories and related data
+      await loadAllData()
+      setIsGapDialogOpen(false)
+    } catch (error) {
+      console.error('Failed to save gap category:', error)
     }
-
-    setIsGapDialogOpen(false)
   }
 
-  const handleDeleteGap = (id: number) => {
-    setGapAnalysis(gapAnalysis.filter(row => row.id !== id))
+  const handleDeleteGap = async (id: string) => {
+    try {
+      await deleteGapAnalysisCategory(id)
+      // Reload data to update UI
+      await loadAllData()
+    } catch (error) {
+      console.error('Failed to delete gap category:', error)
+    }
   }
 
-  const updateFocusDistribution = (
+  const updateFocusDistribution = async (
+    timePeriod: 'short_term' | 'mid_term' | 'long_term',
     setter: React.Dispatch<React.SetStateAction<FocusDistribution[]>>,
     category: string,
     field: keyof FocusDistribution,
     value: string | number
   ) => {
+    // Update local state immediately
     setter(prev => prev.map(item =>
       item.category === category ? { ...item, [field]: value } : item
     ))
+
+    // Debounce database update
+    const categoryId = categoryMap.get(category)
+    if (!categoryId) return
+
+    const focusItem = (timePeriod === 'short_term' ? shortTermFocus :
+                       timePeriod === 'mid_term' ? midTermFocus : longTermFocus)
+                      .find(f => f.category === category)
+
+    if (focusItem) {
+      try {
+        await upsertFocusDistribution({
+          timePeriod,
+          categoryId,
+          focusPercent: field === 'focusPercent' ? Number(value) : focusItem.focusPercent,
+          why: field === 'why' ? String(value) : focusItem.why,
+        })
+      } catch (error) {
+        console.error('Failed to update focus distribution:', error)
+      }
+    }
   }
 
-  const addGoal = (setter: React.Dispatch<React.SetStateAction<Goal[]>>, goals: Goal[]) => {
+  const addGoal = async (
+    timePeriod: 'short_term' | 'mid_term' | 'long_term',
+    setter: React.Dispatch<React.SetStateAction<Goal[]>>,
+    goals: Goal[]
+  ) => {
     if (categories.length === 0) {
       alert("Please add at least one category in the Gap Analysis section first.")
       return
     }
 
-    const newGoal: Goal = {
-      id: Math.max(...goals.map(g => g.id), 0) + 1,
-      goal: "",
-      type: "Core",
-      category: categories[0],
-      status: "Not started",
+    const categoryId = categoryMap.get(categories[0])
+    if (!categoryId) return
+
+    try {
+      const newGoal = await createCareerGoal({
+        timePeriod,
+        goal: "",
+        type: "Core",
+        categoryId,
+        status: "Not started",
+        displayOrder: goals.length,
+      })
+
+      setter([...goals, {
+        id: newGoal.id,
+        goal: newGoal.goal,
+        type: newGoal.type,
+        category: newGoal.category,
+        categoryId: newGoal.categoryId,
+        status: newGoal.status,
+      }])
+    } catch (error) {
+      console.error('Failed to create goal:', error)
     }
-    setter([...goals, newGoal])
   }
 
-  const updateGoal = (
+  const updateGoal = async (
     setter: React.Dispatch<React.SetStateAction<Goal[]>>,
     goals: Goal[],
-    id: number,
+    id: string,
     field: keyof Goal,
     value: string
   ) => {
+    // Update local state immediately
     setter(goals.map(goal =>
       goal.id === id ? { ...goal, [field]: value } : goal
     ))
-  }
 
-  const deleteGoal = (setter: React.Dispatch<React.SetStateAction<Goal[]>>, goals: Goal[], id: number) => {
-    setter(goals.filter(goal => goal.id !== id))
-  }
+    // Update database
+    try {
+      const updates: any = {}
+      if (field === 'goal') updates.goal = value
+      if (field === 'type') updates.type = value as 'Core' | 'Stretch'
+      if (field === 'status') updates.status = value as 'Not started' | 'In progress' | 'Completed'
+      if (field === 'category') {
+        const categoryId = categoryMap.get(value)
+        if (categoryId) updates.categoryId = categoryId
+      }
 
-  const addAchievement = () => {
-    const newAchievement: Achievement = {
-      id: Math.max(...achievements.map(a => a.id), 0) + 1,
-      type: "Book",
-      description: "",
-      date: new Date().toISOString().split('T')[0],
-      keyTakeaway: "",
+      await updateCareerGoal(id, updates)
+    } catch (error) {
+      console.error('Failed to update goal:', error)
     }
-    setAchievements([...achievements, newAchievement])
   }
 
-  const updateAchievement = (id: number, field: keyof Achievement, value: string) => {
+  const deleteGoal = async (setter: React.Dispatch<React.SetStateAction<Goal[]>>, goals: Goal[], id: string) => {
+    try {
+      await deleteCareerGoal(id)
+      setter(goals.filter(goal => goal.id !== id))
+    } catch (error) {
+      console.error('Failed to delete goal:', error)
+    }
+  }
+
+  const addAchievement = async () => {
+    try {
+      const newAchievement = await createAchievement({
+        type: "Book",
+        description: "",
+        achievementDate: new Date().toISOString().split('T')[0],
+        keyTakeaway: "",
+      })
+
+      setAchievements([...achievements, {
+        id: newAchievement.id,
+        type: newAchievement.type,
+        description: newAchievement.description,
+        date: newAchievement.achievementDate,
+        keyTakeaway: newAchievement.keyTakeaway,
+      }])
+    } catch (error) {
+      console.error('Failed to create achievement:', error)
+    }
+  }
+
+  const updateAchievementField = async (id: string, field: keyof AchievementRow, value: string) => {
+    // Update local state immediately
     setAchievements(achievements.map(achievement =>
       achievement.id === id ? { ...achievement, [field]: value } : achievement
     ))
+
+    // Update database
+    try {
+      const updates: any = {}
+      if (field === 'type') updates.type = value as AchievementRow['type']
+      if (field === 'description') updates.description = value
+      if (field === 'date') updates.achievementDate = value
+      if (field === 'keyTakeaway') updates.keyTakeaway = value
+
+      await updateAchievement(id, updates)
+    } catch (error) {
+      console.error('Failed to update achievement:', error)
+    }
   }
 
-  const deleteAchievement = (id: number) => {
-    setAchievements(achievements.filter(achievement => achievement.id !== id))
+  const deleteAchievementById = async (id: string) => {
+    try {
+      await deleteAchievement(id)
+      setAchievements(achievements.filter(achievement => achievement.id !== id))
+    } catch (error) {
+      console.error('Failed to delete achievement:', error)
+    }
   }
 
   const calculateGoalDistribution = (goals: Goal[]) => {
@@ -506,10 +758,10 @@ export default function CareerGoalsPage() {
                             <Input
                               type="number"
                               value={item.focusPercent === 0 ? "" : item.focusPercent}
-                              onChange={(e) => updateFocusDistribution(setShortTermFocus, item.category, "focusPercent", e.target.value === "" ? 0 : parseInt(e.target.value) || 0)}
+                              onChange={(e) => updateFocusDistribution('short_term', setShortTermFocus, item.category, "focusPercent", e.target.value === "" ? 0 : parseInt(e.target.value) || 0)}
                               onBlur={(e) => {
                                 if (e.target.value === "") {
-                                  updateFocusDistribution(setShortTermFocus, item.category, "focusPercent", 0)
+                                  updateFocusDistribution('short_term', setShortTermFocus, item.category, "focusPercent", 0)
                                 }
                               }}
                               className="text-sm w-24"
@@ -520,7 +772,7 @@ export default function CareerGoalsPage() {
                           <td className="p-3">
                             <Input
                               value={item.why}
-                              onChange={(e) => updateFocusDistribution(setShortTermFocus, item.category, "why", e.target.value)}
+                              onChange={(e) => updateFocusDistribution('short_term', setShortTermFocus, item.category, "why", e.target.value)}
                               placeholder="Why this focus percentage..."
                               className="text-sm"
                             />
@@ -549,7 +801,7 @@ export default function CareerGoalsPage() {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-semibold dark:text-gray-100">Goals</h3>
-                  <Button size="sm" onClick={() => addGoal(setShortTermGoals, shortTermGoals)}>
+                  <Button size="sm" onClick={() => addGoal('short_term', setShortTermGoals, shortTermGoals)}>
                     <Plus className="h-4 w-4 mr-1" />
                     Add Goal
                   </Button>
@@ -711,10 +963,10 @@ export default function CareerGoalsPage() {
                             <Input
                               type="number"
                               value={item.focusPercent === 0 ? "" : item.focusPercent}
-                              onChange={(e) => updateFocusDistribution(setMidTermFocus, item.category, "focusPercent", e.target.value === "" ? 0 : parseInt(e.target.value) || 0)}
+                              onChange={(e) => updateFocusDistribution('mid_term', setMidTermFocus, item.category, "focusPercent", e.target.value === "" ? 0 : parseInt(e.target.value) || 0)}
                               onBlur={(e) => {
                                 if (e.target.value === "") {
-                                  updateFocusDistribution(setMidTermFocus, item.category, "focusPercent", 0)
+                                  updateFocusDistribution('mid_term', setMidTermFocus, item.category, "focusPercent", 0)
                                 }
                               }}
                               className="text-sm w-24"
@@ -725,7 +977,7 @@ export default function CareerGoalsPage() {
                           <td className="p-3">
                             <Input
                               value={item.why}
-                              onChange={(e) => updateFocusDistribution(setMidTermFocus, item.category, "why", e.target.value)}
+                              onChange={(e) => updateFocusDistribution('mid_term', setMidTermFocus, item.category, "why", e.target.value)}
                               placeholder="Why this focus percentage..."
                               className="text-sm"
                             />
@@ -754,7 +1006,7 @@ export default function CareerGoalsPage() {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-semibold dark:text-gray-100">Goals</h3>
-                  <Button size="sm" onClick={() => addGoal(setMidTermGoals, midTermGoals)}>
+                  <Button size="sm" onClick={() => addGoal('mid_term', setMidTermGoals, midTermGoals)}>
                     <Plus className="h-4 w-4 mr-1" />
                     Add Goal
                   </Button>
@@ -913,10 +1165,10 @@ export default function CareerGoalsPage() {
                             <Input
                               type="number"
                               value={item.focusPercent === 0 ? "" : item.focusPercent}
-                              onChange={(e) => updateFocusDistribution(setLongTermFocus, item.category, "focusPercent", e.target.value === "" ? 0 : parseInt(e.target.value) || 0)}
+                              onChange={(e) => updateFocusDistribution('long_term', setLongTermFocus, item.category, "focusPercent", e.target.value === "" ? 0 : parseInt(e.target.value) || 0)}
                               onBlur={(e) => {
                                 if (e.target.value === "") {
-                                  updateFocusDistribution(setLongTermFocus, item.category, "focusPercent", 0)
+                                  updateFocusDistribution('long_term', setLongTermFocus, item.category, "focusPercent", 0)
                                 }
                               }}
                               className="text-sm w-24"
@@ -927,7 +1179,7 @@ export default function CareerGoalsPage() {
                           <td className="p-3">
                             <Input
                               value={item.why}
-                              onChange={(e) => updateFocusDistribution(setLongTermFocus, item.category, "why", e.target.value)}
+                              onChange={(e) => updateFocusDistribution('long_term', setLongTermFocus, item.category, "why", e.target.value)}
                               placeholder="Why this focus percentage..."
                               className="text-sm"
                             />
@@ -956,7 +1208,7 @@ export default function CareerGoalsPage() {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-semibold dark:text-gray-100">Goals</h3>
-                  <Button size="sm" onClick={() => addGoal(setLongTermGoals, longTermGoals)}>
+                  <Button size="sm" onClick={() => addGoal('long_term', setLongTermGoals, longTermGoals)}>
                     <Plus className="h-4 w-4 mr-1" />
                     Add Goal
                   </Button>
@@ -1118,7 +1370,7 @@ export default function CareerGoalsPage() {
                       <td className="p-3">
                         <Select
                           value={achievement.type}
-                          onValueChange={(value) => updateAchievement(achievement.id, "type", value)}
+                          onValueChange={(value) => updateAchievementField(achievement.id, "type", value)}
                         >
                           <SelectTrigger className="text-sm">
                             <SelectValue />
@@ -1136,7 +1388,7 @@ export default function CareerGoalsPage() {
                       <td className="p-3">
                         <Input
                           value={achievement.description}
-                          onChange={(e) => updateAchievement(achievement.id, "description", e.target.value)}
+                          onChange={(e) => updateAchievementField(achievement.id, "description", e.target.value)}
                           placeholder="e.g., Designing Data-Intensive Applications by Martin Kleppmann"
                           className="text-sm"
                         />
@@ -1145,14 +1397,14 @@ export default function CareerGoalsPage() {
                         <Input
                           type="date"
                           value={achievement.date}
-                          onChange={(e) => updateAchievement(achievement.id, "date", e.target.value)}
+                          onChange={(e) => updateAchievementField(achievement.id, "date", e.target.value)}
                           className="text-sm"
                         />
                       </td>
                       <td className="p-3">
                         <Input
                           value={achievement.keyTakeaway}
-                          onChange={(e) => updateAchievement(achievement.id, "keyTakeaway", e.target.value)}
+                          onChange={(e) => updateAchievementField(achievement.id, "keyTakeaway", e.target.value)}
                           placeholder="What did you learn or achieve?"
                           className="text-sm"
                         />
@@ -1161,7 +1413,7 @@ export default function CareerGoalsPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => deleteAchievement(achievement.id)}
+                          onClick={() => deleteAchievementById(achievement.id)}
                         >
                           <Trash2 className="h-4 w-4 text-red-600" />
                         </Button>

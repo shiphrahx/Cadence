@@ -8,7 +8,8 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ChevronRight, ChevronLeft } from "lucide-react"
 import { getTodayDate } from "@/lib/utils"
-import { type Team, type Person } from "@/lib/mock-data"
+import { type Person } from "@/lib/services/people"
+import { type Team } from "@/lib/mock-data"
 
 interface PersonFormDialogProps {
   open: boolean
@@ -18,7 +19,7 @@ interface PersonFormDialogProps {
   availableTeams?: Team[]
 }
 
-const emptyPerson: Person = {
+const emptyPerson: Omit<Person, 'id' | 'createdAt'> & { id?: string; createdAt?: string } = {
   name: "",
   role: "",
   level: "",
@@ -29,7 +30,7 @@ const emptyPerson: Person = {
 }
 
 export function PersonFormDialog({ open, onOpenChange, person, onSave, availableTeams = [] }: PersonFormDialogProps) {
-  const [formData, setFormData] = useState<Person>(person || emptyPerson)
+  const [formData, setFormData] = useState<Person | typeof emptyPerson>(person || emptyPerson)
   const [selectedAvailable, setSelectedAvailable] = useState<string[]>([])
   const [selectedTeams, setSelectedTeams] = useState<string[]>([])
 
@@ -44,7 +45,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSave(formData)
+    onSave(formData as Person)
     onOpenChange(false)
   }
 
@@ -133,7 +134,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
                 <Label htmlFor="role">Role / Title</Label>
                 <Input
                   id="role"
-                  value={formData.role}
+                  value={formData.role || ''}
                   onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                   placeholder="e.g. Senior Software Engineer"
                 />
@@ -171,7 +172,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
                 </div>
                 <Input
                   id="level"
-                  value={formData.level}
+                  value={formData.level || ''}
                   onChange={(e) => setFormData({ ...formData, level: e.target.value })}
                   placeholder="Or enter custom level..."
                 />
@@ -181,7 +182,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
                 <Input
                   id="startDate"
                   type="date"
-                  value={formData.startDate}
+                  value={formData.startDate || ''}
                   onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                 />
               </div>
@@ -270,7 +271,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
               <Label htmlFor="notes" className="mb-2">Notes</Label>
               <Textarea
                 id="notes"
-                value={formData.notes}
+                value={formData.notes || ''}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 placeholder="Any additional notes..."
                 className="flex-1 resize-none"

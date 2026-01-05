@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Task, TaskStatus, TASK_STATUSES } from "@/lib/types/task"
+import { getTasks, createTask, updateTask, deleteTask as deleteTaskService } from "@/lib/services/tasks"
 import {
   DndContext,
   DragEndEvent,
@@ -128,13 +129,31 @@ const INITIAL_TASKS: Task[] = [
 ]
 
 export default function TasksPage() {
-  const [tasks, setTasks] = useState<Task[]>(INITIAL_TASKS)
+  const [tasks, setTasks] = useState<Task[]>([])
   const [activeTask, setActiveTask] = useState<Task | null>(null)
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [modalDefaults, setModalDefaults] = useState<Partial<Task>>({})
   const [isMounted, setIsMounted] = useState(false)
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  // Load tasks from Supabase on mount
+  useEffect(() => {
+    loadTasks()
+  }, [])
+
+  const loadTasks = async () => {
+    try {
+      setIsLoading(true)
+      const data = await getTasks()
+      setTasks(data)
+    } catch (error) {
+      console.error('Failed to load tasks:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   // Only enable DnD on client to avoid hydration mismatch
   useEffect(() => {
@@ -292,23 +311,29 @@ export default function TasksPage() {
     }
   }
 
-  const handleUpdateTask = (taskId: string, updates: Partial<Task>) => {
-    setTasks((tasks) =>
-      tasks.map((t) => (t.id === taskId ? { ...t, ...updates } : t))
-    )
+  const handleUpdateTask = async (taskId: string, updates: Partial<Task>) => {
+    try {
+      const updatedTask = await updateTask(taskId, updates)
+      setTasks((tasks) =>
+        tasks.map((t) => (t.id === taskId ? updatedTask : t))
+      )
+    } catch (error) {
+      console.error('Failed to update task:', error)
+    }
   }
 
-  const handleSaveTask = (task: Task) => {
-    if (task.id) {
-      // Update existing task
-      handleUpdateTask(task.id, task)
-    } else {
-      // Create new task
-      const newTask = {
-        ...task,
-        id: Math.random().toString(36).substr(2, 9),
+  const handleSaveTask = async (task: Task) => {
+    try {
+      if (task.id) {
+        // Update existing task
+        await handleUpdateTask(task.id, task)
+      } else {
+        // Create new task
+        const newTask = await createTask(task)
+        setTasks((tasks) => [...tasks, newTask])
       }
-      setTasks((tasks) => [...tasks, newTask])
+    } catch (error) {
+      console.error('Failed to save task:', error)
     }
   }
 
@@ -316,10 +341,15 @@ export default function TasksPage() {
     setDeleteConfirmId(taskId)
   }
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (deleteConfirmId) {
-      setTasks((tasks) => tasks.filter((t) => t.id !== deleteConfirmId))
-      setDeleteConfirmId(null)
+      try {
+        await deleteTaskService(deleteConfirmId)
+        setTasks((tasks) => tasks.filter((t) => t.id !== deleteConfirmId))
+        setDeleteConfirmId(null)
+      } catch (error) {
+        console.error('Failed to delete task:', error)
+      }
     }
   }
 

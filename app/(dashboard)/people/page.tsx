@@ -1,22 +1,41 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Plus, User } from "lucide-react"
 import { PersonFormDialog } from "@/components/person-form-dialog"
-import { PeopleTable, Person } from "@/components/people-table"
+import { PeopleTable } from "@/components/people-table"
 import { DeleteConfirmDialog } from "@/components/delete-confirm-dialog"
-import { mockPeople, mockTeams } from "@/lib/mock-data"
+import { mockTeams } from "@/lib/mock-data"
+import { getPeople, createPerson, updatePerson, deletePerson as deletePersonService, togglePersonStatus, type Person } from "@/lib/services/people"
 
 export default function PeoplePage() {
   const router = useRouter()
-  const [people, setPeople] = useState<Person[]>(mockPeople)
+  const [people, setPeople] = useState<Person[]>([])
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [editingPerson, setEditingPerson] = useState<Person | null>(null)
   const [deletingPerson, setDeletingPerson] = useState<Person | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  // Load people from Supabase on mount
+  useEffect(() => {
+    loadPeople()
+  }, [])
+
+  const loadPeople = async () => {
+    try {
+      setIsLoading(true)
+      const data = await getPeople()
+      setPeople(data)
+    } catch (error) {
+      console.error('Failed to load people:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   // Calculate stats
   const getLevelCounts = () => {
@@ -33,6 +52,7 @@ export default function PeoplePage() {
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
     return people.filter(person => {
+      if (!person.startDate) return false
       const startDate = new Date(person.startDate)
       return startDate >= thirtyDaysAgo
     }).length
@@ -41,32 +61,44 @@ export default function PeoplePage() {
   const levelCounts = getLevelCounts()
   const recentHiresCount = getRecentHires()
 
-  const handleAddPerson = (newPerson: Person) => {
-    const person: Person = {
-      ...newPerson,
-      id: Math.max(...people.map(p => p.id || 0), 0) + 1,
-      status: "active",
+  const handleAddPerson = async (newPerson: Person) => {
+    try {
+      const person = await createPerson(newPerson)
+      setPeople([...people, person])
+      setIsAddDialogOpen(false)
+    } catch (error) {
+      console.error('Failed to create person:', error)
     }
-    setPeople([...people, person])
   }
 
-  const handleEditPerson = (updatedPerson: Person) => {
-    if (updatedPerson.id) {
-      setPeople(people.map(p => p.id === updatedPerson.id ? { ...updatedPerson, id: updatedPerson.id } as Person : p))
+  const handleEditPerson = async (updatedPerson: Person) => {
+    try {
+      const person = await updatePerson(updatedPerson.id, updatedPerson)
+      setPeople(people.map(p => p.id === person.id ? person : p))
+      setEditingPerson(null)
+    } catch (error) {
+      console.error('Failed to update person:', error)
     }
-    setEditingPerson(null)
   }
 
-  const handleToggleStatus = (person: Person) => {
-    setPeople(people.map(p =>
-      p.id === person.id ? { ...p, status: p.status === "active" ? "inactive" : "active" } : p
-    ))
+  const handleToggleStatus = async (person: Person) => {
+    try {
+      const updatedPerson = await togglePersonStatus(person.id, person.status)
+      setPeople(people.map(p => p.id === updatedPerson.id ? updatedPerson : p))
+    } catch (error) {
+      console.error('Failed to toggle person status:', error)
+    }
   }
 
-  const handleDeletePerson = () => {
+  const handleDeletePerson = async () => {
     if (deletingPerson) {
-      setPeople(people.filter(p => p.id !== deletingPerson.id))
-      setDeletingPerson(null)
+      try {
+        await deletePersonService(deletingPerson.id)
+        setPeople(people.filter(p => p.id !== deletingPerson.id))
+        setDeletingPerson(null)
+      } catch (error) {
+        console.error('Failed to delete person:', error)
+      }
     }
   }
 

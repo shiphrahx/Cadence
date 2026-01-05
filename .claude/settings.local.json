@@ -90,7 +90,20 @@
       "Bash(cmd /c \"if exist .next\\\\dev rmdir /s /q .next\\\\dev\")",
       "Bash(npm start)",
       "Bash(cmd /c \"netstat -ano | findstr LISTENING | findstr 3000\")",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(npm run test:run:*)",
+      "Bash(npx vitest:*)",
+      "Bash(node:*)",
+      "Bash(for file in lib/services/*.ts)",
+      "Bash(do sed -i 's/owning_user_id: user\\\\.id,$/&\\\\n    } as any\\)/g' \"$file\")",
+      "Bash(do sed -i 's/} as any\\)$/}/g; s/    } as any\\)/    } as any/g' \"$file\")",
+      "Bash(cmd /c \"taskkill /F /PID 78332\")",
+      "Bash(cmd /c \"taskkill /F /IM node.exe /T 2>nul & if exist .next\\\\dev\\\\lock del /F .next\\\\dev\\\\lock 2>nul & timeout /t 2 /nobreak >nul & npm run dev\")",
+      "Bash(cmd /c \"tasklist /FI \"\"PID eq 78332\"\" /V\")",
+      "Bash(cmd /c \"rmdir /s /q .next 2>nul & npm run dev\")",
+      "Bash(cmd /c \"taskkill /F /T /PID 78332 & timeout /t 3 /nobreak >nul & del /F .next\\\\dev\\\\lock 2>nul & npm run dev\")",
+      "Bash(cmd /c \"wmic process where \"\"commandline like ''%next dev%'' and name=''node.exe''\"\" delete 2>nul & timeout /t 2 >nul & if exist .next rmdir /s /q .next & npm run dev\")",
+      "Bash(tasklist:*)"
     ]
   }
 }

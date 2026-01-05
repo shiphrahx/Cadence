@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { MoreHorizontal, Pencil, Trash2, UserX, UserCheck } from "lucide-react"
 import { useState, useEffect } from "react"
-import { type Person } from "@/lib/mock-data"
+import { type Person } from "@/lib/services/people"
 
 export type { Person }
 
@@ -26,7 +26,7 @@ export function PeopleTable({
   onToggleStatus,
   onQuickAdd,
 }: PeopleTableProps) {
-  const [selectedPersonMenu, setSelectedPersonMenu] = useState<number | null>(null)
+  const [selectedPersonMenu, setSelectedPersonMenu] = useState<string | null>(null)
 
   // Close popup when clicking outside
   useEffect(() => {
@@ -93,7 +93,7 @@ export function PeopleTable({
       header: "Level",
       accessorKey: "level",
       cell: (person) => (
-        <Badge variant="outline" className={getLevelBadgeClass(person.level)}>
+        <Badge variant="outline" className={getLevelBadgeClass(person.level || '')}>
           {person.level}
         </Badge>
       ),
@@ -122,11 +122,11 @@ export function PeopleTable({
       accessorKey: "startDate",
       cell: (person) => (
         <span className="text-gray-700 dark:text-gray-300">
-          {new Date(person.startDate).toLocaleDateString("en-GB", {
+          {person.startDate ? new Date(person.startDate).toLocaleDateString("en-GB", {
             day: "2-digit",
             month: "short",
             year: "numeric",
-          })}
+          }) : '-'}
         </span>
       ),
     },
@@ -159,16 +159,14 @@ export function PeopleTable({
             size="icon"
             onClick={(e) => {
               e.stopPropagation()
-              if (person.id !== undefined) {
-                setSelectedPersonMenu(
-                  selectedPersonMenu === person.id ? null : person.id
-                )
-              }
+              setSelectedPersonMenu(
+                selectedPersonMenu === person.id ? null : person.id
+              )
             }}
           >
             <MoreHorizontal className="h-4 w-4" />
           </Button>
-          {person.id !== undefined && selectedPersonMenu === person.id && (
+          {selectedPersonMenu === person.id && (
             <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-[#262626] ring-1 ring-black ring-opacity-5 dark:ring-gray-700 z-50">
               <div className="py-1">
                 <button

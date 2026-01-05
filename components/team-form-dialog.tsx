@@ -58,17 +58,17 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
   const isEditing = !!team
 
   const availablePeopleList = availablePeople.filter(person =>
-    person.id !== undefined && !formData.memberIds?.includes(person.id)
+    person.id !== undefined && !formData.memberIds?.includes(String(person.id))
   )
 
   const teamMembersList = availablePeople.filter(person =>
-    person.id !== undefined && formData.memberIds?.includes(person.id)
+    person.id !== undefined && formData.memberIds?.includes(String(person.id))
   )
 
   const handleAddToTeam = () => {
     setFormData({
       ...formData,
-      memberIds: [...(formData.memberIds || []), ...selectedAvailable]
+      memberIds: [...(formData.memberIds || []), ...selectedAvailable.map(String)]
     })
     setSelectedAvailable([])
   }
@@ -76,7 +76,7 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
   const handleRemoveFromTeam = () => {
     setFormData({
       ...formData,
-      memberIds: formData.memberIds?.filter(id => !selectedMembers.includes(id)) || []
+      memberIds: formData.memberIds?.filter(id => !selectedMembers.map(String).includes(id)) || []
     })
     setSelectedMembers([])
   }
@@ -100,7 +100,7 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
   const handleDoubleClickAvailable = (personId: number) => {
     setFormData({
       ...formData,
-      memberIds: [...(formData.memberIds || []), personId]
+      memberIds: [...(formData.memberIds || []), String(personId)]
     })
     setSelectedAvailable(prev => prev.filter(id => id !== personId))
   }
@@ -108,7 +108,7 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
   const handleDoubleClickMember = (personId: number) => {
     setFormData({
       ...formData,
-      memberIds: formData.memberIds?.filter(id => id !== personId) || []
+      memberIds: formData.memberIds?.filter(id => id !== String(personId)) || []
     })
     setSelectedMembers(prev => prev.filter(id => id !== personId))
   }
@@ -140,7 +140,7 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
                 <Label htmlFor="description">Description</Label>
                 <Textarea
                   id="description"
-                  value={formData.description}
+                  value={formData.description || ''}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Brief description of the team's focus..."
                   rows={3}

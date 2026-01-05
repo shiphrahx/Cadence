@@ -15,8 +15,9 @@ Cadence is a lightweight web platform for engineering managers to run their day-
 - **UI Components:** shadcn/ui with Radix UI primitives
 - **Icons:** Lucide React
 - **Font:** Inter (Google Fonts)
-- **Database (Planned):** Supabase Postgres with Row Level Security
-- **Authentication (Planned):** Supabase Auth with Google OAuth
+- **Database:** Supabase Postgres with Row Level Security
+- **Authentication:** Supabase Auth with Google OAuth
+- **Testing:** Vitest with React Testing Library
 
 ## Design System
 
@@ -51,28 +52,59 @@ Cadence/
 │   │   ├── people/
 │   │   │   └── page.tsx         # People management (CRUD complete)
 │   │   ├── teams/
-│   │   │   └── page.tsx         # Teams page (placeholder)
+│   │   │   └── page.tsx         # Teams management (CRUD complete)
+│   │   ├── tasks/
+│   │   │   └── page.tsx         # Tasks management (CRUD complete)
 │   │   └── ...
+│   ├── auth/
+│   │   └── callback/
+│   │       └── route.ts         # OAuth callback handler
+│   ├── login/
+│   │   └── page.tsx             # Login page
 │   ├── globals.css              # Global styles with Tailwind imports
 │   └── layout.tsx               # Root layout
 ├── components/
 │   ├── sidebar.tsx              # Navigation sidebar component
-│   ├── person-form-dialog.tsx   # Reusable person add/edit form
+│   ├── people-table.tsx         # People table component
+│   ├── teams-table.tsx          # Teams table component
+│   ├── tasks/
+│   │   ├── task-card.tsx        # Task card component
+│   │   ├── board-column.tsx     # Kanban board column
+│   │   └── backlog-table.tsx    # Backlog table
+│   ├── __tests__/               # Component tests
+│   │   ├── people-table.test.tsx
+│   │   └── teams-table.test.tsx
 │   └── ui/                      # shadcn/ui components
 │       ├── button.tsx
 │       ├── dialog.tsx
-│       ├── input.tsx
-│       ├── label.tsx
-│       ├── table.tsx
-│       ├── badge.tsx
 │       └── ...
 ├── lib/
-│   └── utils.ts                 # Utility functions (cn helper)
-├── public/
-│   ├── banner_01.png            # Project banner
-│   └── icon_02.png              # Logo/icon
-├── .claude/
-│   └── settings.local.json      # Local settings
+│   ├── services/                # Service layer for data access
+│   │   ├── people.ts
+│   │   ├── teams.ts
+│   │   ├── tasks.ts
+│   │   └── __tests__/           # Service layer tests
+│   │       ├── people.test.ts
+│   │       ├── teams.test.ts
+│   │       └── tasks.test.ts
+│   ├── supabase/                # Supabase clients and types
+│   │   ├── client.ts            # Browser client
+│   │   ├── server.ts            # Server client
+│   │   └── types.ts             # Database types
+│   ├── types/
+│   │   └── task.ts              # Task type definitions
+│   └── utils.ts                 # Utility functions
+├── test/
+│   ├── mocks/
+│   │   └── supabase.ts          # Supabase mock for testing
+│   ├── integration/
+│   │   ├── setup.ts             # Integration test setup
+│   │   └── teams.integration.test.ts
+│   └── setup.ts                 # Test configuration
+├── supabase/
+│   └── schema.sql               # Database schema
+├── proxy.ts                     # Authentication middleware
+├── vitest.config.ts             # Vitest configuration
 ├── postcss.config.mjs           # PostCSS config for Tailwind v4
 ├── tailwind.config.ts           # Tailwind configuration
 ├── package.json
@@ -86,12 +118,13 @@ Cadence/
 - Global CSS uses `@import "tailwindcss";` instead of `@tailwind` directives
 - Custom primary color configured in tailwind.config.ts
 
-### 2. Data Management (Current State)
-- **V1 Approach:** Mock data with React state management
-- **Persistence:** None (data resets on page refresh)
-- **Future:** Supabase integration planned for later phases
-- **Date Format:** DD-MM-YYYY for display
-- **Data Retention:** 5 years active, 2 years inactive (planned)
+### 2. Data Management
+- **Backend:** Supabase Postgres with Row Level Security
+- **Service Layer Pattern:** All database operations abstracted in `lib/services/`
+- **Authentication:** Google OAuth via Supabase Auth
+- **Session Management:** Cookie-based with server-side validation
+- **Data Format Mapping:** Bidirectional mapping between database and UI formats (e.g., Tasks)
+- **Date Format:** ISO 8601 in database, formatted for display in UI
 
 ### 3. People Management Features
 - Full CRUD operations (Create, Read, Update, Delete)
@@ -114,14 +147,21 @@ Cadence/
 - **Dropdown Menus:** Actions accessible via More (⋯) button with Edit, Toggle Status, Delete
 
 ### 5. Component Architecture
-- **Reusability:** PersonFormDialog handles both add and edit modes
+- **Reusability:** Form dialogs handle both add and edit modes
 - **Type Safety:** TypeScript interfaces for all data structures
-- **Helper Functions:**
-  - `getInitials()` - Generate avatar initials from names
-  - `getLevelBadgeClass()` - Determine color class based on seniority level
-  - `getLevelCounts()` - Calculate distribution by seniority
-  - `getRecentHires()` - Count hires in last 30 days
-  - `getTodayDate()` - Format today's date for date inputs
+- **Client/Server Separation:** Supabase clients for browser vs server contexts
+- **Testing:** Comprehensive unit, component, and integration tests
+
+### 6. Testing Infrastructure
+- **Unit Tests:** Service layer tests with mocked Supabase client
+- **Component Tests:** React component tests with React Testing Library
+- **Integration Tests:** End-to-end tests with real Supabase test instance
+- **Test Coverage:** 91+ test cases across all domains
+- **Scripts:**
+  - `npm test` - Run tests in watch mode
+  - `npm run test:run` - Run all tests once
+  - `npm run test:ui` - Interactive test UI
+  - `npm run test:coverage` - Generate coverage report
 
 ## Development Workflow
 
@@ -142,91 +182,109 @@ Cadence/
 
 ## Implementation Status
 
-### ✅ Completed
-- [x] Project initialization with Next.js 16
-- [x] Tailwind CSS v4 setup
-- [x] Sidebar navigation with all menu items
-- [x] Dashboard homepage with weekly overview
-- [x] People management page (Issue #5)
+### ✅ V1 Backend Complete
+- [x] Supabase database integration
+  - [x] Database schema with RLS policies
+  - [x] Supabase clients (browser and server)
+  - [x] Service layer for all domains
+- [x] Google OAuth authentication
+  - [x] Login page with OAuth flow
+  - [x] Authentication middleware (proxy.ts)
+  - [x] Session management with cookies
+- [x] Teams management
   - [x] Full CRUD operations
-  - [x] Quick-select seniority buttons
+  - [x] Member count aggregation
+  - [x] Status toggle
+- [x] People management
+  - [x] Full CRUD operations
+  - [x] Team memberships with JOIN queries
   - [x] Color-coded seniority badges
-  - [x] Active/Inactive status toggle
-  - [x] Delete confirmation with name typing
-  - [x] Dynamic statistics
-  - [x] Clickable table rows
-  - [x] Personalized dialog titles
-- [x] Logo integration and sizing
-- [x] Button hover state inversion
-- [x] Pointer cursors on interactive elements
+  - [x] Status toggle
+- [x] Tasks management
+  - [x] Full CRUD operations
+  - [x] Kanban board with drag-and-drop
+  - [x] Database-UI format mapping
+  - [x] Week/Backlog organization
+- [x] Testing infrastructure
+  - [x] Unit tests for all services (33 tests)
+  - [x] Component tests (43 tests)
+  - [x] Integration test setup (15 tests)
+  - [x] Vitest configuration
+  - [x] Supabase mocks
 
 ### 🚧 In Progress / Planned
-- [ ] Teams management (Issue #6)
 - [ ] Projects management
 - [ ] Meetings management
 - [ ] Career Goals tracking
-- [ ] Tasks management
-- [ ] Supabase database integration
-- [ ] Google OAuth authentication
-- [ ] Row Level Security implementation
-- [ ] Data persistence
-- [ ] Additional CRUD features for other entities
+- [ ] CI/CD pipeline with GitHub Actions
+- [ ] Additional integration tests for People and Tasks
+- [ ] E2E tests with Playwright
 
 ## Key Files Reference
 
-### Core Components
+### Service Layer
+- **lib/services/teams.ts** - Teams CRUD operations with member count aggregation
+- **lib/services/people.ts** - People CRUD with team membership JOINs
+- **lib/services/tasks.ts** - Tasks CRUD with database-UI format mapping
 
-**components/sidebar.tsx**
-- Navigation sidebar with logo and menu items
-- Logo clickable to dashboard (/)
-- Hover effects on menu items and logo area
+### Supabase Integration
+- **lib/supabase/client.ts** - Browser-side Supabase client
+- **lib/supabase/server.ts** - Server-side Supabase client
+- **lib/supabase/types.ts** - Database type definitions
+- **supabase/schema.sql** - Complete database schema with RLS policies
 
-**components/person-form-dialog.tsx**
-- Reusable dialog for add/edit person
-- Quick-select seniority buttons with color coding
-- Form validation and state management
-- Uses person's name in edit mode title
+### Authentication
+- **proxy.ts** - Authentication middleware for Next.js 16
+- **app/login/page.tsx** - Login page with Google OAuth
+- **app/auth/callback/route.ts** - OAuth callback handler
 
-**app/(dashboard)/people/page.tsx**
-- People management with full CRUD
-- Dynamic stats calculation
-- Color-coded seniority badges
-- Delete confirmation pattern
-- Active/Inactive filtering
-
-### UI Components (shadcn/ui)
-
-**components/ui/button.tsx**
-- Inverted hover states (darker default, lighter hover)
-- Pointer cursor on all buttons
-- Variants: default, destructive, outline, secondary, ghost, link
-
-**components/ui/dialog.tsx**
-- Modal dialog component
-- White background, border styling
-- Close button with pointer cursor
-
-**components/ui/input.tsx**
-- Form input with focus states
-- Primary color focus ring (#AEA6FD)
-
-**components/ui/table.tsx**
-- Table components with hover states
-- Used for data display in People page
+### Testing
+- **test/setup.ts** - Global test configuration
+- **test/mocks/supabase.ts** - Supabase client mock for unit tests
+- **test/integration/setup.ts** - Integration test helpers and cleanup
+- **vitest.config.ts** - Vitest configuration with React plugin
 
 ## Data Models
 
-### Person Interface
+### Teams
+```typescript
+interface Team {
+  id: string
+  name: string
+  description: string
+  status: 'active' | 'inactive'
+  memberCount: number
+  createdAt: string
+  notes?: string
+}
+```
+
+### People
 ```typescript
 interface Person {
-  id?: number
+  id: string
   name: string
-  role: string
-  level: string          // Junior, Mid, Senior, or custom
-  startDate: string      // YYYY-MM-DD format
-  status: "active" | "inactive"
+  role: string | null
+  level: string | null
+  startDate: string | null
+  status: 'active' | 'inactive'
   teams: string[]
-  notes?: string
+  notes?: string | null
+  createdAt: string
+}
+```
+
+### Tasks
+```typescript
+interface Task {
+  id: string
+  title: string
+  description?: string
+  dueDate: string | null
+  priority: 'Low' | 'Medium' | 'High' | 'Very High'
+  category: 'Task' | 'Meeting'
+  status: 'Not started' | 'In progress' | 'Blocked' | 'Done'
+  list: 'week' | 'backlog'
 }
 ```
 
@@ -237,15 +295,33 @@ interface Person {
 2. **Read files before editing** - Always use Read tool before making changes
 3. **Use specialized tools** - Prefer Read/Edit/Write over bash commands for file operations
 4. **Parallel tool calls** - Make independent tool calls in parallel when possible
-5. **Mock data only** - Current implementation uses mock data, no database yet
+5. **Service Layer Pattern** - All database operations go through `lib/services/` layer
+6. **Authentication Required** - All protected routes require Supabase auth via proxy.ts
+
+### Environment Setup
+1. Copy `.env.example` to `.env.local` (if exists) or create `.env.local`
+2. Add Supabase credentials:
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+   ```
+3. Set up Google OAuth in Supabase dashboard
+4. Run `npm install` to install dependencies
+5. Run `npm run dev` to start development server
+
+### Testing
+1. **Run tests**: `npm run test:run`
+2. **Watch mode**: `npm test`
+3. **Coverage**: `npm run test:coverage`
+4. **Integration tests**: Run separately with `npm run test -- test/integration`
 
 ### For Future Enhancements
-1. Implement localStorage for temporary persistence before Supabase
+1. Build out remaining menu sections (Projects, Meetings, Career Goals)
 2. Add team assignment functionality to People page
-3. Build out remaining menu sections (Teams, Projects, Meetings, Career Goals)
-4. Integrate Supabase for authentication and data persistence
-5. Implement Row Level Security policies
-6. Add data export/import functionality
+3. Implement data export/import functionality
+4. Add CI/CD pipeline with GitHub Actions
+5. Complete integration tests for People and Tasks domains
+6. Add E2E tests with Playwright
 
 ## Related Documentation
 - Requirements: See GitHub Project Board
@@ -254,4 +330,18 @@ interface Person {
 
 ---
 
-Last Updated: 2025-12-18
+Last Updated: 2026-01-04
+
+## Changelog
+
+### 2026-01-04 - V1 Backend Complete
+- Implemented Supabase database integration with RLS policies
+- Added Google OAuth authentication
+- Migrated Teams, People, and Tasks to use Supabase backend
+- Created comprehensive testing infrastructure (91+ tests)
+- Updated documentation to reflect current architecture
+
+### 2025-12-18 - Initial Setup
+- Project initialization with Next.js 16 and Tailwind CSS v4
+- Basic UI components and navigation
+- Mock data implementation for People management

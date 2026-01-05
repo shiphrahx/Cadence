@@ -36,9 +36,9 @@ export async function GET(request: Request) {
           .from('user_profiles')
           .insert({
             id: data.user.id,
-            name: data.user.user_metadata.full_name || data.user.user_metadata.name || 'User',
+            name: (data.user.user_metadata.full_name || data.user.user_metadata.name || 'User') as string,
             email: data.user.email || null,
-          })
+          } as any)
 
         if (profileError) {
           console.error('Error creating user profile:', profileError)
