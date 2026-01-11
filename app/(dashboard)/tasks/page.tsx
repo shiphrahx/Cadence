@@ -433,7 +433,7 @@ export default function TasksPage() {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-gray-100 font-semibold">This week</h2>
-            <Button size="sm" onClick={handleNewTaskHeader}>
+            <Button onClick={handleNewTaskHeader}>
               <Plus className="h-4 w-4 mr-2" />
               New task
             </Button>

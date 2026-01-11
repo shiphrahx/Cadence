@@ -801,7 +801,7 @@ export default function CareerGoalsPage() {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-gray-100 font-semibold">Goals</h3>
-                  <Button size="sm" onClick={() => addGoal('short_term', setShortTermGoals, shortTermGoals)}>
+                  <Button onClick={() => addGoal('short_term', setShortTermGoals, shortTermGoals)}>
                     <Plus className="h-4 w-4 mr-1" />
                     Add Goal
                   </Button>
@@ -1006,7 +1006,7 @@ export default function CareerGoalsPage() {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-gray-100 font-semibold">Goals</h3>
-                  <Button size="sm" onClick={() => addGoal('mid_term', setMidTermGoals, midTermGoals)}>
+                  <Button onClick={() => addGoal('mid_term', setMidTermGoals, midTermGoals)}>
                     <Plus className="h-4 w-4 mr-1" />
                     Add Goal
                   </Button>
@@ -1208,7 +1208,7 @@ export default function CareerGoalsPage() {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-gray-100 font-semibold">Goals</h3>
-                  <Button size="sm" onClick={() => addGoal('long_term', setLongTermGoals, longTermGoals)}>
+                  <Button onClick={() => addGoal('long_term', setLongTermGoals, longTermGoals)}>
                     <Plus className="h-4 w-4 mr-1" />
                     Add Goal
                   </Button>
@@ -1347,7 +1347,7 @@ export default function CareerGoalsPage() {
         <CardContent>
           <div className="space-y-4">
             <div className="flex justify-end">
-              <Button size="sm" onClick={addAchievement}>
+              <Button onClick={addAchievement}>
                 <Plus className="h-4 w-4 mr-1" />
                 Add Achievement
               </Button>

@@ -368,7 +368,7 @@ export default function MeetingsPage() {
         <div className="p-4 border-[#383838]">
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-gray-100 font-semibold">Meetings</h2>
-            <Button size="sm" onClick={() => setIsAddDialogOpen(true)}>
+            <Button onClick={() => setIsAddDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-1" />
               Log
             </Button>

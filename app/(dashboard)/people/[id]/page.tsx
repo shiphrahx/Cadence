@@ -567,7 +567,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
               <div className="p-4 border-[#383838] bg-[#1c1c1c]">
                 <div className="flex items-center justify-between">
                   <h3 className="text-gray-100 font-semibold">Meeting History</h3>
-                  <Button size="sm" onClick={() => setIsAddMeetingDialogOpen(true)}>
+                  <Button onClick={() => setIsAddMeetingDialogOpen(true)}>
                     <Plus className="h-4 w-4 mr-1" />
                     Log
                   </Button>
@@ -581,7 +581,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                 {Object.keys(tree).length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-8 text-center">
                     <p className="text-gray-400 mb-4">No meetings logged yet</p>
-                    <Button size="sm" onClick={() => setIsAddMeetingDialogOpen(true)}>
+                    <Button onClick={() => setIsAddMeetingDialogOpen(true)}>
                       <Plus className="h-4 w-4 mr-1" />
                       Log First Meeting
                     </Button>

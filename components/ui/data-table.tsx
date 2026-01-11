@@ -138,7 +138,7 @@ export function DataTable<T extends { id?: number | string }>({
           )}
         </div>
         {onQuickAdd && (
-          <Button size="sm" onClick={onQuickAdd}>
+          <Button onClick={onQuickAdd}>
             <Plus className="h-4 w-4 mr-2" />
             {quickAddLabel}
           </Button>
