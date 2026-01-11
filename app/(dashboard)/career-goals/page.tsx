@@ -611,15 +611,10 @@ export default function CareerGoalsPage() {
           <div className="grid grid-cols-2 gap-6">
             <div className="grid gap-2">
               <Label>Where you are now</Label>
-              <p className="text-gray-500 mb-2">
-                Example: I am currently a Lead / Engineering Manager, responsible for delivery, technical direction, and people management.
-                I am effective at keeping work moving and resolving issues as they come up, but I am still too involved in day-to-day execution. 
-                I often step in to unblock or make decisions myself, which limits how much space I create for others to lead and reduces my time for more strategic work.
-              </p>
               <MarkdownTextarea
                 value={whereYouAre}
                 onValueChange={setWhereYouAre}
-                placeholder="Describe your current role, strengths, and areas for improvement..."
+                placeholder="Example: I am currently a Lead / Engineering Manager, responsible for delivery, technical direction, and people management. I am effective at keeping work moving and resolving issues as they come up, but I am still too involved in day-to-day execution. I often step in to unblock or make decisions myself, which limits how much space I create for others to lead and reduces my time for more strategic work."
                 rows={8}
                 className="text-sm"
               />
@@ -627,14 +622,10 @@ export default function CareerGoalsPage() {
 
             <div className="grid gap-2">
               <Label>Where you want to go</Label>
-              <p className="text-gray-500 mb-2">
-                Example: My goal in 12 months is to move into a more senior leadership role where my impact comes from setting direction rather than solving every problem myself. 
-                I aim to delegate more effectively and focus on longer-term technical and organisational decisions. 
-              </p>
               <MarkdownTextarea
                 value={whereYouWantToGo}
                 onValueChange={setWhereYouWantToGo}
-                placeholder="Describe your career goal and what success looks like..."
+                placeholder="Example: My goal in 12 months is to move into a more senior leadership role where my impact comes from setting direction rather than solving every problem myself. I aim to delegate more effectively and focus on longer-term technical and organisational decisions."
                 rows={8}
                 className="text-sm"
               />
