@@ -81,8 +81,8 @@ export default function TeamsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Teams</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
+          <h1 className="text-gray-100 font-bold">Teams</h1>
+          <p className="text-gray-400 mt-1">
             Manage your teams and team members
           </p>
         </div>
@@ -93,7 +93,7 @@ export default function TeamsPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid md:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Teams</CardTitle>
@@ -101,7 +101,7 @@ export default function TeamsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{teams.filter(t => t.status === "active").length}</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground">
               {teams.filter(t => t.status === "inactive").length} inactive
             </p>
           </CardContent>
@@ -116,7 +116,7 @@ export default function TeamsPage() {
             <div className="text-2xl font-bold">
               {teams.filter(t => t.status === "active").reduce((sum, team) => sum + team.memberCount, 0)}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground">
               In active teams
             </p>
           </CardContent>
@@ -133,7 +133,7 @@ export default function TeamsPage() {
                 ? Math.round(teams.filter(t => t.status === "active").reduce((sum, team) => sum + team.memberCount, 0) / teams.filter(t => t.status === "active").length)
                 : 0}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground">
               Members per active team
             </p>
           </CardContent>

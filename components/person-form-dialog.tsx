@@ -191,7 +191,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
                 <div className="flex gap-3 items-center">
                   {/* Available Teams */}
                   <div className="flex-1">
-                    <Label className="text-xs text-gray-600 mb-1">Available Teams</Label>
+                    <Label className="text-gray-600 mb-1">Available Teams</Label>
                     <div className="border border-gray-300 rounded-md h-32 overflow-y-auto">
                       {availableTeamsList.length > 0 ? (
                         availableTeamsList.map((team) => (
@@ -200,14 +200,14 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
                             onClick={() => toggleAvailableSelection(team.name)}
                             onDoubleClick={() => handleDoubleClickAvailable(team.name)}
                             className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 select-none ${
-                              selectedAvailable.includes(team.name) ? 'bg-primary-50 dark:bg-primary-dark-900/30 border-l-2 border-primary-600' : ''
+                              selectedAvailable.includes(team.name) ? 'bg-primary-50 bg-primary-dark-900/30 border-l-2 border-primary-600' : ''
                             }`}
                           >
                             {team.name}
                           </div>
                         ))
                       ) : (
-                        <div className="flex items-center justify-center h-full text-sm text-gray-500">
+                        <div className="flex items-center justify-center h-full text-gray-500">
                           All teams assigned
                         </div>
                       )}
@@ -240,7 +240,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
 
                   {/* Person Teams */}
                   <div className="flex-1">
-                    <Label className="text-xs text-gray-600 mb-1">{formData.name ? `${formData.name}'s Teams` : "Person's Teams"} ({personTeamsList.length})</Label>
+                    <Label className="text-gray-600 mb-1">{formData.name ? `${formData.name}'s Teams` : "Person's Teams"} ({personTeamsList.length})</Label>
                     <div className="border border-gray-300 rounded-md h-32 overflow-y-auto">
                       {personTeamsList.length > 0 ? (
                         personTeamsList.map((team) => (
@@ -249,14 +249,14 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
                             onClick={() => toggleTeamSelection(team.name)}
                             onDoubleClick={() => handleDoubleClickTeam(team.name)}
                             className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 select-none ${
-                              selectedTeams.includes(team.name) ? 'bg-primary-50 dark:bg-primary-dark-900/30 border-l-2 border-primary-600' : ''
+                              selectedTeams.includes(team.name) ? 'bg-primary-50 bg-primary-dark-900/30 border-l-2 border-primary-600' : ''
                             }`}
                           >
                             {team.name}
                           </div>
                         ))
                       ) : (
-                        <div className="flex items-center justify-center h-full text-sm text-gray-500">
+                        <div className="flex items-center justify-center h-full text-gray-500">
                           No teams yet
                         </div>
                       )}

@@ -7,7 +7,8 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    // setupFiles: ['./test/setup.ts'], // Temporarily disabled to debug
+    setupFiles: ['./test/setup.ts'],
+    include: ['**/*.{test,spec}.{ts,tsx}'],
     exclude: [
       '**/node_modules/**',
       '**/dist/**',
@@ -32,5 +33,8 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './'),
     },
+  },
+  esbuild: {
+    target: 'es2020',
   },
 })

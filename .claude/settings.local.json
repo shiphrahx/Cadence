@@ -103,7 +103,9 @@
       "Bash(cmd /c \"rmdir /s /q .next 2>nul & npm run dev\")",
       "Bash(cmd /c \"taskkill /F /T /PID 78332 & timeout /t 3 /nobreak >nul & del /F .next\\\\dev\\\\lock 2>nul & npm run dev\")",
       "Bash(cmd /c \"wmic process where \"\"commandline like ''%next dev%'' and name=''node.exe''\"\" delete 2>nul & timeout /t 2 >nul & if exist .next rmdir /s /q .next & npm run dev\")",
-      "Bash(tasklist:*)"
+      "Bash(tasklist:*)",
+      "Bash(python:*)",
+      "Bash(head:*)"
     ]
   }
 }

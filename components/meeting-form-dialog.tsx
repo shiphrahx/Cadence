@@ -253,7 +253,7 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[95vw] max-w-[95vw] h-[90vh] max-h-[90vh]">
+      <DialogContent className="w-[95vw] max-h-[90vh] h-[90vh]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>{isEditing ? meeting?.title : "Log Meeting"}</DialogTitle>
@@ -314,12 +314,12 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                         required
                       />
                       {showSuggestions && (
-                        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                        <div className="absolute border z-50 w-full mt-1 bg-white border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
                           {filteredPeople.map((person, index) => (
                             <div
                               key={index}
                               onClick={() => handlePersonSelect(person)}
-                              className="px-3 py-2 text-sm cursor-pointer hover:bg-gray-100"
+                              className="hover:bg-gray-100 px-3 py-2 text-sm cursor-pointer"
                             >
                               {person}
                             </div>
@@ -327,7 +327,7 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                         </div>
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-muted-foreground">
                       Select from your team or type a new name
                     </p>
                   </div>
@@ -415,12 +415,12 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                         required
                       />
                       {showTeamSuggestions && (
-                        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                        <div className="absolute border z-50 w-full mt-1 bg-white border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
                           {filteredTeams.map((team, index) => (
                             <div
                               key={index}
                               onClick={() => handleTeamSelect(team)}
-                              className="px-3 py-2 text-sm cursor-pointer hover:bg-gray-100"
+                              className="hover:bg-gray-100 px-3 py-2 text-sm cursor-pointer"
                             >
                               {team}
                             </div>
@@ -428,7 +428,7 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                         </div>
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-muted-foreground">
                       Select from your teams or type a new name
                     </p>
                   </div>
@@ -476,7 +476,7 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                       onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                       placeholder={`e.g. ${formData.type} - ${teamInput || "Team Name"}`}
                     />
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-muted-foreground">
                       Leave blank to auto-generate from type and team
                     </p>
                   </div>
@@ -541,7 +541,7 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                       })}
                       placeholder="Enter names separated by commas"
                     />
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-muted-foreground">
                       Separate multiple attendees with commas
                     </p>
                   </div>
@@ -577,7 +577,7 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                         onClick={() => setSelectedTemplate(template)}
                         className={`text-xs border ${
                           selectedTemplate === template
-                            ? "bg-primary-100 dark:bg-primary-dark-900 text-primary-700 dark:text-primary-dark-400 border-primary-300"
+                            ? "bg-primary-100 bg-primary-dark-900 text-primary-700 text-primary-dark-400 border-primary-300"
                             : "bg-white text-gray-700 hover:bg-gray-50"
                         }`}
                       >
@@ -585,14 +585,14 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                       </Button>
                     ))}
                   </div>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground">
                     Select a template to load pre-formatted notes
                   </p>
                 </div>
               )}
 
               {/* Notes Section */}
-              <div className="flex flex-col flex-1">
+              <div className="flex flex-1">
                 <Label className="mb-2">Notes</Label>
                 <div className="flex-1">
                   <MarkdownTextarea
@@ -607,7 +607,7 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
           </div>
           {validationError && (
             <div className="px-6 pb-2">
-              <p className="text-sm text-red-600">{validationError}</p>
+              <p className="text-red-600">{validationError}</p>
             </div>
           )}
           <DialogFooter>

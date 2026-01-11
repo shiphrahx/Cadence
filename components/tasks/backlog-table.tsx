@@ -156,7 +156,7 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-2 flex-1">
           <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute -translate-y-1/2 left-3 top-1/2 h-4 w-4 text-gray-400" />
             <Input
               placeholder="Search tasks..."
               value={searchQuery}
@@ -173,20 +173,20 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
             Filters
           </Button>
         </div>
-        <Button size="sm" onClick={onQuickAdd}>
+        <Button onClick={onQuickAdd}>
           <Plus className="h-4 w-4 mr-2" />
           New task
         </Button>
       </div>
 
       {showFilters && (
-        <div className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-[#262626] rounded-lg border dark:border-[#383838]">
+        <div className="flex border items-center gap-4 p-4 bg-[#262626] rounded-lg border-[#383838]">
           <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-100">Status:</label>
+            <label className="text-gray-100 font-medium">Status:</label>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as TaskStatus | "all")}
-              className="text-sm border border-gray-300 rounded-md px-2 py-1"
+              className="border text-sm border-gray-300 rounded-md px-2 py-1"
             >
               <option value="all">All</option>
               {TASK_STATUSES.map((status) => (
@@ -197,11 +197,11 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
             </select>
           </div>
           <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-100">Priority:</label>
+            <label className="text-gray-100 font-medium">Priority:</label>
             <select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value as TaskPriority | "all")}
-              className="text-sm border border-gray-300 rounded-md px-2 py-1"
+              className="border text-sm border-gray-300 rounded-md px-2 py-1"
             >
               <option value="all">All</option>
               {TASK_PRIORITIES.map((priority) => (
@@ -212,11 +212,11 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
             </select>
           </div>
           <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-100">Category:</label>
+            <label className="text-gray-100 font-medium">Category:</label>
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value as TaskCategory | "all")}
-              className="text-sm border border-gray-300 rounded-md px-2 py-1"
+              className="border text-sm border-gray-300 rounded-md px-2 py-1"
             >
               <option value="all">All</option>
               {TASK_CATEGORIES.map((category) => (
@@ -232,8 +232,8 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
       <div
         ref={setNodeRef}
         className={cn(
-          "border dark:border-[#383838] rounded-lg bg-white dark:bg-[#262626] transition-colors max-md:overflow-x-auto",
-          isOver && "ring-2 ring-primary-500 dark:ring-primary-dark-500 bg-primary-50 dark:bg-primary-dark-900/30 dark:bg-primary-dark-900/30"
+          "border border-[#383838] rounded-lg bg-white bg-[#262626] transition-colors max-md:overflow-x-auto",
+          isOver && "ring-2 ring-primary-500 ring-primary-dark-500 bg-primary-50 bg-primary-dark-900/30 bg-primary-dark-900/30"
         )}
       >
         <table className="w-full border-collapse">
@@ -247,54 +247,54 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
             <col className="w-12 max-md:w-10" />
           </colgroup>
           <thead>
-            <tr className="border-b dark:border-[#383838]">
-              <th className="p-3 bg-gray-50 dark:bg-[#262626]"></th>
-              <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100">
+            <tr className="border-[#383838]">
+              <th className="p-3 bg-[#262626]"></th>
+              <th className="text-gray-100 p-3 bg-[#262626] font-semibold">
                 <button
                   onClick={() => handleSort("title")}
-                  className="flex items-center gap-1 hover:text-primary-600 dark:text-primary-dark-400 dark:hover:text-primary-dark-400 dark:hover:text-primary-400"
+                  className="flex hover:text-primary-600 hover:text-primary-dark-400 hover:text-primary-400 items-center gap-1 text-primary-dark-400"
                 >
                   Name
                   <ArrowUpDown className="h-3 w-3" />
                 </button>
               </th>
-              <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100">
+              <th className="text-gray-100 p-3 bg-[#262626] font-semibold">
                 <button
                   onClick={() => handleSort("status")}
-                  className="flex items-center gap-1 hover:text-primary-600 dark:text-primary-dark-400 dark:hover:text-primary-dark-400 dark:hover:text-primary-400"
+                  className="flex hover:text-primary-600 hover:text-primary-dark-400 hover:text-primary-400 items-center gap-1 text-primary-dark-400"
                 >
                   Status
                   <ArrowUpDown className="h-3 w-3" />
                 </button>
               </th>
-              <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100">
+              <th className="text-gray-100 p-3 bg-[#262626] font-semibold">
                 <button
                   onClick={() => handleSort("dueDate")}
-                  className="flex items-center gap-1 hover:text-primary-600 dark:text-primary-dark-400 dark:hover:text-primary-dark-400 dark:hover:text-primary-400"
+                  className="flex hover:text-primary-600 hover:text-primary-dark-400 hover:text-primary-400 items-center gap-1 text-primary-dark-400"
                 >
                   Due Date
                   <ArrowUpDown className="h-3 w-3" />
                 </button>
               </th>
-              <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100">
+              <th className="text-gray-100 p-3 bg-[#262626] font-semibold">
                 <button
                   onClick={() => handleSort("priority")}
-                  className="flex items-center gap-1 hover:text-primary-600 dark:text-primary-dark-400 dark:hover:text-primary-dark-400 dark:hover:text-primary-400"
+                  className="flex hover:text-primary-600 hover:text-primary-dark-400 hover:text-primary-400 items-center gap-1 text-primary-dark-400"
                 >
                   Priority
                   <ArrowUpDown className="h-3 w-3" />
                 </button>
               </th>
-              <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100">
+              <th className="text-gray-100 p-3 bg-[#262626] font-semibold">
                 <button
                   onClick={() => handleSort("category")}
-                  className="flex items-center gap-1 hover:text-primary-600 dark:text-primary-dark-400 dark:hover:text-primary-dark-400 dark:hover:text-primary-400"
+                  className="flex hover:text-primary-600 hover:text-primary-dark-400 hover:text-primary-400 items-center gap-1 text-primary-dark-400"
                 >
                   Category
                   <ArrowUpDown className="h-3 w-3" />
                 </button>
               </th>
-              <th className="p-3 bg-gray-50 dark:bg-[#262626]"></th>
+              <th className="p-3 bg-[#262626]"></th>
             </tr>
           </thead>
           <tbody>
@@ -309,12 +309,12 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
                     className="p-3 text-center"
                     onDoubleClick={(e) => e.stopPropagation()}
                   >
-                    <div className="drag-handle cursor-grab active:cursor-grabbing inline-flex">
+                    <div className="active:cursor-grabbing drag-handle cursor-grab inline-flex">
                       <GripVertical className="h-4 w-4 text-gray-400" />
                     </div>
                   </td>
                   <td
-                    className="p-3 font-medium text-sm dark:text-gray-100 overflow-hidden"
+                    className="p-3 font-medium text-gray-100 overflow-hidden"
                     title={task.title}
                   >
                     <div className="line-clamp-2 break-all max-md:break-words">{task.title}</div>
@@ -330,7 +330,7 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
                       }))}
                     />
                   </td>
-                  <td className="p-3 text-sm text-gray-700 dark:text-gray-300">{formatDate(task.dueDate)}</td>
+                  <td className="p-3 text-gray-300">{formatDate(task.dueDate)}</td>
                   <td className="p-3" onClick={(e) => e.stopPropagation()}>
                     <BadgeSelect
                       value={task.priority}
@@ -364,7 +364,7 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
                         e.stopPropagation()
                         if (onDelete) onDelete(task.id)
                       }}
-                      className="text-gray-400 hover:text-red-600 cursor-pointer transition-colors"
+                      className="hover:text-red-600 text-gray-400 cursor-pointer transition-colors"
                       aria-label="Delete task"
                     >
                       <Trash2 className="h-4 w-4 inline-block" />
@@ -377,7 +377,7 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
               <td colSpan={7} className="p-0">
                 <button
                   onClick={onQuickAdd}
-                  className="w-full text-left px-3 py-3 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#292929] transition-colors flex items-center gap-2 border-t dark:border-[#383838]"
+                  className="hover:text-gray-700 hover:text-gray-200 hover:bg-gray-50 hover:bg-[#292929] flex w-full text-gray-400 px-3 py-3 transition-colors items-center gap-2 border-[#383838]"
                 >
                   <Plus className="h-4 w-4" />
                   New task

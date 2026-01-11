@@ -493,7 +493,7 @@ export default function CareerGoalsPage() {
 
     if (total === 0) {
       return (
-        <div className="flex items-center justify-center h-64 text-gray-400 dark:text-gray-500">
+        <div className="flex items-center justify-center h-64 text-gray-500">
           No goals yet
         </div>
       )
@@ -537,13 +537,13 @@ export default function CareerGoalsPage() {
             startAngle = endAngle
             return slice
           })}
-          <circle cx={centerX} cy={centerY} r="40" className="fill-white dark:fill-[#262626]" />
+          <circle cx={centerX} cy={centerY} r="40" className="fill-[#262626]" />
           <text
             x={centerX}
             y={centerY}
             textAnchor="middle"
             dominantBaseline="middle"
-            className="text-4xl font-bold fill-[#1f2937] dark:fill-[#ebebeb]"
+            className="text-4xl font-bold fill-[#ebebeb]"
           >
             {total}
           </text>
@@ -552,13 +552,13 @@ export default function CareerGoalsPage() {
             y={centerY + 25}
             textAnchor="middle"
             dominantBaseline="middle"
-            className="text-xs fill-[#6b7280] dark:fill-[#9ca3af]"
+            className="text-xs fill-[#9ca3af]"
           >
             Total
           </text>
         </svg>
 
-        <div className="flex flex-wrap gap-x-4 gap-y-2 justify-center max-w-md">
+        <div className="flex flex-wrap gap-y-2 justify-center max-w-md">
           {categories.map((category) => {
             const count = distribution[category] || 0
             const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : "0.0"
@@ -570,8 +570,8 @@ export default function CareerGoalsPage() {
                   className="w-3 h-3 rounded-sm flex-shrink-0"
                   style={{ backgroundColor: getCategoryColor(category) }}
                 />
-                <span className="text-gray-700 dark:text-gray-300">{truncatedCategory}</span>
-                <span className="text-gray-500 dark:text-gray-400">({percentage}%)</span>
+                <span className="text-gray-300">{truncatedCategory}</span>
+                <span className="text-gray-400">({percentage}%)</span>
               </div>
             )
           })}
@@ -585,8 +585,8 @@ export default function CareerGoalsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Career Goals</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
+          <h1 className="text-gray-100 font-bold">Career Goals</h1>
+          <p className="text-gray-400 mt-1">
             Plan your career progression and track your goals
           </p>
         </div>
@@ -599,7 +599,7 @@ export default function CareerGoalsPage() {
             <Target className="h-5 w-5" />
             Starting Point & Destination
           </CardTitle>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+          <p className="text-gray-400 mt-2">
             Reflect on your current role, responsibilities, and capabilities.
             Be honest about your strengths, areas for improvement, and what motivates you at work.
             This section helps you establish your baseline before setting goals.
@@ -611,15 +611,10 @@ export default function CareerGoalsPage() {
           <div className="grid grid-cols-2 gap-6">
             <div className="grid gap-2">
               <Label>Where you are now</Label>
-              <p className="text-xs text-gray-500 mb-2">
-                Example: I am currently a Lead / Engineering Manager, responsible for delivery, technical direction, and people management.
-                I am effective at keeping work moving and resolving issues as they come up, but I am still too involved in day-to-day execution. 
-                I often step in to unblock or make decisions myself, which limits how much space I create for others to lead and reduces my time for more strategic work.
-              </p>
               <MarkdownTextarea
                 value={whereYouAre}
                 onValueChange={setWhereYouAre}
-                placeholder="Describe your current role, strengths, and areas for improvement..."
+                placeholder="Example: I am currently a Lead / Engineering Manager, responsible for delivery, technical direction, and people management. I am effective at keeping work moving and resolving issues as they come up, but I am still too involved in day-to-day execution. I often step in to unblock or make decisions myself, which limits how much space I create for others to lead and reduces my time for more strategic work."
                 rows={8}
                 className="text-sm"
               />
@@ -627,14 +622,10 @@ export default function CareerGoalsPage() {
 
             <div className="grid gap-2">
               <Label>Where you want to go</Label>
-              <p className="text-xs text-gray-500 mb-2">
-                Example: My goal in 12 months is to move into a more senior leadership role where my impact comes from setting direction rather than solving every problem myself. 
-                I aim to delegate more effectively and focus on longer-term technical and organisational decisions. 
-              </p>
               <MarkdownTextarea
                 value={whereYouWantToGo}
                 onValueChange={setWhereYouWantToGo}
-                placeholder="Describe your career goal and what success looks like..."
+                placeholder="Example: My goal in 12 months is to move into a more senior leadership role where my impact comes from setting direction rather than solving every problem myself. I aim to delegate more effectively and focus on longer-term technical and organisational decisions."
                 rows={8}
                 className="text-sm"
               />
@@ -652,7 +643,7 @@ export default function CareerGoalsPage() {
                 <TrendingUp className="h-5 w-5" />
                 Gap Analysis
               </CardTitle>
-              <p className="text-sm text-gray-600 mt-2">
+              <p className="text-gray-600 mt-2">
                 Identify the gaps between your current position and your desired destination.
                 These could be technical, behavioural, or contextual.
                 The goal is to clearly see where you should focus more of your efforts to close the gap between where you are now and where you want to be.
@@ -666,10 +657,10 @@ export default function CareerGoalsPage() {
         </CardHeader>
         <CardContent>
           {gapAnalysis.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center border dark:border-[#383838] rounded-lg bg-gray-50 dark:bg-[#262626]">
+            <div className="flex border flex-col items-center justify-center py-12 text-center border-[#383838] rounded-lg bg-[#262626]">
               <TrendingUp className="h-12 w-12 text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-1">No categories yet</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              <h3 className="text-gray-100 font-medium mb-1">No categories yet</h3>
+              <p className="text-gray-400 mb-4">
                 Add your first category to start your gap analysis
               </p>
               <Button onClick={openAddGapDialog}>
@@ -681,19 +672,19 @@ export default function CareerGoalsPage() {
             <div className="overflow-x-auto">
               <table className="w-full border-collapse table-fixed">
                 <thead>
-                  <tr className="border-b dark:border-[#383838]">
-                    <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[20%] dark:text-gray-100">Category</th>
-                    <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[35%] dark:text-gray-100">Current State</th>
-                    <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[35%] dark:text-gray-100">Desired State</th>
-                    <th className="text-center p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[10%] dark:text-gray-100">Actions</th>
+                  <tr className="border-[#383838]">
+                    <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[20%]">Category</th>
+                    <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[35%]">Current State</th>
+                    <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[35%]">Desired State</th>
+                    <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[10%]">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {gapAnalysis.map((row) => (
-                    <tr key={row.id} className="border-b dark:border-[#383838] hover:bg-gray-50 dark:hover:bg-[#292929]">
-                      <td className="p-3 font-medium text-sm break-words dark:text-gray-100">{row.category}</td>
-                      <td className="p-3 text-sm text-gray-700 dark:text-gray-300 break-words">{row.currentState}</td>
-                      <td className="p-3 text-sm text-gray-700 dark:text-gray-300 break-words">{row.desiredState}</td>
+                    <tr key={row.id} className="hover:bg-gray-50 hover:bg-[#292929] border-[#383838]">
+                      <td className="p-3 font-medium text-gray-100 break-words">{row.category}</td>
+                      <td className="p-3 text-gray-300 break-words">{row.currentState}</td>
+                      <td className="p-3 text-gray-300 break-words">{row.desiredState}</td>
                       <td className="p-3">
                         <div className="flex items-center justify-center gap-2">
                           <Button
@@ -730,7 +721,7 @@ export default function CareerGoalsPage() {
             <Zap className="h-5 w-5" />
             Short-term (0-4 months)
           </CardTitle>
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="text-gray-600 mt-2">
             Focus on quick wins and foundational improvements you can achieve in the next few months. 
             These goals should help you build momentum by strengthening the skills, habits, and knowledge you'll need to progress further.
           </p>
@@ -740,20 +731,20 @@ export default function CareerGoalsPage() {
             {/* Desired Focus Distribution */}
             {categories.length > 0 && (
               <div>
-                <h3 className="text-sm font-semibold mb-3 dark:text-gray-100">Desired Focus Distribution</h3>
-                <div className="overflow-x-auto border dark:border-[#383838] rounded-lg bg-white dark:bg-[#262626]">
+                <h3 className="text-gray-100 font-semibold mb-3">Desired Focus Distribution</h3>
+                <div className="border overflow-x-auto border-[#383838] rounded-lg bg-[#262626]">
                   <table className="w-full border-collapse table-fixed">
                     <thead>
-                      <tr className="border-b dark:border-[#383838]">
-                        <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[30%] dark:text-gray-100">Category</th>
-                        <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[10%] dark:text-gray-100">Focus %</th>
-                        <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[60%] dark:text-gray-100">Why</th>
+                      <tr className="border-[#383838]">
+                        <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[30%]">Category</th>
+                        <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[10%]">Focus %</th>
+                        <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[60%]">Why</th>
                       </tr>
                     </thead>
                     <tbody>
                       {shortTermFocus.map((item) => (
-                        <tr key={item.category} className="border-b dark:border-[#383838] hover:bg-gray-50 dark:hover:bg-[#292929]">
-                          <td className="p-3 font-medium text-sm max-w-[300px] truncate dark:text-gray-100" title={item.category}>{item.category}</td>
+                        <tr key={item.category} className="hover:bg-gray-50 hover:bg-[#292929] border-[#383838]">
+                          <td className="truncate p-3 font-medium text-gray-100 max-w-[300px]" title={item.category}>{item.category}</td>
                           <td className="p-3">
                             <Input
                               type="number"
@@ -786,7 +777,7 @@ export default function CareerGoalsPage() {
                   const total = shortTermFocus.reduce((sum, item) => sum + item.focusPercent, 0)
                   if (total !== 100 && total > 0) {
                     return (
-                      <div className="mt-2 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-3">
+                      <div className="border mt-2 text-amber-700 bg-amber-50 border-amber-200 rounded-md p-3">
                         <strong>Warning:</strong> Total focus percentage is {total}%. It should equal 100%.
                       </div>
                     )
@@ -800,26 +791,26 @@ export default function CareerGoalsPage() {
             <div className="grid grid-cols-[60%_40%] gap-6">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold dark:text-gray-100">Goals</h3>
-                  <Button size="sm" onClick={() => addGoal('short_term', setShortTermGoals, shortTermGoals)}>
+                  <h3 className="text-gray-100 font-semibold">Goals</h3>
+                  <Button onClick={() => addGoal('short_term', setShortTermGoals, shortTermGoals)}>
                     <Plus className="h-4 w-4 mr-1" />
                     Add Goal
                   </Button>
                 </div>
-                <div className="overflow-x-auto border dark:border-[#383838] rounded-lg bg-white dark:bg-[#262626]">
+                <div className="border overflow-x-auto border-[#383838] rounded-lg bg-[#262626]">
                   <table className="w-full border-collapse">
                     <thead>
-                      <tr className="border-b dark:border-[#383838] bg-gray-50 dark:bg-[#262626]">
-                        <th className="text-left p-2 font-semibold text-sm w-[45%] dark:text-gray-100">Goal</th>
-                        <th className="text-left p-2 font-semibold text-sm w-[12%] dark:text-gray-100">Type</th>
-                        <th className="text-left p-2 font-semibold text-sm w-[18%] dark:text-gray-100">Category</th>
-                        <th className="text-left p-2 font-semibold text-sm w-[15%] dark:text-gray-100">Status</th>
-                        <th className="text-left p-2 font-semibold text-sm w-10"></th>
+                      <tr className="border-[#383838] bg-[#262626]">
+                        <th className="text-gray-100 p-2 font-semibold w-[45%]">Goal</th>
+                        <th className="text-gray-100 p-2 font-semibold w-[12%]">Type</th>
+                        <th className="text-gray-100 p-2 font-semibold w-[18%]">Category</th>
+                        <th className="text-gray-100 p-2 font-semibold w-[15%]">Status</th>
+                        <th className="text-sm p-2 font-semibold w-10"></th>
                       </tr>
                     </thead>
                     <tbody>
                       {shortTermGoals.map((goal) => (
-                        <tr key={goal.id} className="border-b dark:border-[#383838]">
+                        <tr key={goal.id} className="border-[#383838]">
                           <td className="p-2">
                             <Textarea
                               value={goal.goal}
@@ -880,7 +871,7 @@ export default function CareerGoalsPage() {
                       ))}
                       {shortTermGoals.length === 0 && (
                         <tr>
-                          <td colSpan={5} className="p-4 text-center text-sm text-gray-500">
+                          <td colSpan={5} className="p-4 text-gray-500">
                             No goals yet. Click "Add Goal" to create one.
                           </td>
                         </tr>
@@ -891,7 +882,7 @@ export default function CareerGoalsPage() {
               </div>
 
               <div>
-                <h3 className="text-sm font-semibold mb-3 dark:text-gray-100">Current Focus Distribution</h3>
+                <h3 className="text-gray-100 font-semibold mb-3">Current Focus Distribution</h3>
                 {renderPieChart(shortTermGoals)}
                 {(() => {
                   const currentDist = calculateGoalDistribution(shortTermGoals)
@@ -910,7 +901,7 @@ export default function CareerGoalsPage() {
 
                   if (mismatches.length > 0) {
                     return (
-                      <div className="mt-4 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-3">
+                      <div className="border mt-4 text-amber-700 bg-amber-50 border-amber-200 rounded-md p-3">
                         <strong>Note:</strong> Current focus differs from desired:
                         <ul className="mt-1 ml-4 list-disc">
                           {mismatches.map((msg, i) => <li key={i}>{msg}</li>)}
@@ -933,7 +924,7 @@ export default function CareerGoalsPage() {
             <TrendingUp className="h-5 w-5" />
             Mid-term (4-8 months)
           </CardTitle>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+          <p className="text-gray-400 mt-2">
             Focus on goals that show deeper growth and sustained progress.
             At this stage, you should be applying your foundational skills to more complex situations,
             building consistency, and demonstrating broader impact. These goals should reflect maturity,
@@ -945,20 +936,20 @@ export default function CareerGoalsPage() {
             {/* Desired Focus Distribution */}
             {categories.length > 0 && (
               <div>
-                <h3 className="text-sm font-semibold mb-3 dark:text-gray-100">Desired Focus Distribution</h3>
-                <div className="overflow-x-auto border dark:border-[#383838] rounded-lg bg-white dark:bg-[#262626]">
+                <h3 className="text-gray-100 font-semibold mb-3">Desired Focus Distribution</h3>
+                <div className="border overflow-x-auto border-[#383838] rounded-lg bg-[#262626]">
                   <table className="w-full border-collapse table-fixed">
                     <thead>
-                      <tr className="border-b dark:border-[#383838]">
-                        <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[30%] dark:text-gray-100">Category</th>
-                        <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[10%] dark:text-gray-100">Focus %</th>
-                        <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[60%] dark:text-gray-100">Why</th>
+                      <tr className="border-[#383838]">
+                        <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[30%]">Category</th>
+                        <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[10%]">Focus %</th>
+                        <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[60%]">Why</th>
                       </tr>
                     </thead>
                     <tbody>
                       {midTermFocus.map((item) => (
-                        <tr key={item.category} className="border-b dark:border-[#383838] hover:bg-gray-50 dark:hover:bg-[#292929]">
-                          <td className="p-3 font-medium text-sm max-w-[300px] truncate dark:text-gray-100" title={item.category}>{item.category}</td>
+                        <tr key={item.category} className="hover:bg-gray-50 hover:bg-[#292929] border-[#383838]">
+                          <td className="truncate p-3 font-medium text-gray-100 max-w-[300px]" title={item.category}>{item.category}</td>
                           <td className="p-3">
                             <Input
                               type="number"
@@ -991,7 +982,7 @@ export default function CareerGoalsPage() {
                   const total = midTermFocus.reduce((sum, item) => sum + item.focusPercent, 0)
                   if (total !== 100 && total > 0) {
                     return (
-                      <div className="mt-2 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-3">
+                      <div className="border mt-2 text-amber-700 bg-amber-50 border-amber-200 rounded-md p-3">
                         <strong>Warning:</strong> Total focus percentage is {total}%. It should equal 100%.
                       </div>
                     )
@@ -1005,26 +996,26 @@ export default function CareerGoalsPage() {
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold dark:text-gray-100">Goals</h3>
-                  <Button size="sm" onClick={() => addGoal('mid_term', setMidTermGoals, midTermGoals)}>
+                  <h3 className="text-gray-100 font-semibold">Goals</h3>
+                  <Button onClick={() => addGoal('mid_term', setMidTermGoals, midTermGoals)}>
                     <Plus className="h-4 w-4 mr-1" />
                     Add Goal
                   </Button>
                 </div>
-                <div className="overflow-x-auto border dark:border-[#383838] rounded-lg bg-white dark:bg-[#262626]">
+                <div className="border overflow-x-auto border-[#383838] rounded-lg bg-[#262626]">
                   <table className="w-full border-collapse">
                     <thead>
-                      <tr className="border-b dark:border-[#383838] bg-gray-50 dark:bg-[#262626]">
-                        <th className="text-left p-2 font-semibold text-sm w-[45%] dark:text-gray-100">Goal</th>
-                        <th className="text-left p-2 font-semibold text-sm w-[12%] dark:text-gray-100">Type</th>
-                        <th className="text-left p-2 font-semibold text-sm w-[18%] dark:text-gray-100">Category</th>
-                        <th className="text-left p-2 font-semibold text-sm w-[15%] dark:text-gray-100">Status</th>
-                        <th className="text-left p-2 font-semibold text-sm w-10"></th>
+                      <tr className="border-[#383838] bg-[#262626]">
+                        <th className="text-gray-100 p-2 font-semibold w-[45%]">Goal</th>
+                        <th className="text-gray-100 p-2 font-semibold w-[12%]">Type</th>
+                        <th className="text-gray-100 p-2 font-semibold w-[18%]">Category</th>
+                        <th className="text-gray-100 p-2 font-semibold w-[15%]">Status</th>
+                        <th className="text-sm p-2 font-semibold w-10"></th>
                       </tr>
                     </thead>
                     <tbody>
                       {midTermGoals.map((goal) => (
-                        <tr key={goal.id} className="border-b dark:border-[#383838]">
+                        <tr key={goal.id} className="border-[#383838]">
                           <td className="p-2">
                             <Textarea
                               value={goal.goal}
@@ -1085,7 +1076,7 @@ export default function CareerGoalsPage() {
                       ))}
                       {midTermGoals.length === 0 && (
                         <tr>
-                          <td colSpan={5} className="p-4 text-center text-sm text-gray-500">
+                          <td colSpan={5} className="p-4 text-gray-500">
                             No goals yet. Click "Add Goal" to create one.
                           </td>
                         </tr>
@@ -1096,7 +1087,7 @@ export default function CareerGoalsPage() {
               </div>
 
               <div>
-                <h3 className="text-sm font-semibold mb-3 dark:text-gray-100">Current Focus Distribution</h3>
+                <h3 className="text-gray-100 font-semibold mb-3">Current Focus Distribution</h3>
                 {renderPieChart(midTermGoals)}
                 {(() => {
                   const currentDist = calculateGoalDistribution(midTermGoals)
@@ -1115,7 +1106,7 @@ export default function CareerGoalsPage() {
 
                   if (mismatches.length > 0) {
                     return (
-                      <div className="mt-4 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-3">
+                      <div className="border mt-4 text-amber-700 bg-amber-50 border-amber-200 rounded-md p-3">
                         <strong>Note:</strong> Current focus differs from desired:
                         <ul className="mt-1 ml-4 list-disc">
                           {mismatches.map((msg, i) => <li key={i}>{msg}</li>)}
@@ -1138,7 +1129,7 @@ export default function CareerGoalsPage() {
             <Award className="h-5 w-5" />
             Long-term (8-12 months)
           </CardTitle>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+          <p className="text-gray-400 mt-2">
             These goals should represent the next level of growth in your role. Focus on demonstrating autonomy, technical depth, and influence across teams. Long-term goals often involve shaping technical direction, mentoring others, and driving improvements that have a lasting impact. Think about how your work connects to broader business or customer outcomes, not just technical execution.
           </p>
         </CardHeader>
@@ -1147,20 +1138,20 @@ export default function CareerGoalsPage() {
             {/* Desired Focus Distribution */}
             {categories.length > 0 && (
               <div>
-                <h3 className="text-sm font-semibold mb-3 dark:text-gray-100">Desired Focus Distribution</h3>
-                <div className="overflow-x-auto border dark:border-[#383838] rounded-lg bg-white dark:bg-[#262626]">
+                <h3 className="text-gray-100 font-semibold mb-3">Desired Focus Distribution</h3>
+                <div className="border overflow-x-auto border-[#383838] rounded-lg bg-[#262626]">
                   <table className="w-full border-collapse table-fixed">
                     <thead>
-                      <tr className="border-b dark:border-[#383838]">
-                        <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[30%] dark:text-gray-100">Category</th>
-                        <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[10%] dark:text-gray-100">Focus %</th>
-                        <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-[60%] dark:text-gray-100">Why</th>
+                      <tr className="border-[#383838]">
+                        <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[30%]">Category</th>
+                        <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[10%]">Focus %</th>
+                        <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[60%]">Why</th>
                       </tr>
                     </thead>
                     <tbody>
                       {longTermFocus.map((item) => (
-                        <tr key={item.category} className="border-b dark:border-[#383838] hover:bg-gray-50 dark:hover:bg-[#292929]">
-                          <td className="p-3 font-medium text-sm max-w-[300px] truncate dark:text-gray-100" title={item.category}>{item.category}</td>
+                        <tr key={item.category} className="hover:bg-gray-50 hover:bg-[#292929] border-[#383838]">
+                          <td className="truncate p-3 font-medium text-gray-100 max-w-[300px]" title={item.category}>{item.category}</td>
                           <td className="p-3">
                             <Input
                               type="number"
@@ -1193,7 +1184,7 @@ export default function CareerGoalsPage() {
                   const total = longTermFocus.reduce((sum, item) => sum + item.focusPercent, 0)
                   if (total !== 100 && total > 0) {
                     return (
-                      <div className="mt-2 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-3">
+                      <div className="border mt-2 text-amber-700 bg-amber-50 border-amber-200 rounded-md p-3">
                         <strong>Warning:</strong> Total focus percentage is {total}%. It should equal 100%.
                       </div>
                     )
@@ -1207,26 +1198,26 @@ export default function CareerGoalsPage() {
             <div className="grid grid-cols-[60%_40%] gap-6">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold dark:text-gray-100">Goals</h3>
-                  <Button size="sm" onClick={() => addGoal('long_term', setLongTermGoals, longTermGoals)}>
+                  <h3 className="text-gray-100 font-semibold">Goals</h3>
+                  <Button onClick={() => addGoal('long_term', setLongTermGoals, longTermGoals)}>
                     <Plus className="h-4 w-4 mr-1" />
                     Add Goal
                   </Button>
                 </div>
-                <div className="overflow-x-auto border dark:border-[#383838] rounded-lg bg-white dark:bg-[#262626]">
+                <div className="border overflow-x-auto border-[#383838] rounded-lg bg-[#262626]">
                   <table className="w-full border-collapse">
                     <thead>
-                      <tr className="border-b dark:border-[#383838] bg-gray-50 dark:bg-[#262626]">
-                        <th className="text-left p-2 font-semibold text-sm w-[45%] dark:text-gray-100">Goal</th>
-                        <th className="text-left p-2 font-semibold text-sm w-[12%] dark:text-gray-100">Type</th>
-                        <th className="text-left p-2 font-semibold text-sm w-[18%] dark:text-gray-100">Category</th>
-                        <th className="text-left p-2 font-semibold text-sm w-[15%] dark:text-gray-100">Status</th>
-                        <th className="text-left p-2 font-semibold text-sm w-10"></th>
+                      <tr className="border-[#383838] bg-[#262626]">
+                        <th className="text-gray-100 p-2 font-semibold w-[45%]">Goal</th>
+                        <th className="text-gray-100 p-2 font-semibold w-[12%]">Type</th>
+                        <th className="text-gray-100 p-2 font-semibold w-[18%]">Category</th>
+                        <th className="text-gray-100 p-2 font-semibold w-[15%]">Status</th>
+                        <th className="text-sm p-2 font-semibold w-10"></th>
                       </tr>
                     </thead>
                     <tbody>
                       {longTermGoals.map((goal) => (
-                        <tr key={goal.id} className="border-b dark:border-[#383838]">
+                        <tr key={goal.id} className="border-[#383838]">
                           <td className="p-2">
                             <Textarea
                               value={goal.goal}
@@ -1287,7 +1278,7 @@ export default function CareerGoalsPage() {
                       ))}
                       {longTermGoals.length === 0 && (
                         <tr>
-                          <td colSpan={5} className="p-4 text-center text-sm text-gray-500">
+                          <td colSpan={5} className="p-4 text-gray-500">
                             No goals yet. Click "Add Goal" to create one.
                           </td>
                         </tr>
@@ -1298,7 +1289,7 @@ export default function CareerGoalsPage() {
               </div>
 
               <div>
-                <h3 className="text-sm font-semibold mb-3 dark:text-gray-100">Current Focus Distribution</h3>
+                <h3 className="text-gray-100 font-semibold mb-3">Current Focus Distribution</h3>
                 {renderPieChart(longTermGoals)}
                 {(() => {
                   const currentDist = calculateGoalDistribution(longTermGoals)
@@ -1317,7 +1308,7 @@ export default function CareerGoalsPage() {
 
                   if (mismatches.length > 0) {
                     return (
-                      <div className="mt-4 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-3">
+                      <div className="border mt-4 text-amber-700 bg-amber-50 border-amber-200 rounded-md p-3">
                         <strong>Note:</strong> Current focus differs from desired:
                         <ul className="mt-1 ml-4 list-disc">
                           {mismatches.map((msg, i) => <li key={i}>{msg}</li>)}
@@ -1340,33 +1331,33 @@ export default function CareerGoalsPage() {
             <Award className="h-5 w-5" />
             Extra Achievements & Learning
           </CardTitle>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+          <p className="text-gray-400 mt-2">
             Use this section to record any additional accomplishments, learning experiences, or initiatives you completed outside your planned goals. These might include certifications, courses, conferences, books, talks, mentoring, or side projects — anything that meaningfully contributed to your professional growth.
           </p>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="flex justify-end">
-              <Button size="sm" onClick={addAchievement}>
+              <Button onClick={addAchievement}>
                 <Plus className="h-4 w-4 mr-1" />
                 Add Achievement
               </Button>
             </div>
 
-            <div className="overflow-x-auto border dark:border-[#383838] rounded-lg bg-white dark:bg-[#262626]">
+            <div className="border overflow-x-auto border-[#383838] rounded-lg bg-[#262626]">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="border-b dark:border-[#383838]">
-                    <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100">Type</th>
-                    <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100">Description</th>
-                    <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100">Date</th>
-                    <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100">Key Takeaway</th>
-                    <th className="text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm w-10"></th>
+                  <tr className="border-[#383838]">
+                    <th className="text-gray-100 p-3 bg-[#262626] font-semibold">Type</th>
+                    <th className="text-gray-100 p-3 bg-[#262626] font-semibold">Description</th>
+                    <th className="text-gray-100 p-3 bg-[#262626] font-semibold">Date</th>
+                    <th className="text-gray-100 p-3 bg-[#262626] font-semibold">Key Takeaway</th>
+                    <th className="text-sm p-3 bg-[#262626] font-semibold w-10"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {achievements.map((achievement) => (
-                    <tr key={achievement.id} className="border-b dark:border-[#383838]">
+                    <tr key={achievement.id} className="border-[#383838]">
                       <td className="p-3">
                         <Select
                           value={achievement.type}
@@ -1422,7 +1413,7 @@ export default function CareerGoalsPage() {
                   ))}
                   {achievements.length === 0 && (
                     <tr>
-                      <td colSpan={5} className="p-4 text-center text-sm text-gray-500">
+                      <td colSpan={5} className="p-4 text-gray-500">
                         No achievements yet. Click "Add Achievement" to create one.
                       </td>
                     </tr>

@@ -73,10 +73,10 @@ export function PeopleTable({
       accessorKey: "name",
       cell: (person) => (
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 dark:bg-primary-dark-900 dark:bg-primary-dark-900/30 text-primary-700 dark:text-primary-dark-400 dark:text-primary-dark-400">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-dark-900/30 text-primary-dark-400">
             <span className="text-sm font-semibold">{getInitials(person.name)}</span>
           </div>
-          <span className="font-medium dark:text-gray-100">{person.name}</span>
+          <span className="font-medium text-gray-100">{person.name}</span>
         </div>
       ),
     },
@@ -85,7 +85,7 @@ export function PeopleTable({
       header: "Role",
       accessorKey: "role",
       cell: (person) => (
-        <span className="text-gray-700 dark:text-gray-300">{person.role}</span>
+        <span className="text-gray-300">{person.role}</span>
       ),
     },
     {
@@ -108,7 +108,7 @@ export function PeopleTable({
             <Badge
               key={idx}
               variant="secondary"
-              className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+              className="text-gray-300 bg-gray-700"
             >
               {team}
             </Badge>
@@ -121,7 +121,7 @@ export function PeopleTable({
       header: "Start Date",
       accessorKey: "startDate",
       cell: (person) => (
-        <span className="text-gray-700 dark:text-gray-300">
+        <span className="text-gray-300">
           {person.startDate ? new Date(person.startDate).toLocaleDateString("en-GB", {
             day: "2-digit",
             month: "short",
@@ -139,8 +139,8 @@ export function PeopleTable({
           variant={person.status === "active" ? "success" : "secondary"}
           className={
             person.status === "active"
-              ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-              : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+              ? "bg-green-100 text-green-700 bg-green-900/30 text-green-400"
+              : "bg-gray-100 text-gray-700 bg-gray-700 text-gray-300"
           }
         >
           {person.status}
@@ -167,7 +167,7 @@ export function PeopleTable({
             <MoreHorizontal className="h-4 w-4" />
           </Button>
           {selectedPersonMenu === person.id && (
-            <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-[#262626] ring-1 ring-black ring-opacity-5 dark:ring-gray-700 z-50">
+            <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-[#262626] ring-gray-700 z-50">
               <div className="py-1">
                 <button
                   onClick={(e) => {
@@ -175,7 +175,7 @@ export function PeopleTable({
                     onEdit(person)
                     setSelectedPersonMenu(null)
                   }}
-                  className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#292929] cursor-pointer"
+                  className="flex hover:bg-gray-100 hover:bg-[#292929] w-full items-center gap-2 px-4 py-2 text-gray-300 cursor-pointer"
                 >
                   <Pencil className="h-4 w-4" />
                   Edit
@@ -185,7 +185,7 @@ export function PeopleTable({
                     e.stopPropagation()
                     onToggleStatus(person)
                   }}
-                  className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#292929] cursor-pointer"
+                  className="flex hover:bg-gray-100 hover:bg-[#292929] w-full items-center gap-2 px-4 py-2 text-gray-300 cursor-pointer"
                 >
                   {person.status === "active" ? (
                     <>
@@ -205,7 +205,7 @@ export function PeopleTable({
                     onDelete(person)
                     setSelectedPersonMenu(null)
                   }}
-                  className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer"
+                  className="flex hover:bg-red-50 hover:bg-red-900/20 w-full items-center gap-2 px-4 py-2 text-red-400 cursor-pointer"
                 >
                   <Trash2 className="h-4 w-4" />
                   Delete
