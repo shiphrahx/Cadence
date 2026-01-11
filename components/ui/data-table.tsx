@@ -180,12 +180,12 @@ export function DataTable<T extends { id?: number | string }>({
               {columns.map((column) => (
                 <th
                   key={column.id}
-                  className={`text-left p-3 bg-gray-50 bg-[#262626] font-semibold text-sm text-gray-100 ${column.className || ""}`}
+                  className={`text-left p-3 bg-[#262626] font-semibold text-sm text-gray-100 ${column.className || ""}`}
                 >
                   {column.sortable !== false ? (
                     <button
                       onClick={() => handleSort(column.id)}
-                      className="flex hover:text-primary-600 hover:text-primary-dark-400 hover:text-primary-400 items-center gap-1 text-primary-dark-400"
+                      className="flex hover:text-[#84ffc4] items-center gap-1 text-gray-300"
                     >
                       {column.header}
                       <ArrowUpDown className="h-3 w-3" />
