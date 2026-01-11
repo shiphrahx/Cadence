@@ -117,7 +117,7 @@ export function DataTable<T extends { id?: number | string }>({
         <div className="flex items-center gap-2 flex-1">
           {searchKeys.length > 0 && (
             <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
+              <Search className="absolute -translate-y-1/2 left-3 top-1/2 h-4 w-4 text-gray-500" />
               <Input
                 placeholder={searchPlaceholder}
                 value={searchQuery}
@@ -147,10 +147,10 @@ export function DataTable<T extends { id?: number | string }>({
 
       {/* Filters Panel */}
       {showFilters && filters.length > 0 && (
-        <div className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-[#262626] rounded-lg border dark:border-[#383838]">
+        <div className="flex border items-center gap-4 p-4 bg-[#262626] rounded-lg border-[#383838]">
           {filters.map((filter) => (
             <div key={filter.id} className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-100">
+              <label className="text-gray-100 font-medium">
                 {filter.label}:
               </label>
               <select
@@ -158,7 +158,7 @@ export function DataTable<T extends { id?: number | string }>({
                 onChange={(e) =>
                   setFilterValues({ ...filterValues, [filter.id]: e.target.value })
                 }
-                className="text-sm border border-gray-300 dark:border-[#383838] dark:bg-[#262626] dark:text-gray-100 rounded-md px-2 py-1"
+                className="border text-gray-100 border-[#383838] bg-[#262626] rounded-md px-2 py-1"
               >
                 <option value="all">All</option>
                 {filter.options.map((option) => (
@@ -173,19 +173,19 @@ export function DataTable<T extends { id?: number | string }>({
       )}
 
       {/* Table */}
-      <div className="border dark:border-[#383838] rounded-lg bg-white dark:bg-[#262626] max-md:overflow-x-auto">
+      <div className="border border-[#383838] rounded-lg bg-[#262626] max-md:overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="border-b dark:border-[#383838]">
+            <tr className="border-[#383838]">
               {columns.map((column) => (
                 <th
                   key={column.id}
-                  className={`text-left p-3 bg-gray-50 dark:bg-[#262626] font-semibold text-sm dark:text-gray-100 ${column.className || ""}`}
+                  className={`text-left p-3 bg-gray-50 bg-[#262626] font-semibold text-sm text-gray-100 ${column.className || ""}`}
                 >
                   {column.sortable !== false ? (
                     <button
                       onClick={() => handleSort(column.id)}
-                      className="flex items-center gap-1 hover:text-primary-600 dark:text-primary-dark-400 dark:hover:text-primary-dark-400 dark:hover:text-primary-400"
+                      className="flex hover:text-primary-600 hover:text-primary-dark-400 hover:text-primary-400 items-center gap-1 text-primary-dark-400"
                     >
                       {column.header}
                       <ArrowUpDown className="h-3 w-3" />
@@ -203,7 +203,7 @@ export function DataTable<T extends { id?: number | string }>({
                 <tr
                   key={item.id}
                   onClick={() => onRowClick?.(item)}
-                  className="border-b dark:border-[#383838] hover:bg-gray-50 dark:hover:bg-[#292929] transition-colors cursor-pointer"
+                  className="hover:bg-gray-50 hover:bg-[#292929] border-[#383838] transition-colors cursor-pointer"
                 >
                   {columns.map((column) => (
                     <td
@@ -224,7 +224,7 @@ export function DataTable<T extends { id?: number | string }>({
                 <td colSpan={columns.length} className="p-0">
                   {emptyState || (
                     <div className="flex flex-col items-center justify-center py-12 text-center">
-                      <p className="text-sm text-gray-600 dark:text-gray-400">No items found</p>
+                      <p className="text-gray-400">No items found</p>
                     </div>
                   )}
                 </td>
@@ -235,7 +235,7 @@ export function DataTable<T extends { id?: number | string }>({
                 <td colSpan={columns.length} className="p-0">
                   <button
                     onClick={onQuickAdd}
-                    className="w-full text-left px-3 py-3 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#292929] transition-colors flex items-center gap-2 border-t dark:border-[#383838]"
+                    className="hover:text-gray-700 hover:text-gray-200 hover:bg-gray-50 hover:bg-[#292929] flex w-full text-gray-400 px-3 py-3 transition-colors items-center gap-2 border-[#383838]"
                   >
                     <Plus className="h-4 w-4" />
                     {quickAddLabel}

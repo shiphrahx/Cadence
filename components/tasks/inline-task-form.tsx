@@ -37,7 +37,7 @@ export function InlineTaskForm({ status = "Not started", list, onSave, onCancel 
   }
 
   return (
-    <div className="bg-white border border-primary-500 dark:border-primary-dark-500 rounded-lg p-3 shadow-md">
+    <div className="border bg-white border-primary-dark-500 rounded-lg p-3 shadow-md">
       <Input
         ref={inputRef}
         value={title}
