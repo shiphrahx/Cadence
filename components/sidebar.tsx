@@ -47,22 +47,24 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
       {/* Logo */}
       <div className="flex h-16 items-center border-[#383838]">
         <Link href="/" className={cn(
-          "flex items-center gap-3 hover:bg-gray-50 hover:bg-[#292929] transition-colors flex-1",
+          "flex items-center gap-3 hover:bg-[#292929] transition-colors flex-1",
           isOpen ? "px-6" : "px-3 justify-center"
         )}>
           <Image
-            src="/icon_02.png"
+            src="/logo.png"
             alt="Cadence"
-            width={35}
+            width={isOpen ? 140 : 35}
             height={35}
-            className="h-[35px] w-[35px] object-contain rounded-lg flex-shrink-0"
+            className={cn(
+              "object-contain flex-shrink-0",
+              isOpen ? "h-[35px] w-auto" : "h-[35px] w-[35px]"
+            )}
           />
-          {isOpen && <span className="text-gray-100 font-semibold">Cadence</span>}
         </Link>
         {isOpen && (
           <button
             onClick={onToggle}
-            className="hover:bg-gray-100 hover:bg-[#292929] px-3 h-full transition-colors"
+            className="hover:bg-[#292929] px-3 h-full transition-colors"
             aria-label="Collapse sidebar"
           >
             <ChevronLeft className="h-5 w-5 text-gray-400" />
