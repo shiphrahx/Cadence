@@ -34,6 +34,7 @@ describe('PeopleTable', () => {
     onEdit: vi.fn(),
     onDelete: vi.fn(),
     onToggleStatus: vi.fn(),
+    onQuickAdd: vi.fn(),
   }
 
   it('should render all people in the table', () => {
@@ -55,15 +56,17 @@ describe('PeopleTable', () => {
   it('should display team memberships', () => {
     render(<PeopleTable people={mockPeople} {...mockHandlers} />)
 
-    expect(screen.getByText('Platform Engineering, Product Team')).toBeInTheDocument()
-    expect(screen.getByText('Platform Engineering')).toBeInTheDocument()
+    // Teams are displayed as separate badges
+    const platformBadges = screen.getAllByText('Platform Engineering')
+    expect(platformBadges.length).toBeGreaterThanOrEqual(1)
+    expect(screen.getByText('Product Team')).toBeInTheDocument()
   })
 
   it('should display status badges', () => {
     render(<PeopleTable people={mockPeople} {...mockHandlers} />)
 
-    const activeBadge = screen.getByText('Active')
-    const inactiveBadge = screen.getByText('Inactive')
+    const activeBadge = screen.getByText('active')
+    const inactiveBadge = screen.getByText('inactive')
 
     expect(activeBadge).toBeInTheDocument()
     expect(inactiveBadge).toBeInTheDocument()

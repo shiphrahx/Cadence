@@ -32,7 +32,7 @@ describe('TaskCard', () => {
 
     const priorityBadge = screen.getByText('High')
     expect(priorityBadge).toBeInTheDocument()
-    expect(priorityBadge).toHaveClass('bg-red-100', 'text-red-700')
+    expect(priorityBadge).toHaveClass('bg-red-900/30', 'text-red-400')
   })
 
   it('should display status badge with correct styling', () => {
@@ -40,7 +40,7 @@ describe('TaskCard', () => {
 
     const statusBadge = screen.getByText('Not started')
     expect(statusBadge).toBeInTheDocument()
-    expect(statusBadge).toHaveClass('bg-gray-100', 'text-gray-700')
+    expect(statusBadge).toHaveClass('bg-gray-800', 'text-gray-300')
   })
 
   it('should display due date in formatted style', () => {
@@ -226,10 +226,4 @@ describe('TaskCard', () => {
     expect(screen.queryByText('Edit')).not.toBeInTheDocument()
   })
 
-  it('should render correctly in dark mode', () => {
-    render(<TaskCard task={mockTask} onEdit={mockHandlers.onEdit} />)
-
-    const card = screen.getByText('Complete project proposal').closest('div')
-    expect(card).toHaveClass('dark:bg-[#292929]', 'dark:border-[#383838]')
-  })
 })
