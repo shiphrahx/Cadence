@@ -107,8 +107,8 @@ export default function PeoplePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">People</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
+          <h1 className="text-gray-100 font-bold">People</h1>
+          <p className="text-gray-400 mt-1">
             Manage your team members and their details
           </p>
         </div>
@@ -119,7 +119,7 @@ export default function PeoplePage() {
       </div>
 
       {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid md:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active People</CardTitle>
@@ -127,7 +127,7 @@ export default function PeoplePage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{people.filter(p => p.status === "active").length}</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground">
               {people.filter(p => p.status === "inactive").length} inactive
             </p>
           </CardContent>
@@ -145,7 +145,7 @@ export default function PeoplePage() {
                   <Badge key={level} variant="outline">{level}: {count}</Badge>
                 ))
               ) : (
-                <p className="text-xs text-muted-foreground">No people yet</p>
+                <p className="text-muted-foreground">No people yet</p>
               )}
             </div>
           </CardContent>
@@ -158,7 +158,7 @@ export default function PeoplePage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{recentHiresCount}</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground">
               In the last 30 days
             </p>
           </CardContent>

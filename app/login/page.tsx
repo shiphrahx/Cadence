@@ -34,7 +34,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-[#171717] p-4">
+    <div className="flex min-h-screen items-center justify-center bg-[#171717] p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
@@ -78,7 +78,7 @@ export default function LoginPage() {
             Continue with Google
           </Button>
 
-          <div className="text-center text-sm text-gray-500 dark:text-gray-400">
+          <div className="text-gray-400">
             <p>By signing in, you agree to our Terms of Service</p>
             <p className="mt-1">and Privacy Policy</p>
           </div>

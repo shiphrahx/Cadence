@@ -403,11 +403,11 @@ export default function TasksPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Tasks</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">Manage your tasks and priorities</p>
+            <h1 className="text-gray-100 font-bold">Tasks</h1>
+            <p className="text-gray-400 mt-1">Manage your tasks and priorities</p>
           </div>
         </div>
-        <div className="text-center py-12 text-gray-500 dark:text-gray-400">Loading...</div>
+        <div className="text-gray-400 py-12">Loading...</div>
       </div>
     )
   }
@@ -424,23 +424,23 @@ export default function TasksPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Tasks</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">Manage your tasks and priorities</p>
+            <h1 className="text-gray-100 font-bold">Tasks</h1>
+            <p className="text-gray-400 mt-1">Manage your tasks and priorities</p>
           </div>
         </div>
 
         {/* This Week Board */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">This week</h2>
-            <Button size="sm" onClick={handleNewTaskHeader}>
+            <h2 className="text-gray-100 font-semibold">This week</h2>
+            <Button onClick={handleNewTaskHeader}>
               <Plus className="h-4 w-4 mr-2" />
               New task
             </Button>
           </div>
           <div className="rounded-lg p-4 max-md:p-2">
             {/* Desktop: grid layout unchanged, Mobile: horizontal scroll */}
-            <div className="grid grid-cols-4 gap-6 max-md:grid-cols-none max-md:flex max-md:flex-nowrap max-md:overflow-x-auto max-md:gap-3 max-md:-mx-2 max-md:px-2">
+            <div className="grid grid-cols-4 gap-6 max-md:px-2">
               {TASK_STATUSES.map((status) => (
                 <BoardColumn
                   key={status}
@@ -457,7 +457,7 @@ export default function TasksPage() {
 
         {/* Backlog */}
         <div>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Backlog</h2>
+          <h2 className="text-gray-100 font-semibold mb-4">Backlog</h2>
           <BacklogTable
             tasks={backlogTasks}
             onUpdateTask={handleUpdateTask}

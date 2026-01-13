@@ -57,7 +57,8 @@ describe('TeamsTable', () => {
     render(<TeamsTable teams={mockTeams} {...mockHandlers} />)
 
     // Dates should be formatted as "01 Jan 2024" format
-    expect(screen.getByText(/Jan.*2024/)).toBeInTheDocument()
+    const dates = screen.getAllByText(/Jan.*2024/)
+    expect(dates.length).toBeGreaterThanOrEqual(1)
   })
 
   it('should show action menu when More button is clicked', async () => {

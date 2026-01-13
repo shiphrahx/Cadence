@@ -89,8 +89,8 @@ export default function SettingsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Settings</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
+          <h1 className="text-gray-100 font-bold">Settings</h1>
+          <p className="text-gray-400 mt-1">
             Manage your account preferences and application settings
           </p>
         </div>
@@ -119,8 +119,8 @@ export default function SettingsPage() {
                     className="h-20 w-20 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="h-20 w-20 rounded-full bg-primary-100 dark:bg-primary-dark-900 dark:bg-primary-dark-900 flex items-center justify-center">
-                    <span className="text-2xl font-semibold text-primary-700 dark:text-primary-dark-400 dark:text-primary-dark-400">
+                  <div className="flex h-20 w-20 rounded-full bg-primary-dark-900 items-center justify-center">
+                    <span className="text-primary-dark-400 font-semibold">
                       {getInitials(preferredName)}
                     </span>
                   </div>
@@ -128,7 +128,7 @@ export default function SettingsPage() {
               </div>
               <div className="flex-1">
                 <Label htmlFor="avatar" className="cursor-pointer">
-                  <div className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-[#383838] rounded-md hover:bg-gray-50 dark:hover:bg-[#292929] transition-colors w-fit">
+                  <div className="flex border hover:bg-gray-50 hover:bg-[#292929] items-center gap-2 px-4 py-2 border-[#383838] rounded-md transition-colors w-fit">
                     <Upload className="h-4 w-4" />
                     <span className="text-sm font-medium">Upload Avatar</span>
                   </div>
@@ -140,7 +140,7 @@ export default function SettingsPage() {
                   onChange={handleAvatarChange}
                   className="hidden"
                 />
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                <p className="text-gray-400 mt-2">
                   JPG, PNG or GIF. Max size 2MB.
                 </p>
               </div>
@@ -155,7 +155,7 @@ export default function SettingsPage() {
                 onChange={(e) => setPreferredName(e.target.value)}
                 placeholder="Enter your preferred name"
               />
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-gray-400">
                 This is how you'll be addressed throughout the application
               </p>
             </div>
@@ -168,9 +168,9 @@ export default function SettingsPage() {
                 type="email"
                 value={email}
                 disabled
-                className="bg-gray-50 dark:bg-[#1c1c1c] cursor-not-allowed"
+                className="bg-[#1c1c1c] cursor-not-allowed"
               />
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-gray-400">
                 Email is managed through your OAuth provider and cannot be changed here
               </p>
             </div>
@@ -211,13 +211,13 @@ export default function SettingsPage() {
                   </SelectItem>
                   <SelectItem value="system">
                     <div className="flex items-center gap-2">
-                      <div className="h-4 w-4 rounded-full border-2 border-current" />
+                      <div className="h-4 w-4 rounded-full border-current" />
                       System
                     </div>
                   </SelectItem>
                 </SelectContent>
               </Select>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-gray-400">
                 Choose your preferred color scheme. System will match your OS settings.
               </p>
             </div>
@@ -249,7 +249,7 @@ export default function SettingsPage() {
                   <SelectItem value="Saturday">Saturday</SelectItem>
                 </SelectContent>
               </Select>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-gray-400">
                 Choose which day starts your week in calendar views
               </p>
             </div>
@@ -258,7 +258,7 @@ export default function SettingsPage() {
 
         {/* Save Button */}
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-gray-400">
             Changes will be saved to your account
           </p>
           <Button onClick={handleSave} className="min-w-[120px]">

@@ -25,16 +25,16 @@ export function BoardColumn({ status, tasks, onEdit, onDelete, onQuickAdd }: Boa
   })
 
   return (
-    <div className="flex flex-col h-full max-md:min-w-[300px] max-md:w-[300px] max-md:flex-shrink-0">
+    <div className="flex flex-col h-full max-md:flex-shrink-0">
       {/* Column Header  */}
-      <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-200 dark:border-[#383838]">
+      <div className="flex items-center justify-between mb-3 pb-2 border-[#383838]">
         <div className="flex items-center gap-1.5">
-          <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 p-2">{status}</span>
-          <span className="text-sm text-gray-400 dark:text-gray-500">{tasks.length}</span>
+          <span className="text-gray-300 font-semibold p-2">{status}</span>
+          <span className="text-gray-500">{tasks.length}</span>
         </div>
         <button
           onClick={() => onQuickAdd(status)}
-          className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+          className="hover:text-gray-600 hover:text-gray-300 text-gray-400 transition-colors"
         >
           <Plus className="h-4 w-4" />
         </button>
@@ -45,7 +45,7 @@ export function BoardColumn({ status, tasks, onEdit, onDelete, onQuickAdd }: Boa
         ref={setNodeRef}
         className={cn(
           "flex-1 flex flex-col min-h-[400px]  p-2 rounded-lg transition-all duration-200",
-          isOver && "bg-gray-50/80 dark:bg-[#292929]/80 ring-1 ring-gray-200 dark:ring-[#383838]"
+          isOver && "bg-gray-50/80 bg-[#292929]/80 ring-1 ring-gray-200 ring-[#383838]"
         )}
       >
         {/* Sortable card list */}
@@ -58,8 +58,8 @@ export function BoardColumn({ status, tasks, onEdit, onDelete, onQuickAdd }: Boa
 
           {/* Empty state placeholder when dragging */}
           {tasks.length === 0 && isOver && (
-            <div className="flex items-center justify-center h-24 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg bg-white/50 dark:bg-[#171717]/50">
-              <p className="text-sm text-gray-400 dark:text-gray-500">Drop here</p>
+            <div className="flex items-center justify-center h-24 border-gray-600 rounded-lg bg-[#171717]/50">
+              <p className="text-gray-500">Drop here</p>
             </div>
           )}
         </div>
@@ -67,7 +67,7 @@ export function BoardColumn({ status, tasks, onEdit, onDelete, onQuickAdd }: Boa
         {/* Add Task Button - Outside sortable context, at bottom */}
         <button
           onClick={() => onQuickAdd(status)}
-          className="w-full text-left px-2 py-1.5 text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors flex items-center gap-1.5 mt-2"
+          className="hover:text-gray-600 hover:text-gray-300 flex w-full text-gray-400 px-2 py-1.5 transition-colors items-center gap-1.5 mt-2"
         >
           <Plus className="h-3.5 w-3.5" />
           Add task
