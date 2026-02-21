@@ -51,7 +51,7 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
           isOpen ? "px-6" : "px-3 justify-center"
         )}>
           <Image
-            src="/logo.png"
+            src="/logo_transparent.png"
             alt="Cadence"
             width={isOpen ? 140 : 35}
             height={35}

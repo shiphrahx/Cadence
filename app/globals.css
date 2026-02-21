@@ -51,6 +51,15 @@
   border-color: hsl(var(--border));
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #262626 inset !important;
+  -webkit-text-fill-color: #e8e8e8 !important;
+  caret-color: #e8e8e8;
+}
+
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
