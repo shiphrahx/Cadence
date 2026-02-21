@@ -19,10 +19,6 @@ describe('People Service', () => {
           notes: 'Great team player',
           status: 'active',
           created_at: '2024-01-01T00:00:00Z',
-          team_memberships: [
-            { teams: { name: 'Platform Engineering' } },
-            { teams: { name: 'Product Team' } },
-          ],
         },
         {
           id: '2',
@@ -33,26 +29,36 @@ describe('People Service', () => {
           notes: null,
           status: 'active',
           created_at: '2024-01-02T00:00:00Z',
-          team_memberships: [
-            { teams: { name: 'Platform Engineering' } },
-          ],
         },
       ]
 
-      const mockFrom = vi.fn().mockReturnValue({
-        select: vi.fn().mockReturnValue({
-          order: vi.fn().mockResolvedValue({
-            data: mockPeople,
-            error: null,
-          }),
-        }),
-      })
+      const mockMemberships = [
+        { person_id: '1', teams: { name: 'Platform Engineering' } },
+        { person_id: '1', teams: { name: 'Product Team' } },
+        { person_id: '2', teams: { name: 'Platform Engineering' } },
+      ]
 
-      mockSupabaseClient.from = mockFrom
+      // getPeople does two parallel queries: people and team_memberships
+      mockSupabaseClient.from = vi.fn().mockImplementation((table: string) => {
+        if (table === 'people') {
+          return {
+            select: vi.fn().mockReturnValue({
+              order: vi.fn().mockResolvedValue({ data: mockPeople, error: null }),
+            }),
+          }
+        }
+        if (table === 'team_memberships') {
+          return {
+            select: vi.fn().mockResolvedValue({ data: mockMemberships, error: null }),
+          }
+        }
+        return { select: vi.fn().mockResolvedValue({ data: [], error: null }) }
+      })
 
       const people = await getPeople()
 
-      expect(mockFrom).toHaveBeenCalledWith('people')
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('people')
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('team_memberships')
       expect(people).toHaveLength(2)
       expect(people[0]).toMatchObject({
         id: '1',
@@ -76,20 +82,24 @@ describe('People Service', () => {
           notes: null,
           status: 'active',
           created_at: '2024-01-01T00:00:00Z',
-          team_memberships: [],
         },
       ]
 
-      const mockFrom = vi.fn().mockReturnValue({
-        select: vi.fn().mockReturnValue({
-          order: vi.fn().mockResolvedValue({
-            data: mockPeople,
-            error: null,
-          }),
-        }),
+      mockSupabaseClient.from = vi.fn().mockImplementation((table: string) => {
+        if (table === 'people') {
+          return {
+            select: vi.fn().mockReturnValue({
+              order: vi.fn().mockResolvedValue({ data: mockPeople, error: null }),
+            }),
+          }
+        }
+        if (table === 'team_memberships') {
+          return {
+            select: vi.fn().mockResolvedValue({ data: [], error: null }),
+          }
+        }
+        return { select: vi.fn().mockResolvedValue({ data: [], error: null }) }
       })
-
-      mockSupabaseClient.from = mockFrom
 
       const people = await getPeople()
 
@@ -97,16 +107,18 @@ describe('People Service', () => {
     })
 
     it('should throw error when fetching people fails', async () => {
-      const mockFrom = vi.fn().mockReturnValue({
-        select: vi.fn().mockReturnValue({
-          order: vi.fn().mockResolvedValue({
-            data: null,
-            error: { message: 'Database error' },
-          }),
-        }),
+      mockSupabaseClient.from = vi.fn().mockImplementation((table: string) => {
+        if (table === 'people') {
+          return {
+            select: vi.fn().mockReturnValue({
+              order: vi.fn().mockResolvedValue({ data: null, error: { message: 'Database error' } }),
+            }),
+          }
+        }
+        return {
+          select: vi.fn().mockResolvedValue({ data: [], error: null }),
+        }
       })
-
-      mockSupabaseClient.from = mockFrom
 
       await expect(getPeople()).rejects.toThrow()
     })
@@ -121,6 +133,7 @@ describe('People Service', () => {
         startDate: '2024-03-01',
         notes: 'Joining from competitor',
         status: 'active' as const,
+        teams: [],
       }
 
       const mockCreatedPerson = {
@@ -134,22 +147,22 @@ describe('People Service', () => {
         created_at: '2024-01-03T00:00:00Z',
       }
 
-      const mockFrom = vi.fn().mockReturnValue({
-        insert: vi.fn().mockReturnValue({
-          select: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: mockCreatedPerson,
-              error: null,
+      mockSupabaseClient.from = vi.fn().mockImplementation((table: string) => {
+        if (table === 'people') {
+          return {
+            insert: vi.fn().mockReturnValue({
+              select: vi.fn().mockReturnValue({
+                single: vi.fn().mockResolvedValue({ data: mockCreatedPerson, error: null }),
+              }),
             }),
-          }),
-        }),
+          }
+        }
+        return { select: vi.fn().mockResolvedValue({ data: [], error: null }) }
       })
-
-      mockSupabaseClient.from = mockFrom
 
       const result = await createPerson(newPerson)
 
-      expect(mockFrom).toHaveBeenCalledWith('people')
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('people')
       expect(result).toMatchObject({
         id: 'new-person-id',
         name: 'Alice Johnson',
@@ -172,6 +185,7 @@ describe('People Service', () => {
         startDate: '2024-01-01',
         notes: null,
         status: 'active' as const,
+        teams: [],
       }
 
       await expect(createPerson(newPerson)).rejects.toThrow('Not authenticated')
@@ -191,6 +205,7 @@ describe('People Service', () => {
         startDate: null,
         notes: null,
         status: 'active' as const,
+        teams: [],
       }
 
       const mockCreatedPerson = {
@@ -204,18 +219,18 @@ describe('People Service', () => {
         created_at: '2024-01-03T00:00:00Z',
       }
 
-      const mockFrom = vi.fn().mockReturnValue({
-        insert: vi.fn().mockReturnValue({
-          select: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: mockCreatedPerson,
-              error: null,
+      mockSupabaseClient.from = vi.fn().mockImplementation((table: string) => {
+        if (table === 'people') {
+          return {
+            insert: vi.fn().mockReturnValue({
+              select: vi.fn().mockReturnValue({
+                single: vi.fn().mockResolvedValue({ data: mockCreatedPerson, error: null }),
+              }),
             }),
-          }),
-        }),
+          }
+        }
+        return { select: vi.fn().mockResolvedValue({ data: [], error: null }) }
       })
-
-      mockSupabaseClient.from = mockFrom
 
       const result = await createPerson(newPerson)
 
@@ -242,25 +257,42 @@ describe('People Service', () => {
         notes: 'Great team player',
         status: 'active',
         created_at: '2024-01-01T00:00:00Z',
-        team_memberships: [
-          { teams: { name: 'Platform Engineering' } },
-        ],
       }
 
-      const mockFrom = vi.fn().mockReturnValue({
-        update: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            select: vi.fn().mockReturnValue({
-              single: vi.fn().mockResolvedValue({
-                data: mockUpdatedPerson,
-                error: null,
+      // updatePerson calls: people (update), teams (select), team_memberships (select current),
+      // team_memberships (insert/delete diffs), team_memberships (final select)
+      mockSupabaseClient.from = vi.fn().mockImplementation((table: string) => {
+        if (table === 'people') {
+          return {
+            update: vi.fn().mockReturnValue({
+              eq: vi.fn().mockReturnValue({
+                select: vi.fn().mockReturnValue({
+                  single: vi.fn().mockResolvedValue({ data: mockUpdatedPerson, error: null }),
+                }),
               }),
             }),
-          }),
-        }),
+          }
+        }
+        if (table === 'teams') {
+          return {
+            select: vi.fn().mockResolvedValue({ data: [], error: null }),
+          }
+        }
+        if (table === 'team_memberships') {
+          return {
+            select: vi.fn().mockReturnValue({
+              eq: vi.fn().mockResolvedValue({ data: [], error: null }),
+            }),
+            insert: vi.fn().mockResolvedValue({ data: null, error: null }),
+            delete: vi.fn().mockReturnValue({
+              eq: vi.fn().mockReturnValue({
+                in: vi.fn().mockResolvedValue({ data: null, error: null }),
+              }),
+            }),
+          }
+        }
+        return { select: vi.fn().mockResolvedValue({ data: [], error: null }) }
       })
-
-      mockSupabaseClient.from = mockFrom
 
       const result = await updatePerson('person-1', updates)
 
@@ -281,26 +313,51 @@ describe('People Service', () => {
         notes: null,
         status: 'active',
         created_at: '2024-01-01T00:00:00Z',
-        team_memberships: [
-          { teams: { name: 'Team A' } },
-          { teams: { name: 'Team B' } },
-        ],
       }
 
-      const mockFrom = vi.fn().mockReturnValue({
-        update: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            select: vi.fn().mockReturnValue({
-              single: vi.fn().mockResolvedValue({
-                data: mockUpdatedPerson,
-                error: null,
+      const finalMemberships = [
+        { teams: { name: 'Team A' } },
+        { teams: { name: 'Team B' } },
+      ]
+
+      mockSupabaseClient.from = vi.fn().mockImplementation((table: string) => {
+        if (table === 'people') {
+          return {
+            update: vi.fn().mockReturnValue({
+              eq: vi.fn().mockReturnValue({
+                select: vi.fn().mockReturnValue({
+                  single: vi.fn().mockResolvedValue({ data: mockUpdatedPerson, error: null }),
+                }),
               }),
             }),
-          }),
-        }),
+          }
+        }
+        if (table === 'teams') {
+          return {
+            select: vi.fn().mockResolvedValue({ data: [], error: null }),
+          }
+        }
+        if (table === 'team_memberships') {
+          // Distinguish the two SELECT calls by the column string:
+          //   'team_id'     -> current memberships lookup (returns [])
+          //   'teams(name)' -> final memberships fetch (returns finalMemberships)
+          return {
+            select: vi.fn().mockImplementation((cols: string) => ({
+              eq: vi.fn().mockResolvedValue({
+                data: cols === 'teams(name)' ? finalMemberships : [],
+                error: null,
+              }),
+            })),
+            insert: vi.fn().mockResolvedValue({ data: null, error: null }),
+            delete: vi.fn().mockReturnValue({
+              eq: vi.fn().mockReturnValue({
+                in: vi.fn().mockResolvedValue({ data: null, error: null }),
+              }),
+            }),
+          }
+        }
+        return { select: vi.fn().mockResolvedValue({ data: [], error: null }) }
       })
-
-      mockSupabaseClient.from = mockFrom
 
       const result = await updatePerson('person-1', updates)
 
@@ -352,23 +409,32 @@ describe('People Service', () => {
         notes: null,
         status: 'inactive',
         created_at: '2024-01-01T00:00:00Z',
-        team_memberships: [],
       }
 
-      const mockFrom = vi.fn().mockReturnValue({
-        update: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            select: vi.fn().mockReturnValue({
-              single: vi.fn().mockResolvedValue({
-                data: mockUpdatedPerson,
-                error: null,
+      mockSupabaseClient.from = vi.fn().mockImplementation((table: string) => {
+        if (table === 'people') {
+          return {
+            update: vi.fn().mockReturnValue({
+              eq: vi.fn().mockReturnValue({
+                select: vi.fn().mockReturnValue({
+                  single: vi.fn().mockResolvedValue({ data: mockUpdatedPerson, error: null }),
+                }),
               }),
             }),
-          }),
-        }),
+          }
+        }
+        if (table === 'teams') {
+          return { select: vi.fn().mockResolvedValue({ data: [], error: null }) }
+        }
+        if (table === 'team_memberships') {
+          return {
+            select: vi.fn().mockReturnValue({
+              eq: vi.fn().mockResolvedValue({ data: [], error: null }),
+            }),
+          }
+        }
+        return { select: vi.fn().mockResolvedValue({ data: [], error: null }) }
       })
-
-      mockSupabaseClient.from = mockFrom
 
       const result = await togglePersonStatus('person-1', 'active')
 
@@ -385,23 +451,32 @@ describe('People Service', () => {
         notes: null,
         status: 'active',
         created_at: '2024-01-01T00:00:00Z',
-        team_memberships: [],
       }
 
-      const mockFrom = vi.fn().mockReturnValue({
-        update: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            select: vi.fn().mockReturnValue({
-              single: vi.fn().mockResolvedValue({
-                data: mockUpdatedPerson,
-                error: null,
+      mockSupabaseClient.from = vi.fn().mockImplementation((table: string) => {
+        if (table === 'people') {
+          return {
+            update: vi.fn().mockReturnValue({
+              eq: vi.fn().mockReturnValue({
+                select: vi.fn().mockReturnValue({
+                  single: vi.fn().mockResolvedValue({ data: mockUpdatedPerson, error: null }),
+                }),
               }),
             }),
-          }),
-        }),
+          }
+        }
+        if (table === 'teams') {
+          return { select: vi.fn().mockResolvedValue({ data: [], error: null }) }
+        }
+        if (table === 'team_memberships') {
+          return {
+            select: vi.fn().mockReturnValue({
+              eq: vi.fn().mockResolvedValue({ data: [], error: null }),
+            }),
+          }
+        }
+        return { select: vi.fn().mockResolvedValue({ data: [], error: null }) }
       })
-
-      mockSupabaseClient.from = mockFrom
 
       const result = await togglePersonStatus('person-1', 'inactive')
 
