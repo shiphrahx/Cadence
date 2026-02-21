@@ -460,7 +460,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                             key={team.id}
                             onClick={() => toggleAvailableSelection(team.id!)}
                             onDoubleClick={() => handleDoubleClickAvailable(team.id!)}
-                            className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 hover:bg-[#292929] select-none text-gray-200 ${
+                            className={`px-3 py-2 text-sm cursor-pointer dual-list-item select-none text-gray-200 ${
                               selectedAvailable.includes(team.id!) ? 'bg-primary-50 bg-primary-dark-900/30 bg-primary-dark-900/30 border-l-2 border-primary-600 border-primary-dark-600 border-primary-dark-400' : ''
                             }`}
                           >
@@ -509,7 +509,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                             key={team.id}
                             onClick={() => toggleTeamMemberSelection(team.id!)}
                             onDoubleClick={() => handleDoubleClickTeamMember(team.id!)}
-                            className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 hover:bg-[#292929] select-none text-gray-200 ${
+                            className={`px-3 py-2 text-sm cursor-pointer dual-list-item select-none text-gray-200 ${
                               selectedTeamMembers.includes(team.id!) ? 'bg-primary-50 bg-primary-dark-900/30 bg-primary-dark-900/30 border-l-2 border-primary-600 border-primary-dark-600 border-primary-dark-400' : ''
                             }`}
                           >

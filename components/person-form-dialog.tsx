@@ -226,7 +226,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
                             key={team.id}
                             onClick={() => toggleAvailableSelection(team.name)}
                             onDoubleClick={() => handleDoubleClickAvailable(team.name)}
-                            className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 select-none ${
+                            className={`px-3 py-2 text-sm cursor-pointer dual-list-item select-none ${
                               selectedAvailable.includes(team.name) ? 'bg-primary-50 bg-primary-dark-900/30 border-l-2 border-primary-600' : ''
                             }`}
                           >
@@ -275,7 +275,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
                             key={team.id}
                             onClick={() => toggleTeamSelection(team.name)}
                             onDoubleClick={() => handleDoubleClickTeam(team.name)}
-                            className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 select-none ${
+                            className={`px-3 py-2 text-sm cursor-pointer dual-list-item select-none ${
                               selectedTeams.includes(team.name) ? 'bg-primary-50 bg-primary-dark-900/30 border-l-2 border-primary-600' : ''
                             }`}
                           >

@@ -51,6 +51,12 @@
   border-color: hsl(var(--border));
 }
 
+/* Dual-list selector hover */
+.dual-list-item:hover {
+  background: linear-gradient(90deg, rgb(0, 255, 229) 0%, rgb(0, 240, 88) 100%);
+  color: #111;
+}
+
 /* Dark theme for native date picker */
 input[type="date"] {
   color-scheme: dark;
