@@ -25,16 +25,18 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     }, [props.value, adjustHeight])
 
     return (
-      <textarea
-        className={cn(
-          "flex min-h-[80px] w-full rounded-md border border-gray-300 border-[#383838] bg-white bg-[#262626] px-3 py-2 text-sm text-gray-900 text-gray-100 ring-offset-white ring-offset-[#171717] placeholder:text-gray-500 placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ring-primary-dark-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-          autoResize && "resize-none overflow-hidden",
-          className
-        )}
-        ref={textareaRef}
-        onInput={adjustHeight}
-        {...props}
-      />
+      <div className="has-[:focus-visible]:[background:linear-gradient(90deg,rgb(0,255,229)_0%,rgb(0,240,88)_100%)] has-[:disabled]:opacity-50 bg-[#383838] rounded-md p-[1.5px] w-full">
+        <textarea
+          className={cn(
+            "flex min-h-[80px] w-full rounded-[5px] bg-[#262626] px-3 py-2 text-sm text-gray-100 placeholder:text-gray-400 focus-visible:outline-none disabled:cursor-not-allowed",
+            autoResize && "resize-none overflow-hidden",
+            className
+          )}
+          ref={textareaRef}
+          onInput={adjustHeight}
+          {...props}
+        />
+      </div>
     )
   }
 )

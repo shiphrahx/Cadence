@@ -51,6 +51,11 @@
   border-color: hsl(var(--border));
 }
 
+/* Dropdown menu item hover */
+.menu-item:hover {
+  background-color: #2a2a2a;
+}
+
 /* Dual-list selector hover */
 .dual-list-item:hover {
   background: linear-gradient(90deg, rgb(0, 255, 229) 0%, rgb(0, 240, 88) 100%);

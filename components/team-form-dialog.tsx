@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { ChevronRight, ChevronLeft } from "lucide-react"
 import { getTodayDate } from "@/lib/utils"
 import { type Team } from "@/lib/services/teams"
-import { type Person } from "@/lib/mock-data"
+import { type Person } from "@/lib/services/people"
 
 interface TeamFormDialogProps {
   open: boolean
@@ -33,8 +33,8 @@ const emptyTeam: Omit<Team, 'id' | 'createdAt'> & { id?: string; createdAt?: str
 
 export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeople = [] }: TeamFormDialogProps) {
   const [formData, setFormData] = useState<Team | typeof emptyTeam>(team || emptyTeam)
-  const [selectedAvailable, setSelectedAvailable] = useState<number[]>([])
-  const [selectedMembers, setSelectedMembers] = useState<number[]>([])
+  const [selectedAvailable, setSelectedAvailable] = useState<string[]>([])
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([])
 
   // Reset form data when dialog opens/closes or team changes
   useEffect(() => {
@@ -58,17 +58,17 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
   const isEditing = !!team
 
   const availablePeopleList = availablePeople.filter(person =>
-    person.id !== undefined && !formData.memberIds?.includes(String(person.id))
+    person.id !== undefined && !formData.memberIds?.includes(person.id)
   )
 
   const teamMembersList = availablePeople.filter(person =>
-    person.id !== undefined && formData.memberIds?.includes(String(person.id))
+    person.id !== undefined && formData.memberIds?.includes(person.id)
   )
 
   const handleAddToTeam = () => {
     setFormData({
       ...formData,
-      memberIds: [...(formData.memberIds || []), ...selectedAvailable.map(String)]
+      memberIds: [...(formData.memberIds || []), ...selectedAvailable]
     })
     setSelectedAvailable([])
   }
@@ -76,12 +76,12 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
   const handleRemoveFromTeam = () => {
     setFormData({
       ...formData,
-      memberIds: formData.memberIds?.filter(id => !selectedMembers.map(String).includes(id)) || []
+      memberIds: formData.memberIds?.filter(id => !selectedMembers.includes(id)) || []
     })
     setSelectedMembers([])
   }
 
-  const toggleAvailableSelection = (personId: number) => {
+  const toggleAvailableSelection = (personId: string) => {
     setSelectedAvailable(prev =>
       prev.includes(personId)
         ? prev.filter(id => id !== personId)
@@ -89,7 +89,7 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
     )
   }
 
-  const toggleMemberSelection = (personId: number) => {
+  const toggleMemberSelection = (personId: string) => {
     setSelectedMembers(prev =>
       prev.includes(personId)
         ? prev.filter(id => id !== personId)
@@ -97,18 +97,18 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
     )
   }
 
-  const handleDoubleClickAvailable = (personId: number) => {
+  const handleDoubleClickAvailable = (personId: string) => {
     setFormData({
       ...formData,
-      memberIds: [...(formData.memberIds || []), String(personId)]
+      memberIds: [...(formData.memberIds || []), personId]
     })
     setSelectedAvailable(prev => prev.filter(id => id !== personId))
   }
 
-  const handleDoubleClickMember = (personId: number) => {
+  const handleDoubleClickMember = (personId: string) => {
     setFormData({
       ...formData,
-      memberIds: formData.memberIds?.filter(id => id !== String(personId)) || []
+      memberIds: formData.memberIds?.filter(id => id !== personId) || []
     })
     setSelectedMembers(prev => prev.filter(id => id !== personId))
   }

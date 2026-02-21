@@ -9,7 +9,9 @@ import { Label } from "@/components/ui/label"
 import { MarkdownTextarea } from "@/components/ui/markdown-textarea"
 import { ChevronRight, ChevronLeft, ArrowLeft, ChevronDown, Plus } from "lucide-react"
 import { MeetingFormDialog } from "@/components/meeting-form-dialog"
-import { type Team, type Person, type Meeting, mockTeams, mockPeople, mockMeetings as centralizedMockMeetings } from "@/lib/mock-data"
+import { getPeople, updatePerson, type Person } from "@/lib/services/people"
+import { getTeams, type Team } from "@/lib/services/teams"
+import { type Meeting } from "@/lib/mock-data"
 
 interface TreeNode {
   type: string
@@ -109,10 +111,11 @@ const getLevelHoverClass = (level: string) => {
 
 export default function PersonDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
-  const [personId, setPersonId] = useState<number | null>(null)
+  const [personId, setPersonId] = useState<string | null>(null)
   const [formData, setFormData] = useState<Person | null>(null)
-  const [selectedAvailable, setSelectedAvailable] = useState<number[]>([])
-  const [selectedTeamMembers, setSelectedTeamMembers] = useState<number[]>([])
+  const [allTeams, setAllTeams] = useState<Team[]>([])
+  const [selectedAvailable, setSelectedAvailable] = useState<string[]>([])
+  const [selectedTeamMembers, setSelectedTeamMembers] = useState<string[]>([])
 
   // Meeting states
   const [meetings, setMeetings] = useState<ExtendedMeeting[]>(mockMeetingsExtended)
@@ -123,20 +126,18 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
   const [isResizing, setIsResizing] = useState(false)
 
   useEffect(() => {
-    // Unwrap params promise and set personId
     params.then(({ id }) => {
-      setPersonId(parseInt(id))
+      setPersonId(id)
     })
   }, [params])
 
   useEffect(() => {
-    // Find the person by ID once personId is set
-    if (personId !== null) {
-      const person = mockPeople.find(p => p.id === personId)
-      if (person) {
-        setFormData(person)
-      }
-    }
+    if (!personId) return
+    getPeople().then(people => {
+      const person = people.find(p => p.id === personId)
+      if (person) setFormData(person)
+    }).catch(console.error)
+    getTeams().then(setAllTeams).catch(console.error)
   }, [personId])
 
   // Meeting helper functions and tree organization - MUST be before early return
@@ -225,82 +226,68 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
     )
   }
 
-  const handleSave = () => {
-    // TODO: Save the person data
-    console.log("Saving person:", formData)
-    router.push("/people")
+  const handleSave = async () => {
+    if (!formData?.id) return
+    try {
+      await updatePerson(formData.id, formData)
+      router.push("/people")
+    } catch (error) {
+      console.error('Failed to save person:', error)
+    }
   }
 
   const handleCancel = () => {
     router.push("/people")
   }
 
-  const availableTeamsList = mockTeams.filter(team =>
+  const availableTeamsList = allTeams.filter(team =>
     !formData.teams.includes(team.name)
   )
 
-  const assignedTeamsList = mockTeams.filter(team =>
+  const assignedTeamsList = allTeams.filter(team =>
     formData.teams.includes(team.name)
   )
 
   const handleAddToTeams = () => {
-    const teamsToAdd = mockTeams
-      .filter(team => team.id !== undefined && selectedAvailable.includes(team.id))
+    const teamsToAdd = allTeams
+      .filter(team => selectedAvailable.includes(team.id))
       .map(team => team.name)
-
-    setFormData({
-      ...formData,
-      teams: [...formData.teams, ...teamsToAdd]
-    })
+    setFormData({ ...formData, teams: [...formData.teams, ...teamsToAdd] })
     setSelectedAvailable([])
   }
 
   const handleRemoveFromTeams = () => {
-    const teamsToRemove = mockTeams
-      .filter(team => team.id !== undefined && selectedTeamMembers.includes(team.id))
+    const teamsToRemove = allTeams
+      .filter(team => selectedTeamMembers.includes(team.id))
       .map(team => team.name)
-
-    setFormData({
-      ...formData,
-      teams: formData.teams.filter(team => !teamsToRemove.includes(team))
-    })
+    setFormData({ ...formData, teams: formData.teams.filter(t => !teamsToRemove.includes(t)) })
     setSelectedTeamMembers([])
   }
 
-  const toggleAvailableSelection = (teamId: number) => {
+  const toggleAvailableSelection = (teamId: string) => {
     setSelectedAvailable(prev =>
-      prev.includes(teamId)
-        ? prev.filter(id => id !== teamId)
-        : [...prev, teamId]
+      prev.includes(teamId) ? prev.filter(id => id !== teamId) : [...prev, teamId]
     )
   }
 
-  const toggleTeamMemberSelection = (teamId: number) => {
+  const toggleTeamMemberSelection = (teamId: string) => {
     setSelectedTeamMembers(prev =>
-      prev.includes(teamId)
-        ? prev.filter(id => id !== teamId)
-        : [...prev, teamId]
+      prev.includes(teamId) ? prev.filter(id => id !== teamId) : [...prev, teamId]
     )
   }
 
-  const handleDoubleClickAvailable = (teamId: number) => {
-    const team = mockTeams.find(t => t.id === teamId)
+  const handleDoubleClickAvailable = (teamId: string) => {
+    const team = allTeams.find(t => t.id === teamId)
     if (team) {
-      setFormData({
-        ...formData,
-        teams: [...formData.teams, team.name]
-      })
+      setFormData({ ...formData, teams: [...formData.teams, team.name] })
       setSelectedAvailable(prev => prev.filter(id => id !== teamId))
     }
   }
 
-  const handleDoubleClickTeamMember = (teamId: number) => {
-    const team = mockTeams.find(t => t.id === teamId)
+  const handleDoubleClickTeamMember = (teamId: string) => {
+    const team = allTeams.find(t => t.id === teamId)
     if (team) {
-      setFormData({
-        ...formData,
-        teams: formData.teams.filter(t => t !== team.name)
-      })
+      setFormData({ ...formData, teams: formData.teams.filter(t => t !== team.name) })
       setSelectedTeamMembers(prev => prev.filter(id => id !== teamId))
     }
   }
@@ -399,35 +386,36 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
               <div className="grid gap-2">
                 <Label htmlFor="level">Seniority Level *</Label>
                 <div className="flex flex-wrap gap-2 mb-2">
-                  {seniorityLevels.map((level) => (
-                    <Button
-                      key={level}
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setFormData({ ...formData, level })}
-                      className={`text-xs border ${
-                        formData.level === level
-                          ? getLevelBadgeClass(level)
-                          : getLevelHoverClass(level)
-                      }`}
-                    >
-                      {level}
-                    </Button>
-                  ))}
                   <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setFormData({ ...formData, level: "" })}
-                    className={`text-xs border ${
-                      !seniorityLevels.includes(formData.level)
-                        ? "bg-gray-100 text-gray-700 border-gray-300"
-                        : "bg-white text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    Other
-                  </Button>
+                    type="button" variant="outline" size="sm"
+                    onClick={() => setFormData({ ...formData, level: "Junior" })}
+                    className={formData.level === "Junior" ? "!bg-green-100 !text-green-700 !border-green-300 hover:!bg-green-200" : "hover:!bg-green-100 hover:!text-green-700 hover:!border-green-300"}
+                  >Junior</Button>
+                  <Button
+                    type="button" variant="outline" size="sm"
+                    onClick={() => setFormData({ ...formData, level: "Mid" })}
+                    className={formData.level === "Mid" ? "!bg-yellow-100 !text-yellow-700 !border-yellow-300 hover:!bg-yellow-200" : "hover:!bg-yellow-100 hover:!text-yellow-700 hover:!border-yellow-300"}
+                  >Mid</Button>
+                  <Button
+                    type="button" variant="outline" size="sm"
+                    onClick={() => setFormData({ ...formData, level: "Senior" })}
+                    className={formData.level === "Senior" ? "!bg-pink-100 !text-pink-700 !border-pink-300 hover:!bg-pink-200" : "hover:!bg-pink-100 hover:!text-pink-700 hover:!border-pink-300"}
+                  >Senior</Button>
+                  <Button
+                    type="button" variant="outline" size="sm"
+                    onClick={() => setFormData({ ...formData, level: "Staff" })}
+                    className={formData.level === "Staff" ? "!bg-blue-100 !text-blue-700 !border-blue-300 hover:!bg-blue-200" : "hover:!bg-blue-100 hover:!text-blue-700 hover:!border-blue-300"}
+                  >Staff</Button>
+                  <Button
+                    type="button" variant="outline" size="sm"
+                    onClick={() => setFormData({ ...formData, level: "Principal" })}
+                    className={formData.level === "Principal" ? "!bg-purple-100 !text-purple-700 !border-purple-300 hover:!bg-purple-200" : "hover:!bg-purple-100 hover:!text-purple-700 hover:!border-purple-300"}
+                  >Principal</Button>
+                  <Button
+                    type="button" variant="outline" size="sm"
+                    onClick={() => setFormData({ ...formData, level: "Other" })}
+                    className={formData.level !== null && formData.level !== '' && !["Junior", "Mid", "Senior", "Staff", "Principal"].includes(formData.level) ? "!bg-gray-100 !text-gray-700 !border-gray-300 hover:!bg-gray-200" : "hover:!bg-gray-100 hover:!text-gray-700 hover:!border-gray-300"}
+                  >Other</Button>
                 </div>
                 <Input
                   id="level"

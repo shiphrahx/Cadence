@@ -181,7 +181,7 @@ export function PeopleTable({
                     onEdit(person)
                     setSelectedPersonMenu(null)
                   }}
-                  className="flex hover:bg-gray-100 hover:bg-[#292929] w-full items-center gap-2 px-4 py-2 text-gray-300 cursor-pointer"
+                  className="flex menu-item w-full items-center gap-2 px-4 py-2 text-gray-300 cursor-pointer"
                 >
                   <Pencil className="h-4 w-4" />
                   Edit
@@ -191,7 +191,7 @@ export function PeopleTable({
                     e.stopPropagation()
                     onToggleStatus(person)
                   }}
-                  className="flex hover:bg-gray-100 hover:bg-[#292929] w-full items-center gap-2 px-4 py-2 text-gray-300 cursor-pointer"
+                  className="flex menu-item w-full items-center gap-2 px-4 py-2 text-gray-300 cursor-pointer"
                 >
                   {person.status === "active" ? (
                     <>
