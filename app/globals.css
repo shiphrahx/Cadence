@@ -51,6 +51,18 @@
   border-color: hsl(var(--border));
 }
 
+/* Dark theme for native date picker */
+input[type="date"] {
+  color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7) brightness(1.4);
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
