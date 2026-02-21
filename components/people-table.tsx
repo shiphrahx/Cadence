@@ -61,8 +61,14 @@ export function PeopleTable({
         return "!bg-yellow-100 !text-yellow-700 !border-yellow-300"
       case "Senior":
         return "!bg-pink-100 !text-pink-700 !border-pink-300"
-      default:
+      case "Staff":
         return "!bg-blue-100 !text-blue-700 !border-blue-300"
+      case "Principal":
+        return "!bg-purple-100 !text-purple-700 !border-purple-300"
+      case "Other":
+        return "!bg-gray-100 !text-gray-700 !border-gray-300"
+      default:
+        return "!bg-gray-100 !text-gray-700 !border-gray-300"
     }
   }
 
@@ -175,7 +181,7 @@ export function PeopleTable({
                     onEdit(person)
                     setSelectedPersonMenu(null)
                   }}
-                  className="flex hover:bg-gray-100 hover:bg-[#292929] w-full items-center gap-2 px-4 py-2 text-gray-300 cursor-pointer"
+                  className="flex menu-item w-full items-center gap-2 px-4 py-2 text-gray-300 cursor-pointer"
                 >
                   <Pencil className="h-4 w-4" />
                   Edit
@@ -185,7 +191,7 @@ export function PeopleTable({
                     e.stopPropagation()
                     onToggleStatus(person)
                   }}
-                  className="flex hover:bg-gray-100 hover:bg-[#292929] w-full items-center gap-2 px-4 py-2 text-gray-300 cursor-pointer"
+                  className="flex menu-item w-full items-center gap-2 px-4 py-2 text-gray-300 cursor-pointer"
                 >
                   {person.status === "active" ? (
                     <>

@@ -125,7 +125,7 @@ export function TeamsTable({
                     onEdit(team)
                     setSelectedTeamMenu(null)
                   }}
-                  className="flex hover:bg-gray-100 hover:bg-[#292929] w-full items-center gap-2 px-4 py-2 text-gray-300 cursor-pointer"
+                  className="flex menu-item w-full items-center gap-2 px-4 py-2 text-gray-300 cursor-pointer"
                 >
                   <Pencil className="h-4 w-4" />
                   Edit
@@ -135,7 +135,7 @@ export function TeamsTable({
                     e.stopPropagation()
                     onToggleStatus(team)
                   }}
-                  className="flex hover:bg-gray-100 hover:bg-[#292929] w-full items-center gap-2 px-4 py-2 text-gray-300 cursor-pointer"
+                  className="flex menu-item w-full items-center gap-2 px-4 py-2 text-gray-300 cursor-pointer"
                 >
                   {team.status === "active" ? (
                     <>

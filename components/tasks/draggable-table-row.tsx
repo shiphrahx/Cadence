@@ -63,7 +63,7 @@ export function DraggableTableRow({ task, children, onDoubleClick }: DraggableTa
       style={style}
       {...attributes}
       onDoubleClick={onDoubleClick}
-      className="hover:bg-gray-50 hover:bg-[#292929] border-[#383838] transition-colors cursor-pointer"
+      className="hover:bg-[#2a2a2a] border-[#383838] transition-colors cursor-pointer"
     >
       {modifiedChildren}
     </tr>

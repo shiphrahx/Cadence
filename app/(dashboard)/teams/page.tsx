@@ -8,20 +8,31 @@ import { Plus, Users as UsersIcon } from "lucide-react"
 import { TeamFormDialog } from "@/components/team-form-dialog"
 import { TeamsTable } from "@/components/teams-table"
 import { DeleteConfirmDialog } from "@/components/delete-confirm-dialog"
-import { mockPeople } from "@/lib/mock-data"
 import { getTeams, createTeam, updateTeam, deleteTeam as deleteTeamService, toggleTeamStatus, type Team } from "@/lib/services/teams"
+import { getPeople, type Person } from "@/lib/services/people"
 
 export default function TeamsPage() {
   const [teams, setTeams] = useState<Team[]>([])
+  const [people, setPeople] = useState<Person[]>([])
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [editingTeam, setEditingTeam] = useState<Team | null>(null)
   const [deletingTeam, setDeletingTeam] = useState<Team | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Load teams from Supabase on mount
+  // Load teams and people from Supabase on mount
   useEffect(() => {
     loadTeams()
+    loadPeople()
   }, [])
+
+  const loadPeople = async () => {
+    try {
+      const data = await getPeople()
+      setPeople(data)
+    } catch (error) {
+      console.error('Failed to load people:', error)
+    }
+  }
 
   const loadTeams = async () => {
     try {
@@ -86,10 +97,6 @@ export default function TeamsPage() {
             Manage your teams and team members
           </p>
         </div>
-        <Button onClick={() => setIsAddDialogOpen(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Team
-        </Button>
       </div>
 
       {/* Stats */}
@@ -154,7 +161,7 @@ export default function TeamsPage() {
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
         onSave={handleAddTeam}
-        availablePeople={mockPeople}
+        availablePeople={people}
       />
 
       {/* Edit Team Dialog */}
@@ -163,7 +170,7 @@ export default function TeamsPage() {
         onOpenChange={(open) => !open && setEditingTeam(null)}
         team={editingTeam}
         onSave={handleEditTeam}
-        availablePeople={mockPeople}
+        availablePeople={people}
       />
 
       {/* Delete Confirmation Dialog */}

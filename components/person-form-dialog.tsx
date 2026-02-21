@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { ChevronRight, ChevronLeft } from "lucide-react"
 import { getTodayDate } from "@/lib/utils"
 import { type Person } from "@/lib/services/people"
-import { type Team } from "@/lib/mock-data"
+import { type Team } from "@/lib/services/teams"
 
 interface PersonFormDialogProps {
   open: boolean
@@ -147,7 +147,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
                     variant="outline"
                     size="sm"
                     onClick={() => setFormData({ ...formData, level: "Junior" })}
-                    className={formData.level === "Junior" ? "!bg-green-100 !text-green-700 !border-green-300 hover:!bg-green-200" : "hover:!bg-green-50"}
+                    className={formData.level === "Junior" ? "!bg-green-100 !text-green-700 !border-green-300 hover:!bg-green-200" : "hover:!bg-green-100 hover:!text-green-700 hover:!border-green-300"}
                   >
                     Junior
                   </Button>
@@ -156,7 +156,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
                     variant="outline"
                     size="sm"
                     onClick={() => setFormData({ ...formData, level: "Mid" })}
-                    className={formData.level === "Mid" ? "!bg-yellow-100 !text-yellow-700 !border-yellow-300 hover:!bg-yellow-200" : "hover:!bg-yellow-50"}
+                    className={formData.level === "Mid" ? "!bg-yellow-100 !text-yellow-700 !border-yellow-300 hover:!bg-yellow-200" : "hover:!bg-yellow-100 hover:!text-yellow-700 hover:!border-yellow-300"}
                   >
                     Mid
                   </Button>
@@ -165,9 +165,36 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
                     variant="outline"
                     size="sm"
                     onClick={() => setFormData({ ...formData, level: "Senior" })}
-                    className={formData.level === "Senior" ? "!bg-pink-100 !text-pink-700 !border-pink-300 hover:!bg-pink-200" : "hover:!bg-pink-50"}
+                    className={formData.level === "Senior" ? "!bg-pink-100 !text-pink-700 !border-pink-300 hover:!bg-pink-200" : "hover:!bg-pink-100 hover:!text-pink-700 hover:!border-pink-300"}
                   >
                     Senior
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setFormData({ ...formData, level: "Staff" })}
+                    className={formData.level === "Staff" ? "!bg-blue-100 !text-blue-700 !border-blue-300 hover:!bg-blue-200" : "hover:!bg-blue-100 hover:!text-blue-700 hover:!border-blue-300"}
+                  >
+                    Staff
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setFormData({ ...formData, level: "Principal" })}
+                    className={formData.level === "Principal" ? "!bg-purple-100 !text-purple-700 !border-purple-300 hover:!bg-purple-200" : "hover:!bg-purple-100 hover:!text-purple-700 hover:!border-purple-300"}
+                  >
+                    Principal
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setFormData({ ...formData, level: "Other" })}
+                    className={formData.level !== null && formData.level !== '' && !["Junior", "Mid", "Senior", "Staff", "Principal"].includes(formData.level) ? "!bg-gray-100 !text-gray-700 !border-gray-300 hover:!bg-gray-200" : "hover:!bg-gray-100 hover:!text-gray-700 hover:!border-gray-300"}
+                  >
+                    Other
                   </Button>
                 </div>
                 <Input
@@ -199,7 +226,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
                             key={team.id}
                             onClick={() => toggleAvailableSelection(team.name)}
                             onDoubleClick={() => handleDoubleClickAvailable(team.name)}
-                            className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 select-none ${
+                            className={`px-3 py-2 text-sm cursor-pointer dual-list-item select-none ${
                               selectedAvailable.includes(team.name) ? 'bg-primary-50 bg-primary-dark-900/30 border-l-2 border-primary-600' : ''
                             }`}
                           >
@@ -248,7 +275,7 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
                             key={team.id}
                             onClick={() => toggleTeamSelection(team.name)}
                             onDoubleClick={() => handleDoubleClickTeam(team.name)}
-                            className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 select-none ${
+                            className={`px-3 py-2 text-sm cursor-pointer dual-list-item select-none ${
                               selectedTeams.includes(team.name) ? 'bg-primary-50 bg-primary-dark-900/30 border-l-2 border-primary-600' : ''
                             }`}
                           >

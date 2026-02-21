@@ -28,21 +28,23 @@ export interface Person {
 export async function getPeople(): Promise<Person[]> {
   const supabase = createClient()
 
-  const { data: people, error } = await supabase
-    .from('people')
-    .select(`
-      *,
-      team_memberships(
-        team_id,
-        teams(name)
-      )
-    `)
-    .order('created_at', { ascending: false })
+  const [{ data: people, error }, { data: memberships }] = await Promise.all([
+    supabase.from('people').select('*').order('created_at', { ascending: false }),
+    supabase.from('team_memberships').select('person_id, teams(name)'),
+  ])
 
   if (error) throw error
 
-  // Transform database rows to Person interface
-  return people.map((person: any) => ({
+  // Build a map of person_id -> team names from the memberships query
+  const teamsByPerson: Record<string, string[]> = {}
+  for (const m of (memberships ?? []) as any[]) {
+    const name = m.teams?.name
+    if (!name) continue
+    if (!teamsByPerson[m.person_id]) teamsByPerson[m.person_id] = []
+    teamsByPerson[m.person_id].push(name)
+  }
+
+  return (people ?? []).map((person: any) => ({
     id: person.id,
     name: person.full_name,
     role: person.role,
@@ -50,15 +52,15 @@ export async function getPeople(): Promise<Person[]> {
     startDate: person.start_date,
     notes: person.notes,
     status: person.status,
-    teams: person.team_memberships?.map((tm: any) => tm.teams?.name).filter(Boolean) || [],
+    teams: teamsByPerson[person.id] ?? [],
     createdAt: person.created_at,
   }))
 }
 
 /**
- * Create a new person
+ * Create a new person, including team memberships
  */
-export async function createPerson(person: Omit<Person, 'id' | 'createdAt' | 'teams'>): Promise<Person> {
+export async function createPerson(person: Omit<Person, 'id' | 'createdAt'> & { teams?: string[] }): Promise<Person> {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -80,27 +82,41 @@ export async function createPerson(person: Omit<Person, 'id' | 'createdAt' | 'te
 
   if (error) throw error
 
+  const personId = (data as any).id
+  const teamNames = person.teams ?? []
+
+  if (teamNames.length > 0) {
+    const { data: allTeams } = await supabase.from('teams').select('id, name')
+    const teamNameToId = Object.fromEntries((allTeams ?? []).map((t: any) => [t.name, t.id]))
+    const teamIds = teamNames.map(name => teamNameToId[name]).filter(Boolean)
+    if (teamIds.length > 0) {
+      await supabase.from('team_memberships').insert(
+        teamIds.map((team_id: string) => ({ person_id: personId, team_id } as any))
+      )
+    }
+  }
+
   return {
-    id: (data as any).id,
+    id: personId,
     name: (data as any).full_name,
     role: (data as any).role,
     level: (data as any).level,
     startDate: (data as any).start_date,
     notes: (data as any).notes,
     status: (data as any).status,
-    teams: [],
+    teams: teamNames,
     createdAt: (data as any).created_at,
   }
 }
 
 /**
- * Update an existing person
+ * Update an existing person, including syncing team memberships
  */
 export async function updatePerson(id: string, updates: Partial<Person>): Promise<Person> {
   const supabase = createClient()
 
-  const { data, error } = await (supabase
-    .from('people') as any)
+  // Update person fields
+  const { data, error } = await (supabase.from('people') as any)
     .update({
       full_name: updates.name,
       role: updates.role || null,
@@ -110,16 +126,44 @@ export async function updatePerson(id: string, updates: Partial<Person>): Promis
       status: updates.status,
     })
     .eq('id', id)
-    .select(`
-      *,
-      team_memberships(
-        team_id,
-        teams(name)
-      )
-    `)
+    .select('*')
     .single()
 
   if (error) throw error
+
+  // Sync team memberships if teams were provided
+  if (updates.teams !== undefined) {
+    // Resolve team names -> IDs
+    const { data: allTeams } = await supabase.from('teams').select('id, name')
+    const teamNameToId = Object.fromEntries((allTeams ?? []).map((t: any) => [t.name, t.id]))
+    const desiredTeamIds = updates.teams.map(name => teamNameToId[name]).filter(Boolean)
+
+    // Get current memberships
+    const { data: currentMemberships } = await supabase
+      .from('team_memberships').select('team_id').eq('person_id', id)
+    const currentTeamIds = (currentMemberships ?? []).map((m: any) => m.team_id)
+
+    // Add missing memberships
+    const toAdd = desiredTeamIds.filter((tid: string) => !currentTeamIds.includes(tid))
+    if (toAdd.length > 0) {
+      await supabase.from('team_memberships').insert(
+        toAdd.map((team_id: string) => ({ person_id: id, team_id } as any))
+      )
+    }
+
+    // Remove memberships no longer wanted
+    const toRemove = currentTeamIds.filter((tid: string) => !desiredTeamIds.includes(tid))
+    if (toRemove.length > 0) {
+      await supabase.from('team_memberships')
+        .delete()
+        .eq('person_id', id)
+        .in('team_id', toRemove)
+    }
+  }
+
+  // Fetch final memberships to return accurate teams list
+  const { data: memberships } = await supabase
+    .from('team_memberships').select('teams(name)').eq('person_id', id)
 
   return {
     id: (data as any).id,
@@ -129,7 +173,7 @@ export async function updatePerson(id: string, updates: Partial<Person>): Promis
     startDate: (data as any).start_date,
     notes: (data as any).notes,
     status: (data as any).status,
-    teams: (data as any).team_memberships?.map((tm: any) => tm.teams?.name).filter(Boolean) || [],
+    teams: ((memberships ?? []) as any[]).map((m: any) => m.teams?.name).filter(Boolean),
     createdAt: (data as any).created_at,
   }
 }
