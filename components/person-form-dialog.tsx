@@ -187,6 +187,15 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
                   >
                     Principal
                   </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setFormData({ ...formData, level: "Other" })}
+                    className={formData.level !== null && formData.level !== '' && !["Junior", "Mid", "Senior", "Staff", "Principal"].includes(formData.level) ? "!bg-gray-100 !text-gray-700 !border-gray-300 hover:!bg-gray-200" : "hover:!bg-gray-100 hover:!text-gray-700 hover:!border-gray-300"}
+                  >
+                    Other
+                  </Button>
                 </div>
                 <Input
                   id="level"
