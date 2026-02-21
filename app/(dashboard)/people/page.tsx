@@ -9,21 +9,32 @@ import { Plus, User } from "lucide-react"
 import { PersonFormDialog } from "@/components/person-form-dialog"
 import { PeopleTable } from "@/components/people-table"
 import { DeleteConfirmDialog } from "@/components/delete-confirm-dialog"
-import { mockTeams } from "@/lib/mock-data"
 import { getPeople, createPerson, updatePerson, deletePerson as deletePersonService, togglePersonStatus, type Person } from "@/lib/services/people"
+import { getTeams, type Team } from "@/lib/services/teams"
 
 export default function PeoplePage() {
   const router = useRouter()
   const [people, setPeople] = useState<Person[]>([])
+  const [teams, setTeams] = useState<Team[]>([])
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [editingPerson, setEditingPerson] = useState<Person | null>(null)
   const [deletingPerson, setDeletingPerson] = useState<Person | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Load people from Supabase on mount
+  // Load people and teams from Supabase on mount
   useEffect(() => {
     loadPeople()
+    loadTeams()
   }, [])
+
+  const loadTeams = async () => {
+    try {
+      const data = await getTeams()
+      setTeams(data)
+    } catch (error) {
+      console.error('Failed to load teams:', error)
+    }
+  }
 
   const loadPeople = async () => {
     try {
@@ -176,7 +187,7 @@ export default function PeoplePage() {
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
         onSave={handleAddPerson}
-        availableTeams={mockTeams}
+        availableTeams={teams}
       />
 
       {/* Edit Person Dialog */}
@@ -185,7 +196,7 @@ export default function PeoplePage() {
         onOpenChange={(open) => !open && setEditingPerson(null)}
         person={editingPerson}
         onSave={handleEditPerson}
-        availableTeams={mockTeams}
+        availableTeams={teams}
       />
 
       {/* Delete Confirmation Dialog */}

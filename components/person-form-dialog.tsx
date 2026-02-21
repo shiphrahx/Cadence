@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { ChevronRight, ChevronLeft } from "lucide-react"
 import { getTodayDate } from "@/lib/utils"
 import { type Person } from "@/lib/services/people"
-import { type Team } from "@/lib/mock-data"
+import { type Team } from "@/lib/services/teams"
 
 interface PersonFormDialogProps {
   open: boolean
