@@ -173,6 +173,15 @@ export function PersonFormDialog({ open, onOpenChange, person, onSave, available
                     type="button"
                     variant="outline"
                     size="sm"
+                    onClick={() => setFormData({ ...formData, level: "Staff" })}
+                    className={formData.level === "Staff" ? "!bg-blue-100 !text-blue-700 !border-blue-300 hover:!bg-blue-200" : "hover:!bg-blue-100 hover:!text-blue-700 hover:!border-blue-300"}
+                  >
+                    Staff
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
                     onClick={() => setFormData({ ...formData, level: "Principal" })}
                     className={formData.level === "Principal" ? "!bg-purple-100 !text-purple-700 !border-purple-300 hover:!bg-purple-200" : "hover:!bg-purple-100 hover:!text-purple-700 hover:!border-purple-300"}
                   >
