@@ -203,7 +203,7 @@ export function DataTable<T extends { id?: number | string }>({
                 <tr
                   key={item.id}
                   onClick={() => onRowClick?.(item)}
-                  className="hover:bg-gray-50 hover:bg-[#292929] border-[#383838] transition-colors cursor-pointer"
+                  className="hover:bg-[#2a2a2a] border-[#383838] transition-colors cursor-pointer"
                 >
                   {columns.map((column) => (
                     <td
@@ -227,19 +227,6 @@ export function DataTable<T extends { id?: number | string }>({
                       <p className="text-gray-400">No items found</p>
                     </div>
                   )}
-                </td>
-              </tr>
-            )}
-            {onQuickAdd && filteredAndSortedData.length > 0 && (
-              <tr>
-                <td colSpan={columns.length} className="p-0">
-                  <button
-                    onClick={onQuickAdd}
-                    className="hover:text-gray-700 hover:text-gray-200 hover:bg-gray-50 hover:bg-[#292929] flex w-full text-gray-400 px-3 py-3 transition-colors items-center gap-2 border-[#383838]"
-                  >
-                    <Plus className="h-4 w-4" />
-                    {quickAddLabel}
-                  </button>
                 </td>
               </tr>
             )}
