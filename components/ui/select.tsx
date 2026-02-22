@@ -16,19 +16,21 @@ const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
 >(({ className, children, ...props }, ref) => (
-  <SelectPrimitive.Trigger
-    ref={ref}
-    className={cn(
-      "flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-gray-300 border-[#383838] bg-white bg-[#262626] px-3 py-2 text-sm text-gray-900 text-gray-100 shadow-sm ring-offset-white ring-offset-[#171717] data-[placeholder]:text-gray-500 data-[placeholder]:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 ring-primary-dark-500 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
-      className
-    )}
-    {...props}
-  >
-    {children}
-    <SelectPrimitive.Icon asChild>
-      <ChevronDown className="h-4 w-4 opacity-50" />
-    </SelectPrimitive.Icon>
-  </SelectPrimitive.Trigger>
+  <div className="has-[[data-state=open]]:bg-[linear-gradient(90deg,rgb(0,255,229)_0%,rgb(0,240,88)_100%)] has-[:focus-visible]:bg-[linear-gradient(90deg,rgb(0,255,229)_0%,rgb(0,240,88)_100%)] has-[:disabled]:opacity-50 bg-[#383838] rounded-md p-[1.5px] w-full">
+    <SelectPrimitive.Trigger
+      ref={ref}
+      className={cn(
+        "flex h-9 w-full items-center justify-between whitespace-nowrap rounded-[5px] bg-[#262626] px-3 py-2 text-sm text-gray-100 data-[placeholder]:text-gray-400 focus:outline-none disabled:cursor-not-allowed [&>span]:line-clamp-1",
+        className
+      )}
+      {...props}
+    >
+      {children}
+      <SelectPrimitive.Icon asChild>
+        <ChevronDown className="h-4 w-4 opacity-50" />
+      </SelectPrimitive.Icon>
+    </SelectPrimitive.Trigger>
+  </div>
 ))
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName
 

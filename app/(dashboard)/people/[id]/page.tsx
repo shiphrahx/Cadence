@@ -114,6 +114,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
   const [personId, setPersonId] = useState<string | null>(null)
   const [formData, setFormData] = useState<Person | null>(null)
   const [allTeams, setAllTeams] = useState<Team[]>([])
+  const [allPeopleNames, setAllPeopleNames] = useState<string[]>([])
   const [selectedAvailable, setSelectedAvailable] = useState<string[]>([])
   const [selectedTeamMembers, setSelectedTeamMembers] = useState<string[]>([])
 
@@ -136,6 +137,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
     getPeople().then(people => {
       const person = people.find(p => p.id === personId)
       if (person) setFormData(person)
+      setAllPeopleNames(people.map(p => p.name))
     }).catch(console.error)
     getTeams().then(setAllTeams).catch(console.error)
   }, [personId])
@@ -719,8 +721,8 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
         open={isAddMeetingDialogOpen}
         onOpenChange={setIsAddMeetingDialogOpen}
         onSave={handleAddMeeting}
-        availablePeople={mockPeopleNames}
-        availableTeams={mockTeamsForMeetings}
+        availablePeople={allPeopleNames}
+        availableTeams={allTeams.map(t => t.name)}
         defaultPerson={formData.name}
       />
     </div>
