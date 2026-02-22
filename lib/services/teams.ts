@@ -28,25 +28,35 @@ export interface Team {
 export async function getTeams(): Promise<Team[]> {
   const supabase = createClient()
 
-  const { data: teams, error } = await supabase
-    .from('teams')
-    .select(`
-      *,
-      team_memberships(count)
-    `)
-    .order('created_at', { ascending: false })
+  const [{ data: teams, error }, { data: memberships }] = await Promise.all([
+    supabase
+      .from('teams')
+      .select('*')
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('team_memberships')
+      .select('team_id, person_id'),
+  ])
 
   if (error) throw error
 
-  // Transform database rows to Team interface
-  return teams.map((team: any) => ({
+  // Build a map of team_id -> person_ids and counts
+  const membersByTeam: Record<string, string[]> = {}
+  for (const m of (memberships ?? []) as any[]) {
+    if (!membersByTeam[m.team_id]) membersByTeam[m.team_id] = []
+    membersByTeam[m.team_id].push(m.person_id)
+  }
+
+  return (teams ?? []).map((team: any) => ({
     id: team.id,
     name: team.name,
     description: team.description || '',
     status: team.status,
-    memberCount: team.team_memberships[0]?.count || 0,
+    memberCount: membersByTeam[team.id]?.length ?? 0,
+    memberIds: membersByTeam[team.id] ?? [],
     createdAt: team.created_at,
-    notes: team.description,
+    notes: team.notes || '',
+    documentationUrl: team.documentation_url || '',
   }))
 }
 
@@ -65,6 +75,8 @@ export async function createTeam(team: Omit<Team, 'id' | 'memberCount' | 'create
       name: team.name,
       description: team.description || null,
       status: team.status || 'active',
+      notes: team.notes || null,
+      documentation_url: team.documentationUrl || null,
       owning_user_id: user.id,
     } as any)
     .select()
@@ -72,14 +84,25 @@ export async function createTeam(team: Omit<Team, 'id' | 'memberCount' | 'create
 
   if (error) throw error
 
+  const teamId = (data as any).id
+  const memberIds = team.memberIds ?? []
+
+  if (memberIds.length > 0) {
+    await supabase.from('team_memberships').insert(
+      memberIds.map((person_id: string) => ({ team_id: teamId, person_id } as any))
+    )
+  }
+
   return {
-    id: (data as any).id,
+    id: teamId,
     name: (data as any).name,
     description: (data as any).description || '',
     status: (data as any).status,
-    memberCount: 0,
+    memberCount: memberIds.length,
+    memberIds,
     createdAt: (data as any).created_at,
-    notes: (data as any).description,
+    notes: (data as any).notes || '',
+    documentationUrl: (data as any).documentation_url || '',
   }
 }
 
@@ -95,24 +118,58 @@ export async function updateTeam(id: string, updates: Partial<Team>): Promise<Te
       name: updates.name,
       description: updates.description || null,
       status: updates.status,
+      notes: updates.notes ?? null,
+      documentation_url: updates.documentationUrl ?? null,
     })
     .eq('id', id)
-    .select(`
-      *,
-      team_memberships(count)
-    `)
+    .select('*')
     .single()
 
   if (error) throw error
+
+  // Sync team memberships if memberIds were provided
+  if (updates.memberIds !== undefined) {
+    const desiredIds = updates.memberIds
+
+    const { data: currentMemberships } = await supabase
+      .from('team_memberships')
+      .select('person_id')
+      .eq('team_id', id)
+    const currentIds = (currentMemberships ?? []).map((m: any) => m.person_id)
+
+    const toAdd = desiredIds.filter((pid: string) => !currentIds.includes(pid))
+    if (toAdd.length > 0) {
+      await supabase.from('team_memberships').insert(
+        toAdd.map((person_id: string) => ({ team_id: id, person_id } as any))
+      )
+    }
+
+    const toRemove = currentIds.filter((pid: string) => !desiredIds.includes(pid))
+    if (toRemove.length > 0) {
+      await supabase.from('team_memberships')
+        .delete()
+        .eq('team_id', id)
+        .in('person_id', toRemove)
+    }
+  }
+
+  // Fetch final membership ids
+  const { data: finalMemberships } = await supabase
+    .from('team_memberships')
+    .select('person_id')
+    .eq('team_id', id)
+  const memberIds = (finalMemberships ?? []).map((m: any) => m.person_id)
 
   return {
     id: (data as any).id,
     name: (data as any).name,
     description: (data as any).description || '',
     status: (data as any).status,
-    memberCount: (data as any).team_memberships[0]?.count || 0,
+    memberCount: memberIds.length,
+    memberIds,
     createdAt: (data as any).created_at,
-    notes: (data as any).description,
+    notes: (data as any).notes || '',
+    documentationUrl: (data as any).documentation_url || '',
   }
 }
 

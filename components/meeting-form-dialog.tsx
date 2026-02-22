@@ -156,17 +156,17 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
     }
   }, [formData.date, formData.recurrence])
 
-  // Filter people as user types
+  // Filter people as user types (trigger after 2+ characters)
   useEffect(() => {
-    if (personInput && formData.type === "1:1") {
+    if (formData.type === "1:1" && personInput.length >= 2) {
       const filtered = availablePeople.filter(person =>
         person.toLowerCase().includes(personInput.toLowerCase())
       )
       setFilteredPeople(filtered)
-      // Don't show suggestions if the input exactly matches a person (already selected)
       const exactMatch = availablePeople.some(person => person.toLowerCase() === personInput.toLowerCase())
-      setShowSuggestions(filtered.length > 0 && personInput.length > 0 && !exactMatch)
+      setShowSuggestions(filtered.length > 0 && !exactMatch)
     } else {
+      setFilteredPeople([])
       setShowSuggestions(false)
     }
   }, [personInput, availablePeople, formData.type])
@@ -253,7 +253,7 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[95vw] max-h-[90vh] h-[90vh]">
+      <DialogContent className="sm:max-w-[1100px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>{isEditing ? meeting?.title : "Log Meeting"}</DialogTitle>
@@ -314,20 +314,25 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                         required
                       />
                       {showSuggestions && (
-                        <div className="absolute border z-50 w-full mt-1 bg-white border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                        <div className="absolute border z-50 w-full mt-1 bg-[#1c1c1c] border-[#383838] rounded-md shadow-lg max-h-48 overflow-y-auto">
                           {filteredPeople.map((person, index) => (
                             <div
                               key={index}
                               onClick={() => handlePersonSelect(person)}
-                              className="hover:bg-gray-100 px-3 py-2 text-sm cursor-pointer"
+                              className="hover:bg-[#292929] px-3 py-2 text-sm cursor-pointer text-gray-100"
                             >
                               {person}
                             </div>
                           ))}
                         </div>
                       )}
+                      {personInput.length >= 2 && availablePeople.length > 0 && filteredPeople.length === 0 && !showSuggestions && (
+                        <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                          <span className="text-xs bg-amber-900/40 text-amber-400 border border-amber-700/50 rounded px-1.5 py-0.5">New person</span>
+                        </div>
+                      )}
                     </div>
-                    <p className="text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       Select from your team or type a new name
                     </p>
                   </div>
@@ -415,12 +420,12 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                         required
                       />
                       {showTeamSuggestions && (
-                        <div className="absolute border z-50 w-full mt-1 bg-white border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                        <div className="absolute border z-50 w-full mt-1 bg-[#1c1c1c] border-[#383838] rounded-md shadow-lg max-h-48 overflow-y-auto">
                           {filteredTeams.map((team, index) => (
                             <div
                               key={index}
                               onClick={() => handleTeamSelect(team)}
-                              className="hover:bg-gray-100 px-3 py-2 text-sm cursor-pointer"
+                              className="hover:bg-[#292929] px-3 py-2 text-sm cursor-pointer text-gray-100"
                             >
                               {team}
                             </div>
@@ -428,7 +433,7 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                         </div>
                       )}
                     </div>
-                    <p className="text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       Select from your teams or type a new name
                     </p>
                   </div>
@@ -585,23 +590,21 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                       </Button>
                     ))}
                   </div>
-                  <p className="text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     Select a template to load pre-formatted notes
                   </p>
                 </div>
               )}
 
               {/* Notes Section */}
-              <div className="flex flex-1">
+              <div className="flex flex-col flex-1">
                 <Label className="mb-2">Notes</Label>
-                <div className="flex-1">
-                  <MarkdownTextarea
-                    value={formData.notes}
-                    onValueChange={(value) => setFormData({ ...formData, notes: value })}
-                    placeholder="Meeting notes, discussion points, decisions..."
-                    className="h-full resize-none text-sm"
-                  />
-                </div>
+                <MarkdownTextarea
+                  value={formData.notes}
+                  onValueChange={(value) => setFormData({ ...formData, notes: value })}
+                  placeholder="Meeting notes, discussion points, decisions..."
+                  className="flex-1 resize-none text-sm"
+                />
               </div>
             </div>
           </div>

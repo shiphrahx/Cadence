@@ -114,6 +114,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
   const [personId, setPersonId] = useState<string | null>(null)
   const [formData, setFormData] = useState<Person | null>(null)
   const [allTeams, setAllTeams] = useState<Team[]>([])
+  const [allPeopleNames, setAllPeopleNames] = useState<string[]>([])
   const [selectedAvailable, setSelectedAvailable] = useState<string[]>([])
   const [selectedTeamMembers, setSelectedTeamMembers] = useState<string[]>([])
 
@@ -136,6 +137,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
     getPeople().then(people => {
       const person = people.find(p => p.id === personId)
       if (person) setFormData(person)
+      setAllPeopleNames(people.map(p => p.name))
     }).catch(console.error)
     getTeams().then(setAllTeams).catch(console.error)
   }, [personId])
@@ -580,7 +582,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                       {/* Meeting Type */}
                       <button
                         onClick={() => toggleType(type)}
-                        className="flex hover:bg-gray-100 hover:bg-[#292929] rounded items-center gap-2 w-full px-2 py-1.5 text-gray-100 font-medium"
+                        className="flex hover:bg-[#2a2a2a] rounded items-center gap-2 w-full px-2 py-1.5 text-gray-100 font-medium"
                       >
                         {expandedTypes.has(type) ? (
                           <ChevronDown className="h-4 w-4 flex-shrink-0" />
@@ -600,7 +602,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                               className={`block w-full text-left px-2 py-1.5 text-xs rounded ${
                                 selectedMeeting?.id === meeting.id
                                   ? "bg-primary-50 bg-primary-dark-900/30 bg-primary-dark-900/30 text-primary-700 text-primary-dark-400 text-primary-dark-400 font-medium"
-                                  : "text-gray-600 text-gray-300 hover:bg-gray-100 hover:bg-[#292929]"
+                                  : "text-gray-300 hover:bg-[#2a2a2a]"
                               }`}
                             >
                               {formatDate(meeting.date)}
@@ -719,8 +721,8 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
         open={isAddMeetingDialogOpen}
         onOpenChange={setIsAddMeetingDialogOpen}
         onSave={handleAddMeeting}
-        availablePeople={mockPeopleNames}
-        availableTeams={mockTeamsForMeetings}
+        availablePeople={allPeopleNames}
+        availableTeams={allTeams.map(t => t.name)}
         defaultPerson={formData.name}
       />
     </div>

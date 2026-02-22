@@ -249,46 +249,46 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
           <thead>
             <tr className="border-[#383838]">
               <th className="p-3 bg-[#262626]"></th>
-              <th className="text-gray-100 p-3 bg-[#262626] font-semibold">
+              <th className="text-left p-3 bg-[#262626] font-semibold text-sm text-gray-100">
                 <button
                   onClick={() => handleSort("title")}
-                  className="flex hover:text-primary-600 hover:text-primary-dark-400 hover:text-primary-400 items-center gap-1 text-primary-dark-400"
+                  className="flex hover:text-[#84ffc4] items-center gap-1 text-gray-300"
                 >
                   Name
                   <ArrowUpDown className="h-3 w-3" />
                 </button>
               </th>
-              <th className="text-gray-100 p-3 bg-[#262626] font-semibold">
+              <th className="text-left p-3 bg-[#262626] font-semibold text-sm text-gray-100">
                 <button
                   onClick={() => handleSort("status")}
-                  className="flex hover:text-primary-600 hover:text-primary-dark-400 hover:text-primary-400 items-center gap-1 text-primary-dark-400"
+                  className="flex hover:text-[#84ffc4] items-center gap-1 text-gray-300"
                 >
                   Status
                   <ArrowUpDown className="h-3 w-3" />
                 </button>
               </th>
-              <th className="text-gray-100 p-3 bg-[#262626] font-semibold">
+              <th className="text-left p-3 bg-[#262626] font-semibold text-sm text-gray-100">
                 <button
                   onClick={() => handleSort("dueDate")}
-                  className="flex hover:text-primary-600 hover:text-primary-dark-400 hover:text-primary-400 items-center gap-1 text-primary-dark-400"
+                  className="flex hover:text-[#84ffc4] items-center gap-1 text-gray-300"
                 >
                   Due Date
                   <ArrowUpDown className="h-3 w-3" />
                 </button>
               </th>
-              <th className="text-gray-100 p-3 bg-[#262626] font-semibold">
+              <th className="text-left p-3 bg-[#262626] font-semibold text-sm text-gray-100">
                 <button
                   onClick={() => handleSort("priority")}
-                  className="flex hover:text-primary-600 hover:text-primary-dark-400 hover:text-primary-400 items-center gap-1 text-primary-dark-400"
+                  className="flex hover:text-[#84ffc4] items-center gap-1 text-gray-300"
                 >
                   Priority
                   <ArrowUpDown className="h-3 w-3" />
                 </button>
               </th>
-              <th className="text-gray-100 p-3 bg-[#262626] font-semibold">
+              <th className="text-left p-3 bg-[#262626] font-semibold text-sm text-gray-100">
                 <button
                   onClick={() => handleSort("category")}
-                  className="flex hover:text-primary-600 hover:text-primary-dark-400 hover:text-primary-400 items-center gap-1 text-primary-dark-400"
+                  className="flex hover:text-[#84ffc4] items-center gap-1 text-gray-300"
                 >
                   Category
                   <ArrowUpDown className="h-3 w-3" />
@@ -373,17 +373,6 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
                 </DraggableTableRow>
               ))}
             </SortableContext>
-            <tr>
-              <td colSpan={7} className="p-0">
-                <button
-                  onClick={onQuickAdd}
-                  className="hover:text-gray-700 hover:text-gray-200 hover:bg-gray-50 hover:bg-[#292929] flex w-full text-gray-400 px-3 py-3 transition-colors items-center gap-2 border-[#383838]"
-                >
-                  <Plus className="h-4 w-4" />
-                  New task
-                </button>
-              </td>
-            </tr>
           </tbody>
         </table>
       </div>
