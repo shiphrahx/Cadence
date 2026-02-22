@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -19,6 +19,7 @@ export default function SettingsPage() {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
   const [saveSuccess, setSaveSuccess] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Load saved theme on mount
   useEffect(() => {
@@ -127,14 +128,12 @@ export default function SettingsPage() {
                 )}
               </div>
               <div className="flex-1">
-                <Label htmlFor="avatar" className="cursor-pointer">
-                  <div className="flex border hover:bg-gray-50 hover:bg-[#292929] items-center gap-2 px-4 py-2 border-[#383838] rounded-md transition-colors w-fit">
-                    <Upload className="h-4 w-4" />
-                    <span className="text-sm font-medium">Upload Avatar</span>
-                  </div>
-                </Label>
-                <Input
-                  id="avatar"
+                <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
+                  <Upload className="h-4 w-4" />
+                  Upload Avatar
+                </Button>
+                <input
+                  ref={fileInputRef}
                   type="file"
                   accept="image/*"
                   onChange={handleAvatarChange}
