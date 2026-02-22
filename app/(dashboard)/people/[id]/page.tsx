@@ -631,23 +631,21 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                   <div className="space-y-4">
                     {/* Date and Next Meeting Date */}
                     <div className="grid grid-cols-2 gap-4">
-                      <div>
+                      <div className="grid gap-1">
                         <Label className="text-gray-300 font-medium">Date</Label>
                         <Input
                           type="date"
                           value={selectedMeeting.date}
                           onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, date: e.target.value })}
-                          className="mt-1"
                         />
                       </div>
                       {selectedMeeting.type === "1:1" && selectedMeeting.recurrence && selectedMeeting.recurrence !== "none" && selectedMeeting.nextMeetingDate && (
-                        <div>
+                        <div className="grid gap-1">
                           <Label className="text-gray-300 font-medium">Next Meeting</Label>
                           <Input
                             type="date"
                             value={selectedMeeting.nextMeetingDate}
                             onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, nextMeetingDate: e.target.value })}
-                            className="mt-1"
                           />
                         </div>
                       )}
@@ -655,16 +653,15 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
 
                     {/* Title and Attendees */}
                     <div className="grid grid-cols-2 gap-4">
-                      <div>
+                      <div className="grid gap-1">
                         <Label className="text-gray-300 font-medium">Title</Label>
                         <Input
                           value={selectedMeeting.title}
                           onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, title: e.target.value })}
                           placeholder="Meeting title"
-                          className="mt-1"
                         />
                       </div>
-                      <div>
+                      <div className="grid gap-1">
                         <Label className="text-gray-300 font-medium">Attendees</Label>
                         <Input
                           value={selectedMeeting.attendees.join(", ")}
@@ -673,7 +670,6 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                             attendees: e.target.value.split(",").map(a => a.trim()).filter(a => a.length > 0)
                           })}
                           placeholder="Enter names separated by commas"
-                          className="mt-1"
                         />
                       </div>
                     </div>
