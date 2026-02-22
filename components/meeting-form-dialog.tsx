@@ -98,7 +98,6 @@ const recurrenceOptions = [
 ]
 
 const oneOnOneTemplates = [
-  "1st Meeting",
   "Career Growth Check-in",
   "Regular Check-in",
   "Performance Review",
@@ -261,9 +260,9 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
               {isEditing ? `Update meeting details and notes.` : "Add meeting details and notes."}
             </DialogDescription>
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-6 py-4 overflow-y-auto max-h-[calc(90vh-180px)] px-1">
+          <div className="grid grid-cols-2 gap-6 py-4 px-1">
             {/* Left Column - Form Fields */}
-            <div className="grid gap-3 pr-1">
+            <div className="grid gap-3 pr-1 overflow-y-auto max-h-[calc(90vh-200px)] content-start">
               {/* Conditional Fields based on Meeting Type */}
               {is1on1 ? (
                 <>
@@ -304,6 +303,9 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                   {/* Person Field for 1:1 */}
                   <div className="grid gap-2">
                     <Label htmlFor="person">Person *</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Select from your team or type a new name
+                    </p>
                     <div className="relative">
                       <Input
                         id="person"
@@ -332,9 +334,6 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                         </div>
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      Select from your team or type a new name
-                    </p>
                   </div>
 
                   {/* Recurrence and Next Meeting - Side by Side */}
@@ -567,11 +566,14 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
             </div>
 
             {/* Right Column - Templates and Notes */}
-            <div className="flex flex-col pl-1 gap-4">
+            <div className="flex flex-col pl-1 gap-4 max-h-[calc(90vh-200px)]">
               {/* Template Selection - Only for 1:1 meetings */}
               {is1on1 && (
                 <div className="grid gap-2">
                   <Label>Templates</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Select a template to load pre-formatted notes
+                  </p>
                   <div className="flex flex-wrap gap-2">
                     {oneOnOneTemplates.map((template) => (
                       <Button
@@ -590,20 +592,17 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                       </Button>
                     ))}
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    Select a template to load pre-formatted notes
-                  </p>
                 </div>
               )}
 
               {/* Notes Section */}
-              <div className="flex flex-col flex-1">
+              <div className="flex flex-col flex-1 min-h-0">
                 <Label className="mb-2">Notes</Label>
                 <MarkdownTextarea
                   value={formData.notes}
                   onValueChange={(value) => setFormData({ ...formData, notes: value })}
                   placeholder="Meeting notes, discussion points, decisions..."
-                  className="flex-1 resize-none text-sm"
+                  className="h-full text-sm"
                 />
               </div>
             </div>
