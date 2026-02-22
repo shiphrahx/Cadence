@@ -187,6 +187,7 @@ export function TeamsTable({
       filters={filters}
       searchKeys={["name", "description"]}
       searchPlaceholder="Search teams..."
+      onRowClick={onEdit}
       onQuickAdd={onQuickAdd}
       quickAddLabel="Create team"
     />

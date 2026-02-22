@@ -101,7 +101,9 @@ export async function upsertCareerGoalsProfile(
       where_you_are: profile.whereYouAre,
       where_you_want_to_go: profile.whereYouWantToGo,
       owning_user_id: user.id,
-    } as any)
+    } as any, {
+      onConflict: 'owning_user_id',
+    })
     .select()
     .single()
 

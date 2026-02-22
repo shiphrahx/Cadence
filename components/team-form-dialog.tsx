@@ -12,6 +12,7 @@ import { ChevronRight, ChevronLeft } from "lucide-react"
 import { getTodayDate } from "@/lib/utils"
 import { type Team } from "@/lib/services/teams"
 import { type Person } from "@/lib/services/people"
+import { createClient } from "@/lib/supabase/client"
 
 interface TeamFormDialogProps {
   open: boolean
@@ -38,11 +39,26 @@ export function TeamFormDialog({ open, onOpenChange, team, onSave, availablePeop
 
   // Reset form data when dialog opens/closes or team changes
   useEffect(() => {
-    if (open) {
-      setFormData(team || emptyTeam)
-      setSelectedAvailable([])
-      setSelectedMembers([])
+    if (!open) return
+
+    setSelectedAvailable([])
+    setSelectedMembers([])
+
+    if (!team) {
+      setFormData(emptyTeam)
+      return
     }
+
+    // Always fetch the current member IDs fresh from the DB to ensure accuracy
+    const supabase = createClient()
+    supabase
+      .from('team_memberships')
+      .select('person_id')
+      .eq('team_id', team.id)
+      .then(({ data }) => {
+        const memberIds = (data ?? []).map((m: any) => m.person_id)
+        setFormData({ ...team, memberIds })
+      })
   }, [open, team])
 
   const handleSubmit = (e: React.FormEvent) => {

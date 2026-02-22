@@ -16,7 +16,6 @@ describe('Teams Service', () => {
           description: 'Core platform development',
           status: 'active',
           created_at: '2024-01-01T00:00:00Z',
-          team_memberships: [{ count: 5 }],
         },
         {
           id: '2',
@@ -24,24 +23,41 @@ describe('Teams Service', () => {
           description: 'Product development',
           status: 'active',
           created_at: '2024-01-02T00:00:00Z',
-          team_memberships: [{ count: 3 }],
         },
       ]
 
-      const mockFrom = vi.fn().mockReturnValue({
-        select: vi.fn().mockReturnValue({
-          order: vi.fn().mockResolvedValue({
-            data: mockTeams,
-            error: null,
-          }),
-        }),
-      })
+      const mockMemberships = [
+        { team_id: '1', person_id: 'p1' },
+        { team_id: '1', person_id: 'p2' },
+        { team_id: '1', person_id: 'p3' },
+        { team_id: '1', person_id: 'p4' },
+        { team_id: '1', person_id: 'p5' },
+        { team_id: '2', person_id: 'p1' },
+        { team_id: '2', person_id: 'p2' },
+        { team_id: '2', person_id: 'p3' },
+      ]
 
-      mockSupabaseClient.from = mockFrom
+      // getTeams does two parallel queries: teams and team_memberships
+      mockSupabaseClient.from = vi.fn().mockImplementation((table: string) => {
+        if (table === 'teams') {
+          return {
+            select: vi.fn().mockReturnValue({
+              order: vi.fn().mockResolvedValue({ data: mockTeams, error: null }),
+            }),
+          }
+        }
+        if (table === 'team_memberships') {
+          return {
+            select: vi.fn().mockResolvedValue({ data: mockMemberships, error: null }),
+          }
+        }
+        return { select: vi.fn().mockResolvedValue({ data: [], error: null }) }
+      })
 
       const teams = await getTeams()
 
-      expect(mockFrom).toHaveBeenCalledWith('teams')
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('teams')
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('team_memberships')
       expect(teams).toHaveLength(2)
       expect(teams[0]).toMatchObject({
         id: '1',
@@ -49,19 +65,23 @@ describe('Teams Service', () => {
         memberCount: 5,
         status: 'active',
       })
+      expect(teams[0].memberIds).toEqual(['p1', 'p2', 'p3', 'p4', 'p5'])
+      expect(teams[1].memberCount).toBe(3)
     })
 
     it('should throw error when fetching teams fails', async () => {
-      const mockFrom = vi.fn().mockReturnValue({
-        select: vi.fn().mockReturnValue({
-          order: vi.fn().mockResolvedValue({
-            data: null,
-            error: { message: 'Database error' },
-          }),
-        }),
+      mockSupabaseClient.from = vi.fn().mockImplementation((table: string) => {
+        if (table === 'teams') {
+          return {
+            select: vi.fn().mockReturnValue({
+              order: vi.fn().mockResolvedValue({ data: null, error: { message: 'Database error' } }),
+            }),
+          }
+        }
+        return {
+          select: vi.fn().mockResolvedValue({ data: [], error: null }),
+        }
       })
-
-      mockSupabaseClient.from = mockFrom
 
       await expect(getTeams()).rejects.toThrow()
     })
@@ -74,6 +94,7 @@ describe('Teams Service', () => {
         description: 'Team description',
         status: 'active' as const,
         memberCount: 0,
+        memberIds: [],
         createdAt: '',
       }
 
@@ -85,22 +106,22 @@ describe('Teams Service', () => {
         created_at: '2024-01-03T00:00:00Z',
       }
 
-      const mockFrom = vi.fn().mockReturnValue({
-        insert: vi.fn().mockReturnValue({
-          select: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: mockCreatedTeam,
-              error: null,
+      mockSupabaseClient.from = vi.fn().mockImplementation((table: string) => {
+        if (table === 'teams') {
+          return {
+            insert: vi.fn().mockReturnValue({
+              select: vi.fn().mockReturnValue({
+                single: vi.fn().mockResolvedValue({ data: mockCreatedTeam, error: null }),
+              }),
             }),
-          }),
-        }),
+          }
+        }
+        return { select: vi.fn().mockResolvedValue({ data: [], error: null }) }
       })
-
-      mockSupabaseClient.from = mockFrom
 
       const result = await createTeam(newTeam)
 
-      expect(mockFrom).toHaveBeenCalledWith('teams')
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('teams')
       expect(result).toMatchObject({
         id: 'new-team-id',
         name: 'New Team',
@@ -139,23 +160,35 @@ describe('Teams Service', () => {
         description: 'Updated description',
         status: 'active',
         created_at: '2024-01-01T00:00:00Z',
-        team_memberships: [{ count: 5 }],
       }
 
-      const mockFrom = vi.fn().mockReturnValue({
-        update: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            select: vi.fn().mockReturnValue({
-              single: vi.fn().mockResolvedValue({
-                data: mockUpdatedTeam,
-                error: null,
+      mockSupabaseClient.from = vi.fn().mockImplementation((table: string) => {
+        if (table === 'teams') {
+          return {
+            update: vi.fn().mockReturnValue({
+              eq: vi.fn().mockReturnValue({
+                select: vi.fn().mockReturnValue({
+                  single: vi.fn().mockResolvedValue({ data: mockUpdatedTeam, error: null }),
+                }),
               }),
             }),
-          }),
-        }),
+          }
+        }
+        if (table === 'team_memberships') {
+          return {
+            select: vi.fn().mockReturnValue({
+              eq: vi.fn().mockResolvedValue({ data: [], error: null }),
+            }),
+            insert: vi.fn().mockResolvedValue({ data: null, error: null }),
+            delete: vi.fn().mockReturnValue({
+              eq: vi.fn().mockReturnValue({
+                in: vi.fn().mockResolvedValue({ data: null, error: null }),
+              }),
+            }),
+          }
+        }
+        return { select: vi.fn().mockResolvedValue({ data: [], error: null }) }
       })
-
-      mockSupabaseClient.from = mockFrom
 
       const result = await updateTeam('team-1', updates)
 
@@ -205,23 +238,29 @@ describe('Teams Service', () => {
         description: 'Description',
         status: 'inactive',
         created_at: '2024-01-01T00:00:00Z',
-        team_memberships: [{ count: 3 }],
       }
 
-      const mockFrom = vi.fn().mockReturnValue({
-        update: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            select: vi.fn().mockReturnValue({
-              single: vi.fn().mockResolvedValue({
-                data: mockUpdatedTeam,
-                error: null,
+      mockSupabaseClient.from = vi.fn().mockImplementation((table: string) => {
+        if (table === 'teams') {
+          return {
+            update: vi.fn().mockReturnValue({
+              eq: vi.fn().mockReturnValue({
+                select: vi.fn().mockReturnValue({
+                  single: vi.fn().mockResolvedValue({ data: mockUpdatedTeam, error: null }),
+                }),
               }),
             }),
-          }),
-        }),
+          }
+        }
+        if (table === 'team_memberships') {
+          return {
+            select: vi.fn().mockReturnValue({
+              eq: vi.fn().mockResolvedValue({ data: [], error: null }),
+            }),
+          }
+        }
+        return { select: vi.fn().mockResolvedValue({ data: [], error: null }) }
       })
-
-      mockSupabaseClient.from = mockFrom
 
       const result = await toggleTeamStatus('team-1', 'active')
 
@@ -235,23 +274,29 @@ describe('Teams Service', () => {
         description: 'Description',
         status: 'active',
         created_at: '2024-01-01T00:00:00Z',
-        team_memberships: [{ count: 3 }],
       }
 
-      const mockFrom = vi.fn().mockReturnValue({
-        update: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            select: vi.fn().mockReturnValue({
-              single: vi.fn().mockResolvedValue({
-                data: mockUpdatedTeam,
-                error: null,
+      mockSupabaseClient.from = vi.fn().mockImplementation((table: string) => {
+        if (table === 'teams') {
+          return {
+            update: vi.fn().mockReturnValue({
+              eq: vi.fn().mockReturnValue({
+                select: vi.fn().mockReturnValue({
+                  single: vi.fn().mockResolvedValue({ data: mockUpdatedTeam, error: null }),
+                }),
               }),
             }),
-          }),
-        }),
+          }
+        }
+        if (table === 'team_memberships') {
+          return {
+            select: vi.fn().mockReturnValue({
+              eq: vi.fn().mockResolvedValue({ data: [], error: null }),
+            }),
+          }
+        }
+        return { select: vi.fn().mockResolvedValue({ data: [], error: null }) }
       })
-
-      mockSupabaseClient.from = mockFrom
 
       const result = await toggleTeamStatus('team-1', 'inactive')
 
