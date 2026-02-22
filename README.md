@@ -1,6 +1,6 @@
 # Cadence
 
-![Cadence Banner](public/banner_01.png)
+![Cadence Banner](public/banner_02.png)
 
 ![Next.js](https://img.shields.io/github/package-json/dependency-version/shiphrahx/Cadence/next?logo=nextdotjs)
 ![React](https://img.shields.io/github/package-json/dependency-version/shiphrahx/Cadence/react?logo=react)
