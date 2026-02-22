@@ -580,7 +580,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                       {/* Meeting Type */}
                       <button
                         onClick={() => toggleType(type)}
-                        className="flex hover:bg-gray-100 hover:bg-[#292929] rounded items-center gap-2 w-full px-2 py-1.5 text-gray-100 font-medium"
+                        className="flex hover:bg-[#2a2a2a] rounded items-center gap-2 w-full px-2 py-1.5 text-gray-100 font-medium"
                       >
                         {expandedTypes.has(type) ? (
                           <ChevronDown className="h-4 w-4 flex-shrink-0" />
@@ -600,7 +600,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                               className={`block w-full text-left px-2 py-1.5 text-xs rounded ${
                                 selectedMeeting?.id === meeting.id
                                   ? "bg-primary-50 bg-primary-dark-900/30 bg-primary-dark-900/30 text-primary-700 text-primary-dark-400 text-primary-dark-400 font-medium"
-                                  : "text-gray-600 text-gray-300 hover:bg-gray-100 hover:bg-[#292929]"
+                                  : "text-gray-300 hover:bg-[#2a2a2a]"
                               }`}
                             >
                               {formatDate(meeting.date)}
