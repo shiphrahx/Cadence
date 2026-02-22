@@ -411,7 +411,7 @@ export default function MeetingsPage() {
               {/* Meeting Type */}
               <button
                 onClick={() => toggleType(type)}
-                className="flex hover:bg-gray-100 hover:bg-[#292929] rounded items-center gap-2 w-full px-2 py-1.5 text-gray-100 font-medium"
+                className="flex hover:bg-[#292929] rounded items-center gap-2 w-full px-2 py-1.5 text-gray-100 font-medium"
               >
                 {expandedTypes.has(type) ? (
                   <ChevronDown className="h-4 w-4 flex-shrink-0" />
@@ -429,7 +429,7 @@ export default function MeetingsPage() {
                     <div key={personName} className="mb-1">
                       <button
                         onClick={() => togglePerson(personName)}
-                        className="flex hover:bg-gray-100 hover:bg-[#292929] rounded items-center gap-2 w-full px-2 py-1.5 text-gray-300"
+                        className="flex hover:bg-[#292929] rounded items-center gap-2 w-full px-2 py-1.5 text-gray-300"
                       >
                         {expandedPeople.has(personName) ? (
                           <ChevronDown className="h-4 w-4 flex-shrink-0" />
@@ -449,7 +449,7 @@ export default function MeetingsPage() {
                               className={`block w-full text-left px-2 py-1.5 text-xs rounded ${
                                 selectedMeeting?.id === meeting.id
                                   ? "bg-primary-50 bg-primary-dark-900/30 bg-primary-dark-900/30 text-primary-700 text-primary-dark-400 text-primary-dark-400 font-medium"
-                                  : "text-gray-600 text-gray-300 hover:bg-gray-100 hover:bg-[#292929]"
+                                  : "text-gray-300 hover:bg-[#292929]"
                               }`}
                             >
                               {formatDate(meeting.date)}
@@ -465,7 +465,7 @@ export default function MeetingsPage() {
                     <div key={teamName} className="mb-1">
                       <button
                         onClick={() => toggleTeam(teamName)}
-                        className="flex hover:bg-gray-100 hover:bg-[#292929] rounded items-center gap-2 w-full px-2 py-1.5 text-gray-300"
+                        className="flex hover:bg-[#292929] rounded items-center gap-2 w-full px-2 py-1.5 text-gray-300"
                       >
                         {expandedTeams.has(teamName) ? (
                           <ChevronDown className="h-4 w-4 flex-shrink-0" />
@@ -485,7 +485,7 @@ export default function MeetingsPage() {
                               className={`block w-full text-left px-2 py-1.5 text-xs rounded ${
                                 selectedMeeting?.id === meeting.id
                                   ? "bg-primary-50 bg-primary-dark-900/30 bg-primary-dark-900/30 text-primary-700 text-primary-dark-400 text-primary-dark-400 font-medium"
-                                  : "text-gray-600 text-gray-300 hover:bg-gray-100 hover:bg-[#292929]"
+                                  : "text-gray-300 hover:bg-[#292929]"
                               }`}
                             >
                               {formatDate(meeting.date)}
@@ -504,7 +504,7 @@ export default function MeetingsPage() {
                       className={`block w-full text-left px-2 py-1.5 text-xs rounded ml-4 ${
                         selectedMeeting?.id === meeting.id
                           ? "bg-primary-50 bg-primary-dark-900/30 bg-primary-dark-900/30 text-primary-700 text-primary-dark-400 text-primary-dark-400 font-medium"
-                          : "text-gray-600 text-gray-300 hover:bg-gray-100 hover:bg-[#292929]"
+                          : "text-gray-300 hover:bg-[#292929]"
                       }`}
                     >
                       {formatDate(meeting.date)}
