@@ -54,7 +54,7 @@ const calculateNextMeetingDate = (lastMeetingDate: string, recurrence: string): 
     case "monthly":
       date.setMonth(date.getMonth() + 1)
       break
-    case "quarterly":
+    case "custom":
       date.setMonth(date.getMonth() + 3)
       break
     default:
@@ -85,7 +85,6 @@ const meetingTypes = [
   "Planning",
   "Review",
   "Standup",
-  "All Hands",
   "Other"
 ]
 
@@ -94,7 +93,7 @@ const recurrenceOptions = [
   { value: "weekly", label: "Weekly" },
   { value: "fortnightly", label: "Fortnightly" },
   { value: "monthly", label: "Monthly" },
-  { value: "quarterly", label: "Quarterly" },
+  { value: "custom", label: "Custom" },
 ]
 
 const oneOnOneTemplates = [
@@ -122,10 +121,12 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
 
       // If defaultPerson is provided and we're not editing, pre-populate the person field
       if (defaultPerson && !meeting) {
+        const personData = peopleWithIds.find(p => p.name === defaultPerson)
         setFormData({
           ...initialData,
           attendees: [defaultPerson],
           personName: defaultPerson,
+          personId: personData?.id,
           title: `1:1 with ${defaultPerson}`
         })
         setPersonInput(defaultPerson)
@@ -143,7 +144,7 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
         setFormData(prev => ({ ...prev, nextMeetingDate: nextDate }))
       }
     }
-  }, [open, meeting, defaultPerson])
+  }, [open, meeting, defaultPerson, peopleWithIds])
 
   // Update next meeting date when date or recurrence changes
   useEffect(() => {
@@ -200,17 +201,22 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
 
     // For 1:1 meetings, set personName and attendees
     if (formData.type === "1:1") {
+      const personData = peopleWithIds.find(p => p.name.toLowerCase() === personInput.toLowerCase())
       const meetingData = {
         ...formData,
         personName: personInput,
+        personId: personData?.id || formData.personId,
         attendees: [personInput],
         title: `1:1 with ${personInput}`
       }
       onSave(meetingData)
     } else if (["Team Sync", "Retro", "Planning", "Review", "Standup"].includes(formData.type)) {
       // For team-based meetings
+      const teamData = teamsWithIds.find(t => t.name.toLowerCase() === teamInput.toLowerCase())
       const meetingData = {
         ...formData,
+        teamName: teamInput,
+        teamId: teamData?.id || formData.teamId,
         attendees: [teamInput],
         title: formData.title || `${formData.type} - ${teamInput}`
       }
