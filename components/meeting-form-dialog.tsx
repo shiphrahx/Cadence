@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select"
 import { getTodayDate } from "@/lib/utils"
 import { type Meeting as BaseMeeting } from "@/lib/mock-data"
+import { useTemplates } from "@/lib/hooks/use-templates"
 
 // Extended Meeting interface for forms that includes additional fields
 interface Meeting extends Omit<BaseMeeting, 'id' | 'time' | 'status'> {
@@ -96,14 +97,8 @@ const recurrenceOptions = [
   { value: "custom", label: "Custom" },
 ]
 
-const oneOnOneTemplates = [
-  "Career Growth Check-in",
-  "Regular Check-in",
-  "Performance Review",
-  "Peer 1:1"
-]
-
 export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availablePeople = [], availableTeams = [], defaultPerson, peopleWithIds = [], teamsWithIds = [] }: MeetingFormDialogProps) {
+  const { templates } = useTemplates()
   const [formData, setFormData] = useState<Meeting>(meeting || emptyMeeting)
   const [personInput, setPersonInput] = useState("")
   const [filteredPeople, setFilteredPeople] = useState<string[]>([])
@@ -581,20 +576,23 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                     Select a template to load pre-formatted notes
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {oneOnOneTemplates.map((template) => (
+                    {templates.map((template) => (
                       <Button
-                        key={template}
+                        key={template.id}
                         type="button"
                         variant="outline"
                         size="sm"
-                        onClick={() => setSelectedTemplate(template)}
+                        onClick={() => {
+                          setSelectedTemplate(template.id)
+                          setFormData(prev => ({ ...prev, notes: template.notes }))
+                        }}
                         className={`text-xs border ${
-                          selectedTemplate === template
+                          selectedTemplate === template.id
                             ? "bg-primary-100 bg-primary-dark-900 text-primary-700 text-primary-dark-400 border-primary-300"
                             : "bg-white text-gray-700 hover:bg-gray-50"
                         }`}
                       >
-                        {template}
+                        {template.name}
                       </Button>
                     ))}
                   </div>
