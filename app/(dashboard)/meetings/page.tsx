@@ -127,17 +127,22 @@ export default function MeetingsPage() {
         }
       }
 
-      if (meeting.type === "1:1" && meeting.personName) {
-        if (!tree[meeting.type].people![meeting.personName]) {
-          tree[meeting.type].people![meeting.personName] = []
+      if (meeting.type === "1:1") {
+        const key = meeting.personName || meeting.attendees[0] || "Unknown"
+        if (!tree[meeting.type].people![key]) {
+          tree[meeting.type].people![key] = []
         }
-        tree[meeting.type].people![meeting.personName].push(meeting)
-      } else if (isTeamBased && meeting.teamName) {
-        if (!tree[meeting.type].teams![meeting.teamName]) {
-          tree[meeting.type].teams![meeting.teamName] = []
+        tree[meeting.type].people![key].push(meeting)
+      } else if (isTeamBased) {
+        const key = meeting.teamName || meeting.attendees[0] || "Unknown"
+        if (!tree[meeting.type].teams![key]) {
+          tree[meeting.type].teams![key] = []
         }
-        tree[meeting.type].teams![meeting.teamName].push(meeting)
+        tree[meeting.type].teams![key].push(meeting)
       } else {
+        if (!tree[meeting.type].meetings) {
+          tree[meeting.type].meetings = []
+        }
         tree[meeting.type].meetings!.push(meeting)
       }
     })
@@ -406,7 +411,7 @@ export default function MeetingsPage() {
               {/* Meeting Type */}
               <button
                 onClick={() => toggleType(type)}
-                className="flex hover:bg-gray-100 hover:bg-[#292929] rounded items-center gap-2 w-full px-2 py-1.5 text-gray-100 font-medium"
+                className="flex hover:bg-[#292929] rounded items-center gap-2 w-full px-2 py-1.5 text-gray-100 font-medium"
               >
                 {expandedTypes.has(type) ? (
                   <ChevronDown className="h-4 w-4 flex-shrink-0" />
@@ -424,7 +429,7 @@ export default function MeetingsPage() {
                     <div key={personName} className="mb-1">
                       <button
                         onClick={() => togglePerson(personName)}
-                        className="flex hover:bg-gray-100 hover:bg-[#292929] rounded items-center gap-2 w-full px-2 py-1.5 text-gray-300"
+                        className="flex hover:bg-[#292929] rounded items-center gap-2 w-full px-2 py-1.5 text-gray-300"
                       >
                         {expandedPeople.has(personName) ? (
                           <ChevronDown className="h-4 w-4 flex-shrink-0" />
@@ -444,7 +449,7 @@ export default function MeetingsPage() {
                               className={`block w-full text-left px-2 py-1.5 text-xs rounded ${
                                 selectedMeeting?.id === meeting.id
                                   ? "bg-primary-50 bg-primary-dark-900/30 bg-primary-dark-900/30 text-primary-700 text-primary-dark-400 text-primary-dark-400 font-medium"
-                                  : "text-gray-600 text-gray-300 hover:bg-gray-100 hover:bg-[#292929]"
+                                  : "text-gray-300 hover:bg-[#292929]"
                               }`}
                             >
                               {formatDate(meeting.date)}
@@ -460,7 +465,7 @@ export default function MeetingsPage() {
                     <div key={teamName} className="mb-1">
                       <button
                         onClick={() => toggleTeam(teamName)}
-                        className="flex hover:bg-gray-100 hover:bg-[#292929] rounded items-center gap-2 w-full px-2 py-1.5 text-gray-300"
+                        className="flex hover:bg-[#292929] rounded items-center gap-2 w-full px-2 py-1.5 text-gray-300"
                       >
                         {expandedTeams.has(teamName) ? (
                           <ChevronDown className="h-4 w-4 flex-shrink-0" />
@@ -480,7 +485,7 @@ export default function MeetingsPage() {
                               className={`block w-full text-left px-2 py-1.5 text-xs rounded ${
                                 selectedMeeting?.id === meeting.id
                                   ? "bg-primary-50 bg-primary-dark-900/30 bg-primary-dark-900/30 text-primary-700 text-primary-dark-400 text-primary-dark-400 font-medium"
-                                  : "text-gray-600 text-gray-300 hover:bg-gray-100 hover:bg-[#292929]"
+                                  : "text-gray-300 hover:bg-[#292929]"
                               }`}
                             >
                               {formatDate(meeting.date)}
@@ -499,7 +504,7 @@ export default function MeetingsPage() {
                       className={`block w-full text-left px-2 py-1.5 text-xs rounded ml-4 ${
                         selectedMeeting?.id === meeting.id
                           ? "bg-primary-50 bg-primary-dark-900/30 bg-primary-dark-900/30 text-primary-700 text-primary-dark-400 text-primary-dark-400 font-medium"
-                          : "text-gray-600 text-gray-300 hover:bg-gray-100 hover:bg-[#292929]"
+                          : "text-gray-300 hover:bg-[#292929]"
                       }`}
                     >
                       {formatDate(meeting.date)}
@@ -529,23 +534,21 @@ export default function MeetingsPage() {
                 <div className="space-y-6">
                   {/* Date and Next Meeting Date */}
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
+                    <div className="grid gap-1">
                       <Label className="text-gray-300 font-medium">Date</Label>
                       <Input
                         type="date"
                         value={selectedMeeting.date}
                         onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, date: e.target.value })}
-                        className="mt-1"
                       />
                     </div>
                     {selectedMeeting.type === "1:1" && selectedMeeting.recurrence && selectedMeeting.recurrence !== "none" && selectedMeeting.nextMeetingDate && (
-                      <div>
+                      <div className="grid gap-1">
                         <Label className="text-gray-300 font-medium">Next Meeting</Label>
                         <Input
                           type="date"
                           value={selectedMeeting.nextMeetingDate}
                           onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, nextMeetingDate: e.target.value })}
-                          className="mt-1"
                         />
                       </div>
                     )}
@@ -553,16 +556,15 @@ export default function MeetingsPage() {
 
                   {/* Title and Attendees */}
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
+                    <div className="grid gap-1">
                       <Label className="text-gray-300 font-medium">Title</Label>
                       <Input
                         value={selectedMeeting.title}
                         onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, title: e.target.value })}
                         placeholder="Meeting title"
-                        className="mt-1"
                       />
                     </div>
-                    <div>
+                    <div className="grid gap-1">
                       <Label className="text-gray-300 font-medium">Attendees</Label>
                       <Input
                         value={selectedMeeting.attendees.join(", ")}
@@ -571,7 +573,6 @@ export default function MeetingsPage() {
                           attendees: e.target.value.split(",").map(a => a.trim()).filter(a => a.length > 0)
                         })}
                         placeholder="Enter names separated by commas"
-                        className="mt-1"
                       />
                     </div>
                   </div>

@@ -11,7 +11,7 @@ import { ChevronRight, ChevronLeft, ArrowLeft, ChevronDown, Plus } from "lucide-
 import { MeetingFormDialog } from "@/components/meeting-form-dialog"
 import { getPeople, updatePerson, type Person } from "@/lib/services/people"
 import { getTeams, type Team } from "@/lib/services/teams"
-import { type Meeting } from "@/lib/mock-data"
+import { getMeetingsForPerson, createMeeting, type Meeting as BackendMeeting, type MeetingType, type RecurrenceType } from "@/lib/services/meetings"
 
 interface TreeNode {
   type: string
@@ -20,60 +20,21 @@ interface TreeNode {
 
 const seniorityLevels = ["Junior", "Mid", "Senior", "Staff", "Principal"]
 
-// Extended Meeting interface for person detail page (has additional fields beyond centralized type)
-interface ExtendedMeeting extends Meeting {
+interface ExtendedMeeting {
+  id: string
+  title: string
+  type: string
+  date: string
+  attendees: string[]
   personName?: string
   teamName?: string
   recurrence?: string
   nextMeetingDate?: string
   actionItems?: string
+  notes?: string
+  personId?: string
+  teamId?: string
 }
-
-// Extended mock meetings with additional fields for person detail page
-const mockMeetingsExtended: ExtendedMeeting[] = [
-  {
-    id: 1,
-    title: "1:1 with Sarah Miller",
-    type: "1:1",
-    date: "2024-12-20",
-    time: "14:00",
-    attendees: ["Sarah Miller"],
-    status: "completed",
-    personName: "Sarah Miller",
-    recurrence: "weekly",
-    nextMeetingDate: "2024-12-27",
-    actionItems: "- Follow up on Q1 roadmap\n- Schedule design review",
-    notes: "Discussed career progression and upcoming projects.",
-  },
-  {
-    id: 2,
-    title: "1:1 with Sarah Miller",
-    type: "1:1",
-    date: "2024-12-13",
-    time: "14:00",
-    attendees: ["Sarah Miller"],
-    status: "completed",
-    personName: "Sarah Miller",
-    recurrence: "weekly",
-    notes: "Weekly check-in. Discussed current sprint progress.",
-  },
-  {
-    id: 3,
-    title: "Team Sync - Platform Engineering",
-    type: "Team Sync",
-    date: "2024-12-18",
-    time: "10:00",
-    attendees: ["Platform Engineering"],
-    status: "completed",
-    teamName: "Platform Engineering",
-    actionItems: "- Deploy new infrastructure\n- Update documentation",
-    notes: "Discussed Q1 roadmap and priorities.",
-  },
-]
-
-// Mock people and teams for meeting form
-const mockPeopleNames = ["Sarah Miller", "John Doe", "Jane Smith"]
-const mockTeamsForMeetings = ["Platform Engineering", "Product Development", "Mobile Team"]
 
 const getLevelBadgeClass = (level: string) => {
   switch (level) {
@@ -115,11 +76,12 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
   const [formData, setFormData] = useState<Person | null>(null)
   const [allTeams, setAllTeams] = useState<Team[]>([])
   const [allPeopleNames, setAllPeopleNames] = useState<string[]>([])
+  const [allPeopleWithIds, setAllPeopleWithIds] = useState<Array<{ id: string; name: string }>>([])
   const [selectedAvailable, setSelectedAvailable] = useState<string[]>([])
   const [selectedTeamMembers, setSelectedTeamMembers] = useState<string[]>([])
 
   // Meeting states
-  const [meetings, setMeetings] = useState<ExtendedMeeting[]>(mockMeetingsExtended)
+  const [meetings, setMeetings] = useState<ExtendedMeeting[]>([])
   const [selectedMeeting, setSelectedMeeting] = useState<ExtendedMeeting | null>(null)
   const [expandedTypes, setExpandedTypes] = useState<Set<string>>(new Set(["1:1"]))
   const [isAddMeetingDialogOpen, setIsAddMeetingDialogOpen] = useState(false)
@@ -138,32 +100,36 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
       const person = people.find(p => p.id === personId)
       if (person) setFormData(person)
       setAllPeopleNames(people.map(p => p.name))
+      setAllPeopleWithIds(people.map(p => ({ id: p.id, name: p.name })))
     }).catch(console.error)
     getTeams().then(setAllTeams).catch(console.error)
+    getMeetingsForPerson(personId).then(backendMeetings => {
+      setMeetings(backendMeetings.map(m => ({
+        id: m.id,
+        title: m.title,
+        type: m.meetingType,
+        date: m.meetingDate,
+        attendees: m.attendees,
+        personName: m.personName || undefined,
+        teamName: m.teamName || undefined,
+        recurrence: m.recurrence || undefined,
+        nextMeetingDate: m.nextMeetingDate || undefined,
+        actionItems: m.actionItems || undefined,
+        notes: m.notes || undefined,
+        personId: m.personId || undefined,
+        teamId: m.teamId || undefined,
+      })))
+    }).catch(console.error)
   }, [personId])
 
   // Meeting helper functions and tree organization - MUST be before early return
   const tree = useMemo(() => {
     if (!formData) return {}
 
-    // Filter meetings for this person
-    const personMeetings = meetings.filter(meeting => {
-      // Include 1:1 meetings with this person
-      if (meeting.personName === formData.name) return true
-
-      // Include team meetings where person is in the team
-      if (meeting.teamName && formData.teams.includes(meeting.teamName)) return true
-
-      // Include meetings where person is in attendees
-      if (meeting.attendees.includes(formData.name)) return true
-
-      return false
-    })
-
     // Organize meetings into tree structure
     const treeStructure: { [type: string]: TreeNode } = {}
 
-    personMeetings.forEach((meeting) => {
+    meetings.forEach((meeting) => {
       if (!treeStructure[meeting.type]) {
         treeStructure[meeting.type] = {
           type: meeting.type,
@@ -312,18 +278,48 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
     })
   }
 
-  const handleAddMeeting = (newMeeting: any) => {
-    const teamBasedTypes = ["Team Sync", "Retro", "Planning", "Review", "Standup"]
-    const meeting: ExtendedMeeting = {
-      ...newMeeting,
-      id: Math.max(...meetings.map(m => m.id), 0) + 1,
-      time: "10:00", // Default time
-      status: "completed", // Default to completed since these are logged meetings
-      personName: newMeeting.personName || (newMeeting.type === "1:1" ? newMeeting.attendees[0] : undefined),
-      teamName: teamBasedTypes.includes(newMeeting.type) ? newMeeting.attendees[0] : undefined,
+  const handleAddMeeting = async (newMeeting: any) => {
+    try {
+      // For 1:1 meetings on this person's page, always use the page's personId as fallback
+      const resolvedPersonId = newMeeting.type === "1:1"
+        ? (newMeeting.personId || personId)
+        : null
+      const resolvedTeamId = newMeeting.type !== "1:1" && newMeeting.type !== "Other"
+        ? (newMeeting.teamId || null)
+        : null
+
+      const backendMeeting = await createMeeting({
+        title: newMeeting.title,
+        meetingType: newMeeting.type as MeetingType,
+        meetingDate: newMeeting.date,
+        nextMeetingDate: newMeeting.nextMeetingDate || null,
+        recurrence: (newMeeting.recurrence as RecurrenceType) || null,
+        actionItems: newMeeting.actionItems || null,
+        notes: newMeeting.notes || null,
+        personId: resolvedPersonId,
+        teamId: resolvedTeamId,
+      })
+      const meeting: ExtendedMeeting = {
+        id: backendMeeting.id,
+        title: backendMeeting.title,
+        type: backendMeeting.meetingType,
+        date: backendMeeting.meetingDate,
+        attendees: backendMeeting.attendees,
+        personName: backendMeeting.personName || undefined,
+        teamName: backendMeeting.teamName || undefined,
+        recurrence: backendMeeting.recurrence || undefined,
+        nextMeetingDate: backendMeeting.nextMeetingDate || undefined,
+        actionItems: backendMeeting.actionItems || undefined,
+        notes: backendMeeting.notes || undefined,
+        personId: backendMeeting.personId || undefined,
+        teamId: backendMeeting.teamId || undefined,
+      }
+      setMeetings([...meetings, meeting])
+      setSelectedMeeting(meeting)
+    } catch (error: any) {
+      console.error('Failed to create meeting:', error?.message, error?.code, error?.details, error?.hint, JSON.stringify(error))
+      alert(`Failed to save meeting: ${error?.message || JSON.stringify(error)}`)
     }
-    setMeetings([...meetings, meeting])
-    setSelectedMeeting(meeting)
   }
 
   const handleUpdateMeeting = (updatedMeeting: ExtendedMeeting) => {
@@ -631,23 +627,21 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                   <div className="space-y-4">
                     {/* Date and Next Meeting Date */}
                     <div className="grid grid-cols-2 gap-4">
-                      <div>
+                      <div className="grid gap-1">
                         <Label className="text-gray-300 font-medium">Date</Label>
                         <Input
                           type="date"
                           value={selectedMeeting.date}
                           onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, date: e.target.value })}
-                          className="mt-1"
                         />
                       </div>
                       {selectedMeeting.type === "1:1" && selectedMeeting.recurrence && selectedMeeting.recurrence !== "none" && selectedMeeting.nextMeetingDate && (
-                        <div>
+                        <div className="grid gap-1">
                           <Label className="text-gray-300 font-medium">Next Meeting</Label>
                           <Input
                             type="date"
                             value={selectedMeeting.nextMeetingDate}
                             onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, nextMeetingDate: e.target.value })}
-                            className="mt-1"
                           />
                         </div>
                       )}
@@ -655,16 +649,15 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
 
                     {/* Title and Attendees */}
                     <div className="grid grid-cols-2 gap-4">
-                      <div>
+                      <div className="grid gap-1">
                         <Label className="text-gray-300 font-medium">Title</Label>
                         <Input
                           value={selectedMeeting.title}
                           onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, title: e.target.value })}
                           placeholder="Meeting title"
-                          className="mt-1"
                         />
                       </div>
-                      <div>
+                      <div className="grid gap-1">
                         <Label className="text-gray-300 font-medium">Attendees</Label>
                         <Input
                           value={selectedMeeting.attendees.join(", ")}
@@ -673,7 +666,6 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                             attendees: e.target.value.split(",").map(a => a.trim()).filter(a => a.length > 0)
                           })}
                           placeholder="Enter names separated by commas"
-                          className="mt-1"
                         />
                       </div>
                     </div>
@@ -724,6 +716,8 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
         availablePeople={allPeopleNames}
         availableTeams={allTeams.map(t => t.name)}
         defaultPerson={formData.name}
+        peopleWithIds={allPeopleWithIds}
+        teamsWithIds={allTeams.map(t => ({ id: t.id, name: t.name }))}
       />
     </div>
   )

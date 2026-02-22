@@ -1,73 +1,16 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { User, Moon, Sun, Calendar, Upload, Check } from "lucide-react"
-
-type Theme = "light" | "dark" | "system"
-type WeekStart = "Sunday" | "Monday" | "Saturday"
+import { User, Check } from "lucide-react"
 
 export default function SettingsPage() {
   const [preferredName, setPreferredName] = useState("User")
   const [email] = useState("user@example.com") // Read-only from OAuth
-  const [theme, setTheme] = useState<Theme>("system")
-  const [weekStart, setWeekStart] = useState<WeekStart>("Monday")
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
   const [saveSuccess, setSaveSuccess] = useState(false)
-  const [mounted, setMounted] = useState(false)
-
-  // Load saved theme on mount
-  useEffect(() => {
-    setMounted(true)
-    const savedTheme = localStorage.getItem("theme") as Theme | null
-    if (savedTheme) {
-      setTheme(savedTheme)
-    } else {
-      // Check if system preference exists
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
-      setTheme("system")
-      applyTheme("system", prefersDark)
-    }
-  }, [])
-
-  // Apply theme to document
-  const applyTheme = (newTheme: Theme, systemPrefersDark?: boolean) => {
-    const root = document.documentElement
-
-    if (newTheme === "dark") {
-      root.classList.add("dark")
-    } else if (newTheme === "light") {
-      root.classList.remove("dark")
-    } else if (newTheme === "system") {
-      const prefersDark = systemPrefersDark ?? window.matchMedia("(prefers-color-scheme: dark)").matches
-      if (prefersDark) {
-        root.classList.add("dark")
-      } else {
-        root.classList.remove("dark")
-      }
-    }
-  }
-
-  const handleThemeChange = (newTheme: Theme) => {
-    setTheme(newTheme)
-    localStorage.setItem("theme", newTheme)
-    applyTheme(newTheme)
-  }
-
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setAvatarPreview(reader.result as string)
-      }
-      reader.readAsDataURL(file)
-    }
-  }
 
   const handleSave = () => {
     // TODO: Implement actual save logic when backend is ready
@@ -75,18 +18,8 @@ export default function SettingsPage() {
     setTimeout(() => setSaveSuccess(false), 3000)
   }
 
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2)
-  }
-
   return (
     <div className="flex flex-col gap-6 p-8">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-gray-100 font-bold">Settings</h1>
@@ -97,7 +30,6 @@ export default function SettingsPage() {
       </div>
 
       <div className="grid gap-6 max-w-4xl">
-        {/* Profile Settings */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -105,48 +37,10 @@ export default function SettingsPage() {
               Profile
             </CardTitle>
             <CardDescription>
-              Update your personal information and profile picture
+              Update your personal information
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Avatar Upload */}
-            <div className="flex items-center gap-6">
-              <div className="relative">
-                {avatarPreview ? (
-                  <img
-                    src={avatarPreview}
-                    alt="Avatar preview"
-                    className="h-20 w-20 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-20 w-20 rounded-full bg-primary-dark-900 items-center justify-center">
-                    <span className="text-primary-dark-400 font-semibold">
-                      {getInitials(preferredName)}
-                    </span>
-                  </div>
-                )}
-              </div>
-              <div className="flex-1">
-                <Label htmlFor="avatar" className="cursor-pointer">
-                  <div className="flex border hover:bg-gray-50 hover:bg-[#292929] items-center gap-2 px-4 py-2 border-[#383838] rounded-md transition-colors w-fit">
-                    <Upload className="h-4 w-4" />
-                    <span className="text-sm font-medium">Upload Avatar</span>
-                  </div>
-                </Label>
-                <Input
-                  id="avatar"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleAvatarChange}
-                  className="hidden"
-                />
-                <p className="text-gray-400 mt-2">
-                  JPG, PNG or GIF. Max size 2MB.
-                </p>
-              </div>
-            </div>
-
-            {/* Preferred Name */}
             <div className="grid gap-2">
               <Label htmlFor="preferredName">Preferred Name</Label>
               <Input
@@ -160,7 +54,6 @@ export default function SettingsPage() {
               </p>
             </div>
 
-            {/* Email (Read-only from OAuth) */}
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -177,86 +70,6 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        {/* Appearance Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Sun className="h-5 w-5" />
-              Appearance
-            </CardTitle>
-            <CardDescription>
-              Customize how Cadence looks for you
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Theme Selection */}
-            <div className="grid gap-2">
-              <Label htmlFor="theme">Theme</Label>
-              <Select value={theme} onValueChange={handleThemeChange}>
-                <SelectTrigger id="theme">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="light">
-                    <div className="flex items-center gap-2">
-                      <Sun className="h-4 w-4" />
-                      Light
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="dark">
-                    <div className="flex items-center gap-2">
-                      <Moon className="h-4 w-4" />
-                      Dark
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="system">
-                    <div className="flex items-center gap-2">
-                      <div className="h-4 w-4 rounded-full border-current" />
-                      System
-                    </div>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-              <p className="text-gray-400">
-                Choose your preferred color scheme. System will match your OS settings.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Calendar Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="h-5 w-5" />
-              Calendar
-            </CardTitle>
-            <CardDescription>
-              Configure your calendar and date preferences
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Week Start Day */}
-            <div className="grid gap-2">
-              <Label htmlFor="weekStart">First Day of Week</Label>
-              <Select value={weekStart} onValueChange={(value: WeekStart) => setWeekStart(value)}>
-                <SelectTrigger id="weekStart">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Sunday">Sunday</SelectItem>
-                  <SelectItem value="Monday">Monday</SelectItem>
-                  <SelectItem value="Saturday">Saturday</SelectItem>
-                </SelectContent>
-              </Select>
-              <p className="text-gray-400">
-                Choose which day starts your week in calendar views
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Save Button */}
         <div className="flex items-center justify-between">
           <p className="text-gray-400">
             Changes will be saved to your account

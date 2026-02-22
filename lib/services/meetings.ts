@@ -36,14 +36,14 @@ export async function getMeetings(): Promise<Meeting[]> {
     .from('meetings')
     .select(`
       *,
-      people(full_name),
-      teams(name)
+      person:people(full_name),
+      team:teams(name)
     `)
     .order('meeting_date', { ascending: false })
 
   if (error) throw error
 
-  return meetings.map((meeting: any) => ({
+  return (meetings ?? []).map((meeting: any) => ({
     id: meeting.id,
     title: meeting.title,
     meetingType: meeting.meeting_type,
@@ -53,13 +53,13 @@ export async function getMeetings(): Promise<Meeting[]> {
     actionItems: meeting.action_items,
     notes: meeting.notes,
     personId: meeting.person_id,
-    personName: meeting.people?.full_name || null,
+    personName: meeting.person?.full_name || null,
     teamId: meeting.team_id,
-    teamName: meeting.teams?.name || null,
-    attendees: meeting.meeting_type === '1:1' && meeting.people?.full_name
-      ? [meeting.people.full_name]
-      : meeting.meeting_type !== 'Other' && meeting.teams?.name
-      ? [meeting.teams.name]
+    teamName: meeting.team?.name || null,
+    attendees: meeting.meeting_type === '1:1' && meeting.person?.full_name
+      ? [meeting.person.full_name]
+      : meeting.meeting_type !== 'Other' && meeting.team?.name
+      ? [meeting.team.name]
       : [],
     createdAt: meeting.created_at,
     updatedAt: meeting.updated_at,
@@ -91,8 +91,8 @@ export async function createMeeting(meeting: Omit<Meeting, 'id' | 'createdAt' | 
     } as any)
     .select(`
       *,
-      people(full_name),
-      teams(name)
+      person:people(full_name),
+      team:teams(name)
     `)
     .single()
 
@@ -108,13 +108,13 @@ export async function createMeeting(meeting: Omit<Meeting, 'id' | 'createdAt' | 
     actionItems: (data as any).action_items,
     notes: (data as any).notes,
     personId: (data as any).person_id,
-    personName: (data as any).people?.full_name || null,
+    personName: (data as any).person?.full_name || null,
     teamId: (data as any).team_id,
-    teamName: (data as any).teams?.name || null,
-    attendees: (data as any).meeting_type === '1:1' && (data as any).people?.full_name
-      ? [(data as any).people.full_name]
-      : (data as any).meeting_type !== 'Other' && (data as any).teams?.name
-      ? [(data as any).teams.name]
+    teamName: (data as any).team?.name || null,
+    attendees: (data as any).meeting_type === '1:1' && (data as any).person?.full_name
+      ? [(data as any).person.full_name]
+      : (data as any).meeting_type !== 'Other' && (data as any).team?.name
+      ? [(data as any).team.name]
       : [],
     createdAt: (data as any).created_at,
     updatedAt: (data as any).updated_at,
@@ -144,8 +144,8 @@ export async function updateMeeting(id: string, updates: Partial<Meeting>): Prom
     .eq('id', id)
     .select(`
       *,
-      people(full_name),
-      teams(name)
+      person:people(full_name),
+      team:teams(name)
     `)
     .single()
 
@@ -161,13 +161,13 @@ export async function updateMeeting(id: string, updates: Partial<Meeting>): Prom
     actionItems: (data as any).action_items,
     notes: (data as any).notes,
     personId: (data as any).person_id,
-    personName: (data as any).people?.full_name || null,
+    personName: (data as any).person?.full_name || null,
     teamId: (data as any).team_id,
-    teamName: (data as any).teams?.name || null,
-    attendees: (data as any).meeting_type === '1:1' && (data as any).people?.full_name
-      ? [(data as any).people.full_name]
-      : (data as any).meeting_type !== 'Other' && (data as any).teams?.name
-      ? [(data as any).teams.name]
+    teamName: (data as any).team?.name || null,
+    attendees: (data as any).meeting_type === '1:1' && (data as any).person?.full_name
+      ? [(data as any).person.full_name]
+      : (data as any).meeting_type !== 'Other' && (data as any).team?.name
+      ? [(data as any).team.name]
       : [],
     createdAt: (data as any).created_at,
     updatedAt: (data as any).updated_at,
@@ -198,15 +198,15 @@ export async function getMeetingsForPerson(personId: string): Promise<Meeting[]>
     .from('meetings')
     .select(`
       *,
-      people(full_name),
-      teams(name)
+      person:people(full_name),
+      team:teams(name)
     `)
     .eq('person_id', personId)
     .order('meeting_date', { ascending: false })
 
   if (error) throw error
 
-  return meetings.map((meeting: any) => ({
+  return (meetings ?? []).map((meeting: any) => ({
     id: meeting.id,
     title: meeting.title,
     meetingType: meeting.meeting_type,
@@ -216,10 +216,10 @@ export async function getMeetingsForPerson(personId: string): Promise<Meeting[]>
     actionItems: meeting.action_items,
     notes: meeting.notes,
     personId: meeting.person_id,
-    personName: meeting.people?.full_name || null,
+    personName: meeting.person?.full_name || null,
     teamId: meeting.team_id,
-    teamName: meeting.teams?.name || null,
-    attendees: meeting.people?.full_name ? [meeting.people.full_name] : [],
+    teamName: meeting.team?.name || null,
+    attendees: meeting.person?.full_name ? [meeting.person.full_name] : [],
     createdAt: meeting.created_at,
     updatedAt: meeting.updated_at,
   }))
@@ -235,15 +235,15 @@ export async function getMeetingsForTeam(teamId: string): Promise<Meeting[]> {
     .from('meetings')
     .select(`
       *,
-      people(full_name),
-      teams(name)
+      person:people(full_name),
+      team:teams(name)
     `)
     .eq('team_id', teamId)
     .order('meeting_date', { ascending: false })
 
   if (error) throw error
 
-  return meetings.map((meeting: any) => ({
+  return (meetings ?? []).map((meeting: any) => ({
     id: meeting.id,
     title: meeting.title,
     meetingType: meeting.meeting_type,
@@ -253,10 +253,10 @@ export async function getMeetingsForTeam(teamId: string): Promise<Meeting[]> {
     actionItems: meeting.action_items,
     notes: meeting.notes,
     personId: meeting.person_id,
-    personName: meeting.people?.full_name || null,
+    personName: meeting.person?.full_name || null,
     teamId: meeting.team_id,
-    teamName: meeting.teams?.name || null,
-    attendees: meeting.teams?.name ? [meeting.teams.name] : [],
+    teamName: meeting.team?.name || null,
+    attendees: meeting.team?.name ? [meeting.team.name] : [],
     createdAt: meeting.created_at,
     updatedAt: meeting.updated_at,
   }))

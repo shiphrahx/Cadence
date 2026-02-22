@@ -3,6 +3,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
+import { useState, useEffect } from "react"
 import {
   LayoutDashboard,
   CheckSquare,
@@ -11,11 +12,11 @@ import {
   FolderKanban,
   Calendar,
   Target,
-  Settings,
   ChevronLeft,
   ChevronRight
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { createClient } from "@/lib/supabase/client"
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -27,9 +28,6 @@ const navigation = [
   { name: "Career Goals", href: "/career-goals", icon: Target },
 ]
 
-const bottomNavigation = [
-  { name: "Settings", href: "/settings", icon: Settings },
-]
 
 interface SidebarProps {
   isOpen: boolean
@@ -38,6 +36,21 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const pathname = usePathname()
+  const [userName, setUserName] = useState("User")
+  const [userAvatar, setUserAvatar] = useState<string | null>(null)
+  const [userInitials, setUserInitials] = useState("U")
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return
+      const name = user.user_metadata?.full_name || user.user_metadata?.name || user.email || "User"
+      const avatar = user.user_metadata?.avatar_url || null
+      setUserName(name)
+      setUserAvatar(avatar)
+      setUserInitials(name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2))
+    })
+  }, [])
 
   return (
     <div className={cn(
@@ -106,48 +119,35 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
         })}
       </nav>
 
-      {/* Bottom Navigation */}
+      {/* User Profile → Settings */}
       <div className="border-[#383838] p-4">
-        {bottomNavigation.map((item) => {
-          const isActive = pathname === item.href
-          return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-primary-50 bg-[#292929] text-primary-700 text-[#84ffc4]"
-                  : "text-gray-700 hover:bg-gray-100 hover:text-gray-900 text-gray-300 hover:bg-[#292929] hover:text-gray-100",
-                !isOpen && "justify-center"
-              )}
-              title={!isOpen ? item.name : undefined}
-            >
-              <item.icon className="h-5 w-5 flex-shrink-0" />
-              {isOpen && item.name}
-            </Link>
-          )
-        })}
-      </div>
-
-      {/* User Profile */}
-      <div className="border-[#383838] p-4">
-        <button className={cn(
-          "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-gray-100 hover:bg-[#292929]",
-          !isOpen && "justify-center"
-        )}
-        title={!isOpen ? "User Profile" : undefined}
+        <Link
+          href="/settings"
+          className={cn(
+            "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
+            pathname === "/settings" ? "bg-[#292929] text-[#84ffc4]" : "text-gray-300 hover:bg-[#292929] hover:text-gray-100",
+            !isOpen && "justify-center"
+          )}
+          title={!isOpen ? "Settings" : undefined}
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-dark-900 text-[#84ffc4] flex-shrink-0">
-            <span className="text-sm font-semibold">U</span>
-          </div>
-          {isOpen && (
-            <div className="flex-1 text-left">
-              <div className="text-gray-100 font-medium">User</div>
-              <div className="text-gray-400">View profile</div>
+          {userAvatar ? (
+            <img
+              src={userAvatar}
+              alt={userName}
+              className="h-8 w-8 rounded-full object-cover flex-shrink-0"
+            />
+          ) : (
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-dark-900 text-[#84ffc4] flex-shrink-0">
+              <span className="text-sm font-semibold">{userInitials}</span>
             </div>
           )}
-        </button>
+          {isOpen && (
+            <div className="flex-1 text-left overflow-hidden">
+              <div className="text-gray-100 font-medium truncate">{userName}</div>
+              <div className="text-gray-400">Settings</div>
+            </div>
+          )}
+        </Link>
       </div>
     </div>
   )
