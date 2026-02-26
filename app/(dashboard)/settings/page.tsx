@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { User, Check, FileText, Plus, Trash2, ChevronDown, ChevronRight } from "lucide-react"
+import { User, Check, FileText, Plus, Trash2, ChevronDown, ChevronRight, RotateCcw } from "lucide-react"
 import { useTemplates, type MeetingTemplate } from "@/lib/hooks/use-templates"
 
 export default function SettingsPage() {
@@ -14,7 +14,7 @@ export default function SettingsPage() {
   const [email] = useState("user@example.com")
   const [saveSuccess, setSaveSuccess] = useState(false)
 
-  const { templates, addTemplate, updateTemplate, deleteTemplate } = useTemplates()
+  const { templates, deletedTemplates, addTemplate, updateTemplate, deleteTemplate, restoreTemplate } = useTemplates()
   const [expandedTemplate, setExpandedTemplate] = useState<string | null>(null)
   const [editingTemplate, setEditingTemplate] = useState<MeetingTemplate | null>(null)
   const [isAdding, setIsAdding] = useState(false)
@@ -217,6 +217,32 @@ export default function SettingsPage() {
 
             {templates.length === 0 && !isAdding && (
               <p className="text-gray-500 text-sm text-center py-4">No templates yet. Add one to get started.</p>
+            )}
+
+            {/* Deleted templates */}
+            {deletedTemplates.length > 0 && (
+              <div className="mt-6 pt-4 border-t border-[#383838]">
+                <div className="flex items-center gap-2 mb-3">
+                  <Trash2 className="h-4 w-4 text-gray-500" />
+                  <span className="text-sm font-medium text-gray-400">Deleted templates</span>
+                </div>
+                <div className="space-y-2">
+                  {deletedTemplates.map((template) => (
+                    <div key={template.id} className="flex items-center justify-between px-4 py-3 border border-dashed border-[#383838] rounded-md bg-[#1a1a1a]">
+                      <span className="text-sm text-gray-500">{template.name}</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 px-2 text-xs text-gray-400 hover:text-gray-200"
+                        onClick={() => restoreTemplate(template.id)}
+                      >
+                        <RotateCcw className="h-3.5 w-3.5 mr-1" />
+                        Restore
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
           </CardContent>
         </Card>

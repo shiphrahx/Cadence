@@ -1,6 +1,14 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import {
+  getTemplates,
+  createTemplate,
+  updateTemplate as updateTemplateInDb,
+  softDeleteTemplate,
+  restoreTemplate as restoreTemplateInDb,
+  seedDefaultTemplates,
+} from "@/lib/services/templates"
 
 export interface MeetingTemplate {
   id: string
@@ -22,7 +30,7 @@ const DEFAULT_TEMPLATES: MeetingTemplate[] = [
   {
     id: "low-performer-1on1",
     name: "Low Performer 1:1",
-    notes: "## Low Performer 1:1\n\n### 1. Check-in\n\n- How are you feeling about work at the moment?\n- How have the last few weeks felt for you?\n\n\n### 2. Set context\n*Manager-led.*\n\n\"I want to talk about some concerns I've noticed around your work. The goal here is to understand what's going on and how I can support you.\"\n\n\n### 3. Observations\n*Facts, not judgement. Stick to observable behaviour, avoid labels, focus on impact.*\n\n- \"Here's what I've been seeing…\"\n- \"These are specific examples where expectations weren't met…\"\n\n\n### 4. Their perspective\n\n- How does this land for you?\n- Do you see the same gaps?\n- Is there anything contributing to this that I might not be aware of?\n\n\n### 5. Expectations & clarity\n\n- What do you think is expected of you in your role right now?\n- Where do you feel expectations are unclear?\n- What would \"good\" look like from your perspective?\n\n\n### 6. Support & blockers\n\n- What's making this harder than it should be?\n- Is this a skills gap, context gap, or capacity issue?\n- What support would help you most right now?\n\n\n### 7. Short-term focus (next 2–4 weeks)\n\n- What do we want to see improve first?\n- What would success look like over the next few weeks?\n- How will we check progress?\n\n\n### 8. Actions & ownership\n\n- What actions are we agreeing on?\n- Who owns each one?\n- When will we follow up?\n\n",
+    notes: "## Low Performer 1:1\n\n### 1. Check-in\n\n- How are you feeling about work at the moment?\n- How have the last few weeks felt for you?\n\n\n### 2. Set context\n*Manager-led.*\n\n\"I want to talk about some concerns I've noticed around your work. The goal here is to understand what's going on and how I can support you.\"\n\n\n### 3. Observations\n*Facts, not judgement. Stick to observable behaviour, avoid labels, focus on impact.*\n\n- \"Here's what I've been seeing…\"\n- \"These are specific examples where expectations weren't met…\"\n\n\n### 4. Their perspective\n\n- How does this land for you?\n- Do you see the same gaps?\n- Is there anything contributing to this that I might not be aware of?\n\n\n### 5. Expectations & clarity\n\n- What do you think is expected of you in your role right now?\n- Where do you feel expectations are unclear?\n- What would \"good\" look like from your perspective?\n\n\n### 6. Support & blockers\n\n- What's making this harder than it should be?\n- Is this a skills gap, context gap, or capacity issue?\n- What support would help you most right now?\n\n\n### 7. Short-term focus (next 2–4 weeks)\n\n- What do we want to see improve first?\n- What would success look like over the next few weeks?\n- How will we check progress?\n\n\n### 8. Actions & ownership\n\n- What actions are we agreeing on?\n- Who owns each one?\n- When will we follow up?\n\n| Action | Owner | Due |\n|--------|-------|-----|\n| | | |\n| | | |\n| | | |\n\n",
   },
   {
     id: "30-day-checkin",
@@ -42,23 +50,63 @@ const DEFAULT_TEMPLATES: MeetingTemplate[] = [
 ]
 
 export function useTemplates() {
-  const [templates, setTemplates] = useState<MeetingTemplate[]>(DEFAULT_TEMPLATES)
+  const [templates, setTemplates] = useState<MeetingTemplate[]>([])
+  const [deletedTemplates, setDeletedTemplates] = useState<MeetingTemplate[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const addTemplate = (template: Omit<MeetingTemplate, "id">) => {
-    const newTemplate: MeetingTemplate = {
-      ...template,
-      id: `template-${Date.now()}`,
+  useEffect(() => {
+    async function load() {
+      try {
+        const { active, deleted } = await getTemplates()
+
+        // Check if any default templates are missing by name
+        const existingNames = new Set([...active, ...deleted].map(t => t.name))
+        const missingDefaults = DEFAULT_TEMPLATES.filter(t => !existingNames.has(t.name))
+
+        if (missingDefaults.length > 0) {
+          const seeded = await seedDefaultTemplates(missingDefaults)
+          setTemplates([...seeded, ...active])
+        } else {
+          setTemplates(active)
+        }
+
+        setDeletedTemplates(deleted)
+      } catch {
+        // Fallback to in-memory defaults if DB is unavailable
+        setTemplates(DEFAULT_TEMPLATES)
+      } finally {
+        setLoading(false)
+      }
     }
+
+    load()
+  }, [])
+
+  const addTemplate = async (template: Omit<MeetingTemplate, "id">) => {
+    const newTemplate = await createTemplate(template)
     setTemplates(prev => [...prev, newTemplate])
   }
 
-  const updateTemplate = (id: string, updates: Partial<Omit<MeetingTemplate, "id">>) => {
+  const updateTemplate = async (id: string, updates: Partial<Omit<MeetingTemplate, "id">>) => {
+    await updateTemplateInDb(id, updates)
     setTemplates(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t))
   }
 
-  const deleteTemplate = (id: string) => {
+  const deleteTemplate = async (id: string) => {
+    const template = templates.find(t => t.id === id)
+    if (!template) return
+    await softDeleteTemplate(id)
     setTemplates(prev => prev.filter(t => t.id !== id))
+    setDeletedTemplates(prev => [...prev, template])
   }
 
-  return { templates, addTemplate, updateTemplate, deleteTemplate }
+  const restoreTemplate = async (id: string) => {
+    const template = deletedTemplates.find(t => t.id === id)
+    if (!template) return
+    await restoreTemplateInDb(id)
+    setDeletedTemplates(prev => prev.filter(t => t.id !== id))
+    setTemplates(prev => [...prev, template])
+  }
+
+  return { templates, deletedTemplates, loading, addTemplate, updateTemplate, deleteTemplate, restoreTemplate }
 }

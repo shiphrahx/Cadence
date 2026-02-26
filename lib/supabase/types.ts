@@ -194,6 +194,35 @@ export interface Database {
           created_at?: string
         }
       }
+      meeting_templates: {
+        Row: {
+          id: string
+          name: string
+          notes: string
+          is_deleted: boolean
+          owning_user_id: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          notes?: string
+          is_deleted?: boolean
+          owning_user_id: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          notes?: string
+          is_deleted?: boolean
+          owning_user_id?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
