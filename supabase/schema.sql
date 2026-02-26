@@ -521,6 +521,38 @@ CREATE POLICY "Users can delete own meetings" ON public.meetings
   FOR DELETE USING (auth.uid() = owning_user_id);
 
 -- ============================================================================
+-- MEETING TEMPLATES TABLE
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS public.meeting_templates (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  notes TEXT NOT NULL DEFAULT '',
+  is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+  owning_user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_meeting_templates_owning_user ON public.meeting_templates(owning_user_id);
+
+CREATE TRIGGER update_meeting_templates_updated_at BEFORE UPDATE ON public.meeting_templates
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+ALTER TABLE public.meeting_templates ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own meeting templates" ON public.meeting_templates
+  FOR SELECT USING (auth.uid() = owning_user_id);
+
+CREATE POLICY "Users can insert own meeting templates" ON public.meeting_templates
+  FOR INSERT WITH CHECK (auth.uid() = owning_user_id);
+
+CREATE POLICY "Users can update own meeting templates" ON public.meeting_templates
+  FOR UPDATE USING (auth.uid() = owning_user_id);
+
+CREATE POLICY "Users can delete own meeting templates" ON public.meeting_templates
+  FOR DELETE USING (auth.uid() = owning_user_id);
+
+-- ============================================================================
 -- SEED DATA (Optional - for development)
 -- ============================================================================
 -- Uncomment to add sample data after first user logs in
