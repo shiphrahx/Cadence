@@ -37,7 +37,7 @@ const DEFAULT_TEMPLATES: MeetingTemplate[] = [
   {
     id: "90-day-checkin",
     name: "90 day check-in",
-    notes: "## 90 Day Check-in\n\n**Overall reflections on the first 90 days**\n\n\n**Key accomplishments**\n\n\n**What has surprised you (positively or negatively)?**\n\n\n**How do you feel about your impact so far?**\n\n\n**Goals and priorities going forward**\n\n\n**What can I do to better support you?**\n\n",
+    notes: "## 90 Day Check-in\n\n### 1. Overall reflection\n\n- How are you feeling after your first three months?\n- Looking back, what went better than expected?\n- What's been more challenging than you thought?\n\n\n### 2. Role fit & expectations\n\n- Do you feel clear on what success looks like in your role?\n- Do you feel the role matches your strengths?\n- Is anything about the role still unclear?\n\n\n### 3. Impact & delivery\n\n- What impact do you feel you've had so far?\n- Where do you think you've contributed most?\n- Are there areas where you feel underused or overstretched?\n\n\n### 4. Ownership & decision-making\n\n- Do you feel confident owning problems end to end?\n- Are you clear on when to make decisions independently?\n- Where do you still need guidance?\n\n\n### 5. Feedback & development\n\n- What feedback have you received so far?\n- What patterns are you noticing?\n- What would you like to improve over the next few months?\n\n\n### 6. Looking forward\n\n- What do you want to focus on next?\n- Where do you want to grow in the next quarter?\n- Is there anything you're concerned about going forward?\n\n",
   },
 ]
 
