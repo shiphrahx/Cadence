@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 
 export interface MeetingTemplate {
   id: string
@@ -17,7 +17,7 @@ const DEFAULT_TEMPLATES: MeetingTemplate[] = [
   {
     id: "performance-review",
     name: "Performance Review",
-    notes: "## Performance Review\n\n**Achievements since last review**\n\n\n**Areas for improvement**\n\n\n**Feedback on collaboration and impact**\n\n\n**Goals for next period**\n\n\n**Development opportunities**\n\n",
+    notes: "## Performance Review\n\n### 1. Set context\n*Manager-led.*\n\n\"This conversation is about reflecting on the last period, what's gone well, what hasn't, and what we do next.\"\n\n\n### 2. Period overview\n*Start with their view first.*\n\n- How do you feel the last period has gone overall?\n- What are you most proud of?\n- What felt hardest or most frustrating?\n\n\n### 3. Delivery & outcomes\n\n- What goals or expectations do you think you met?\n- Where do you think you fell short?\n- What outcomes are you happiest with?\n\n\n### 4. Strengths\n\n- \"Here are the strengths I've consistently seen…\"\n- \"These are areas where you add the most value…\"\n\n\n### 5. Areas for improvement\n\n- \"These are the areas I think need improvement…\"\n- \"Here's the impact when these don't land…\"\n\n- Does this align with your view?\n- Is anything unclear or unexpected here?\n\n\n### 6. Feedback themes\n\n- What feedback patterns have you noticed?\n- Is there feedback you disagree with or don't understand?\n- What feedback would you like to act on next?\n\n\n### 7. Growth & development\n*Tie this back to role expectations.*\n\n- Where do you want to grow next?\n- What skills or behaviours should we focus on?\n- What support would help you most?\n\n\n### 8. Looking forward\n\n- What should success look like next period?\n- What do you want to focus on changing or improving?\n- Are priorities and expectations clear?\n\n",
   },
   {
     id: "low-performer-1on1",
@@ -41,44 +41,23 @@ const DEFAULT_TEMPLATES: MeetingTemplate[] = [
   },
 ]
 
-const STORAGE_KEY = "cadence:meeting-templates"
-
 export function useTemplates() {
-  const [templates, setTemplates] = useState<MeetingTemplate[]>([])
-
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored) {
-      try {
-        setTemplates(JSON.parse(stored))
-      } catch {
-        setTemplates(DEFAULT_TEMPLATES)
-      }
-    } else {
-      setTemplates(DEFAULT_TEMPLATES)
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_TEMPLATES))
-    }
-  }, [])
-
-  const save = (updated: MeetingTemplate[]) => {
-    setTemplates(updated)
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
-  }
+  const [templates, setTemplates] = useState<MeetingTemplate[]>(DEFAULT_TEMPLATES)
 
   const addTemplate = (template: Omit<MeetingTemplate, "id">) => {
     const newTemplate: MeetingTemplate = {
       ...template,
       id: `template-${Date.now()}`,
     }
-    save([...templates, newTemplate])
+    setTemplates(prev => [...prev, newTemplate])
   }
 
   const updateTemplate = (id: string, updates: Partial<Omit<MeetingTemplate, "id">>) => {
-    save(templates.map(t => t.id === id ? { ...t, ...updates } : t))
+    setTemplates(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t))
   }
 
   const deleteTemplate = (id: string) => {
-    save(templates.filter(t => t.id !== id))
+    setTemplates(prev => prev.filter(t => t.id !== id))
   }
 
   return { templates, addTemplate, updateTemplate, deleteTemplate }
