@@ -27,7 +27,7 @@ const DEFAULT_TEMPLATES: MeetingTemplate[] = [
   {
     id: "30-day-checkin",
     name: "30 day check-in",
-    notes: "## 30 Day Check-in\n\n**How are you settling in so far?**\n\n\n**What's gone well in the first 30 days?**\n\n\n**What's been challenging or unclear?**\n\n\n**Do you have everything you need to do your job?**\n\n\n**Questions or concerns?**\n\n\n**Focus for the next 30 days**\n\n",
+    notes: "## 30 Day Check-in\n\n### 1. Overall check-in\n\n- How are you feeling after your first month?\n- What's been easier than expected?\n- What's been harder than you thought?\n\n\n### 2. Onboarding & context\n*Watch for: gaps in documentation, unclear ownership, overwhelm or isolation.*\n\n- How did onboarding feel overall?\n- Is there anything you wish you had known earlier?\n- Do you feel you understand how the team works day to day?\n\n\n### 3. Role clarity & expectations\n\n- Do you feel clear on what's expected of you right now?\n- Does the role match what you expected?\n- Are your current priorities clear?\n\n\n### 4. Work & collaboration\n\n- How are you finding collaboration with the team?\n- Do you feel comfortable asking for help?\n- Anyone or anything you're unsure how to work with yet?\n\n\n### 5. Support & unblockers\n\n- Is anything slowing you down or blocking you?\n- What support would help you most right now?\n- Is there anything I can do differently to support you?\n\n\n### 6. Early feedback\n*Two-way.*\n\n- What's been going well so far?\n- Anything that's been frustrating?\n- Any early feedback for me or the team?\n\n",
   },
   {
     id: "60-day-checkin",
