@@ -32,7 +32,7 @@ const DEFAULT_TEMPLATES: MeetingTemplate[] = [
   {
     id: "60-day-checkin",
     name: "60 day check-in",
-    notes: "## 60 Day Check-in\n\n**Progress since the 30 day check-in**\n\n\n**Are you building the relationships you need?**\n\n\n**Confidence in role and responsibilities?**\n\n\n**Any blockers or gaps in support?**\n\n\n**Updated goals and focus areas**\n\n\n**Feedback for me as your manager**\n\n",
+    notes: "## 60 Day Check-in\n\n### 1. Overall reflection\n\n- How are you feeling at the two-month mark?\n- What's changed for you since the 30-day check-in?\n- Do you feel more settled now?\n\n\n### 2. Work & impact\n\n- What work are you most proud of so far?\n- Where do you feel you're adding the most value?\n- Is there anything you expected to be doing by now but aren't?\n\n\n### 3. Ownership & autonomy\n\n- Do you feel confident owning your work?\n- Are decision-making boundaries clear?\n- Do you know when to push forward vs ask for help?\n\n\n### 4. Collaboration & team dynamics\n\n- How is collaboration with the team going?\n- Any friction or confusion in how we work together?\n- Do you feel comfortable challenging ideas?\n\n\n### 5. Feedback & expectations\n*Two-way.*\n\n- What feedback have you received so far?\n- Does it make sense and feel fair?\n- Is there any feedback you'd like from me right now?\n\n\n### 6. Support & adjustments\n\n- What's currently slowing you down?\n- What would help you be more effective?\n- Is there anything we should adjust in priorities or scope?\n\n",
   },
   {
     id: "90-day-checkin",
