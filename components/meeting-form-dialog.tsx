@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { marked } from "marked"
 import { getTodayDate } from "@/lib/utils"
 import { type Meeting as BaseMeeting } from "@/lib/mock-data"
 import { useTemplates } from "@/lib/hooks/use-templates"
@@ -584,7 +585,8 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                         size="sm"
                         onClick={() => {
                           setSelectedTemplate(template.id)
-                          setFormData(prev => ({ ...prev, notes: template.notes }))
+                          const html = marked.parse(template.notes) as string
+                          setFormData(prev => ({ ...prev, notes: html }))
                         }}
                         className={`text-xs border ${
                           selectedTemplate === template.id
