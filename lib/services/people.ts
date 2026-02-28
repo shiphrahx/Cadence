@@ -115,16 +115,18 @@ export async function createPerson(person: Omit<Person, 'id' | 'createdAt'> & { 
 export async function updatePerson(id: string, updates: Partial<Person>): Promise<Person> {
   const supabase = createClient()
 
+  // Build update payload — only include fields that were explicitly provided
+  const payload: Record<string, unknown> = {}
+  if (updates.name !== undefined) payload.full_name = updates.name
+  if (updates.role !== undefined) payload.role = updates.role || null
+  if (updates.level !== undefined) payload.level = updates.level || null
+  if (updates.startDate !== undefined) payload.start_date = updates.startDate || null
+  if (updates.notes !== undefined) payload.notes = updates.notes || null
+  if (updates.status !== undefined) payload.status = updates.status
+
   // Update person fields
   const { data, error } = await (supabase.from('people') as any)
-    .update({
-      full_name: updates.name,
-      role: updates.role || null,
-      level: updates.level || null,
-      start_date: updates.startDate || null,
-      notes: updates.notes || null,
-      status: updates.status,
-    })
+    .update(payload)
     .eq('id', id)
     .select('*')
     .single()
