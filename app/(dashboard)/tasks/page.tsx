@@ -288,10 +288,27 @@ export default function TasksPage() {
     const { active, over } = event
     if (!over) return
 
-    const activeId = active.id
+    const activeId = active.id as string
     const overId = over.id
 
     if (activeId === overId) return
+
+    // Find the final state of the dragged task after handleDragOver updates
+    const finalTask = tasks.find((t) => t.id === activeId)
+    const originalTask = activeTask
+
+    if (finalTask && originalTask) {
+      // Persist list or status changes to the DB
+      const listChanged = finalTask.list !== originalTask.list
+      const statusChanged = finalTask.status !== originalTask.status
+
+      if (listChanged || statusChanged) {
+        const updates: Partial<Task> = {}
+        if (listChanged) updates.list = finalTask.list
+        if (statusChanged) updates.status = finalTask.status
+        handleUpdateTask(activeId, updates)
+      }
+    }
 
     // Final position adjustment on drop
     const overTask = tasks.find((t) => t.id === overId)
@@ -301,7 +318,6 @@ export default function TasksPage() {
         const activeIndex = tasks.findIndex((t) => t.id === activeId)
         const overIndex = tasks.findIndex((t) => t.id === overId)
 
-        // Use arrayMove for smooth reordering within same list
         if (activeIndex !== overIndex) {
           return arrayMove(tasks, activeIndex, overIndex)
         }

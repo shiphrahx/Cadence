@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS public.tasks (
   completion_date DATE,
   source TEXT NOT NULL DEFAULT 'manual' CHECK (source IN ('manual', 'meeting_action', 'recurring_meeting', 'growth', 'performance')),
   priority TEXT NOT NULL DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high', 'very_high')),
+  list TEXT NOT NULL DEFAULT 'backlog' CHECK (list IN ('week', 'backlog')),
   owning_user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL

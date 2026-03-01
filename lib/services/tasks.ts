@@ -80,7 +80,7 @@ export async function getTasks(): Promise<Task[]> {
     priority: mapDbPriorityToUi(task.priority),
     category: 'Task', // Default category for now
     status: mapDbStatusToUi(task.status),
-    list: resolveList(task.due_date),
+    list: (task.list as 'week' | 'backlog') || resolveList(task.due_date),
   }))
 }
 
@@ -101,6 +101,7 @@ export async function createTask(task: Omit<Task, 'id'>): Promise<Task> {
       due_date: task.dueDate || null,
       priority: mapUiPriorityToDb(task.priority),
       status: mapUiStatusToDb(task.status),
+      list: task.list || resolveList(task.dueDate || null),
       source: 'manual',
       owning_user_id: user.id,
     } as any)
@@ -117,7 +118,7 @@ export async function createTask(task: Omit<Task, 'id'>): Promise<Task> {
     priority: mapDbPriorityToUi((data as any).priority),
     category: 'Task',
     status: mapDbStatusToUi((data as any).status),
-    list: resolveList((data as any).due_date),
+    list: (data as any).list || resolveList((data as any).due_date),
   }
 }
 
@@ -132,6 +133,7 @@ export async function updateTask(id: string, updates: Partial<Task>): Promise<Ta
   if (updates.description !== undefined) dbUpdates.description = updates.description || null
   if (updates.dueDate !== undefined) dbUpdates.due_date = updates.dueDate || null
   if (updates.priority !== undefined) dbUpdates.priority = mapUiPriorityToDb(updates.priority)
+  if (updates.list !== undefined) dbUpdates.list = updates.list
   if (updates.status !== undefined) {
     dbUpdates.status = mapUiStatusToDb(updates.status)
     // Set completion date if marking as done
@@ -159,7 +161,7 @@ export async function updateTask(id: string, updates: Partial<Task>): Promise<Ta
     priority: mapDbPriorityToUi((data as any).priority),
     category: 'Task',
     status: mapDbStatusToUi((data as any).status),
-    list: resolveList((data as any).due_date),
+    list: (data as any).list || resolveList((data as any).due_date),
   }
 }
 
@@ -181,26 +183,5 @@ export async function deleteTask(id: string): Promise<void> {
  * Move task between lists (week/backlog)
  */
 export async function moveTask(id: string, toList: 'week' | 'backlog'): Promise<Task> {
-  // For now, we'll just update the task
-  // In the future, this could update a list_type field in the database
-  const supabase = createClient()
-
-  const { data, error } = await supabase
-    .from('tasks')
-    .select()
-    .eq('id', id)
-    .single()
-
-  if (error) throw error
-
-  return {
-    id: (data as any).id,
-    title: (data as any).title,
-    description: (data as any).description || undefined,
-    dueDate: (data as any).due_date,
-    priority: mapDbPriorityToUi((data as any).priority),
-    category: 'Task',
-    status: mapDbStatusToUi((data as any).status),
-    list: toList,
-  }
+  return updateTask(id, { list: toList })
 }
