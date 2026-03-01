@@ -1,258 +1,271 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { CheckSquare, Calendar, Users } from "lucide-react"
 import { createClient } from "@/lib/supabase/server"
+import { MeetingsBarChart, MeetingsWeekData } from "@/components/dashboard/meetings-bar-chart"
+import { TasksBarChart, TasksWeekData } from "@/components/dashboard/tasks-bar-chart"
+import { TaskPriorityChart } from "@/components/dashboard/task-priority-chart"
+import { DashboardCalendar, CalendarTask } from "@/components/dashboard/dashboard-calendar"
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function getMondayOfWeek(date: Date): Date {
+  const d = new Date(date)
+  const day = d.getDay()
+  const diff = day === 0 ? -6 : 1 - day
+  d.setDate(d.getDate() + diff)
+  d.setHours(0, 0, 0, 0)
+  return d
+}
+
+function addDays(date: Date, n: number): Date {
+  const d = new Date(date)
+  d.setDate(d.getDate() + n)
+  return d
+}
+
+function toISO(d: Date): string {
+  return d.toISOString().split("T")[0]
+}
+
+function weekLabel(monday: Date): string {
+  return monday.toLocaleDateString("en-GB", { day: "numeric", month: "short" })
+}
+
+// Build 8 weeks of data for charts — current week + 7 previous weeks
+function buildWeekBuckets(anchorMonday: Date): { monday: Date; label: string }[] {
+  return Array.from({ length: 8 }, (_, i) => {
+    const monday = addDays(anchorMonday, -(7 - i) * 7)
+    return { monday, label: weekLabel(monday) }
+  })
+}
+
+// ─── Data Fetching ─────────────────────────────────────────────────────────────
 
 async function getDashboardData() {
   const supabase = await createClient()
 
   const today = new Date()
   today.setHours(0, 0, 0, 0)
-  const todayStr = today.toISOString().split('T')[0]
+  const currentMonday = getMondayOfWeek(today)
 
-  const weekStart = new Date(today)
-  weekStart.setDate(today.getDate() - today.getDay() + 1) // Monday
-  const weekEnd = new Date(weekStart)
-  weekEnd.setDate(weekStart.getDate() + 6) // Sunday
-  const weekStartStr = weekStart.toISOString().split('T')[0]
-  const weekEndStr = weekEnd.toISOString().split('T')[0]
+  // Fetch 8 weeks back for chart data
+  const chartStart = addDays(currentMonday, -7 * 7)
+  const chartStartStr = toISO(chartStart)
 
-  const [tasksRes, meetingsRes, teamsRes] = await Promise.all([
+  const [tasksRes, meetingsRes] = await Promise.all([
     supabase
-      .from('tasks')
-      .select('id, title, due_date, status, priority')
-      .not('due_date', 'is', null)
-      .order('due_date', { ascending: true }),
+      .from("tasks")
+      .select("id, title, due_date, status, priority")
+      .not("due_date", "is", null)
+      .gte("due_date", chartStartStr)
+      .order("due_date", { ascending: true }),
     supabase
-      .from('meetings')
-      .select('id, title, meeting_type, meeting_date, next_meeting_date, people(full_name)')
-      .order('next_meeting_date', { ascending: true }),
-    supabase
-      .from('teams')
-      .select('id, status, team_memberships(count)')
-      .eq('status', 'active'),
+      .from("meetings")
+      .select("id, title, meeting_type, meeting_date, next_meeting_date")
+      .gte("meeting_date", chartStartStr)
+      .order("meeting_date", { ascending: true }),
   ])
 
-  const tasks = tasksRes.data ?? []
-  const meetings = meetingsRes.data ?? []
-  const teams = teamsRes.data ?? []
+  const tasks: any[] = tasksRes.data ?? []
+  const meetings: any[] = meetingsRes.data ?? []
 
-  // Tasks this week (due within the current week)
-  const tasksThisWeek = tasks.filter((t: any) => t.due_date >= weekStartStr && t.due_date <= weekEndStr)
-  const overdueCount = tasks.filter((t: any) => t.due_date < todayStr && t.status !== 'completed').length
+  // ── Build meetings-per-week chart data ──────────────────────────────────────
+  const weekBuckets = buildWeekBuckets(currentMonday)
 
-  // Active teams + total member count
-  const activeTeamCount = teams.length
-  const totalMembers = teams.reduce((sum: number, t: any) => sum + (t.team_memberships[0]?.count ?? 0), 0)
+  const meetingWeekData: MeetingsWeekData[] = weekBuckets.map(({ monday, label }) => {
+    const sunday = addDays(monday, 6)
+    const mondayStr = toISO(monday)
+    const sundayStr = toISO(sunday)
 
-  // Meetings this week
-  const meetingsThisWeek = meetings.filter((m: any) => {
-    const date = m.next_meeting_date || m.meeting_date
-    return date >= weekStartStr && date <= weekEndStr
+    const bucket = meetings.filter((m: any) => {
+      const d = m.meeting_date
+      return d >= mondayStr && d <= sundayStr
+    })
+
+    const row: MeetingsWeekData = {
+      week: label,
+      "1:1": 0,
+      "Team Sync": 0,
+      "Retro": 0,
+      "Planning": 0,
+      "Review": 0,
+      "Standup": 0,
+      "Other": 0,
+      total: bucket.length,
+    }
+
+    for (const m of bucket) {
+      const t = m.meeting_type as keyof Omit<MeetingsWeekData, "week" | "total">
+      if (t in row) {
+        ;(row as any)[t]++
+      } else {
+        row["Other"]++
+      }
+    }
+
+    return row
   })
-  const oneOnOnesThisWeek = meetingsThisWeek.filter((m: any) => m.meeting_type === '1:1').length
-  const otherMeetingsThisWeek = meetingsThisWeek.length - oneOnOnesThisWeek
 
-  // Upcoming 1:1s — next_meeting_date >= today, sorted ascending, limit 5
-  const upcoming1on1s = meetings
-    .filter((m: any) => m.meeting_type === '1:1')
-    .map((m: any) => ({ ...m, sortDate: m.next_meeting_date || m.meeting_date }))
-    .filter((m: any) => m.sortDate >= todayStr)
-    .sort((a: any, b: any) => a.sortDate.localeCompare(b.sortDate))
-    .slice(0, 5)
+  // ── Build tasks-due-per-week chart data ────────────────────────────────────
+  const taskWeekData: TasksWeekData[] = weekBuckets.map(({ monday, label }) => {
+    const sunday = addDays(monday, 6)
+    const mondayStr = toISO(monday)
+    const sundayStr = toISO(sunday)
 
-  // Tasks this week sorted by due date, limit 5
-  const weekTasksDisplay = tasksThisWeek.slice(0, 5)
+    const bucket = tasks.filter((t: any) => {
+      const d = t.due_date
+      return d >= mondayStr && d <= sundayStr
+    })
+
+    const row: TasksWeekData = {
+      week: label,
+      "Not started": 0,
+      "In progress": 0,
+      "Blocked": 0,
+      "Done": 0,
+      total: bucket.length,
+    }
+
+    const statusMap: Record<string, keyof Omit<TasksWeekData, "week" | "total">> = {
+      not_started: "Not started",
+      in_progress: "In progress",
+      blocked: "Blocked",
+      completed: "Done",
+    }
+
+    for (const t of bucket) {
+      const key = statusMap[t.status] ?? "Not started"
+      row[key]++
+    }
+
+    return row
+  })
+
+  // ── Calendar tasks — all tasks with a due date ─────────────────────────────
+  const priorityMap: Record<string, CalendarTask["priority"]> = {
+    low: "Low",
+    medium: "Medium",
+    high: "High",
+    very_high: "Very High",
+  }
+  const statusMapUi: Record<string, CalendarTask["status"]> = {
+    not_started: "Not started",
+    in_progress: "In progress",
+    blocked: "Blocked",
+    completed: "Done",
+  }
+
+  // Fetch all tasks with due dates for the calendar (not restricted to chart window)
+  const { data: allTasks } = await supabase
+    .from("tasks")
+    .select("id, title, due_date, status, priority")
+    .not("due_date", "is", null)
+    .order("due_date", { ascending: true })
+
+  const calendarTasks: CalendarTask[] = (allTasks ?? []).map((t: any) => ({
+    id: t.id,
+    title: t.title,
+    dueDate: t.due_date,
+    priority: priorityMap[t.priority] ?? "Medium",
+    status: statusMapUi[t.status] ?? "Not started",
+  }))
 
   return {
-    weekStart,
-    weekEnd,
-    tasksThisWeekCount: tasksThisWeek.length,
-    overdueCount,
-    meetingsThisWeekCount: meetingsThisWeek.length,
-    oneOnOnesThisWeek,
-    otherMeetingsThisWeek,
-    activeTeamCount,
-    totalMembers,
-    upcoming1on1s,
-    weekTasksDisplay,
-    todayStr,
+    meetingWeekData,
+    taskWeekData,
+    calendarTasks,
   }
 }
 
-function formatDisplayDate(dateStr: string) {
-  const [year, month, day] = dateStr.split('-').map(Number)
-  return new Date(year, month - 1, day).toLocaleDateString('en-GB', {
-    weekday: 'short',
-    day: '2-digit',
-    month: 'short',
-  })
-}
-
-function getInitials(name: string) {
-  return name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2)
-}
-
-function priorityLabel(priority: string) {
-  const map: Record<string, string> = {
-    low: 'Low',
-    medium: 'Medium',
-    high: 'High',
-    very_high: 'Very High',
-  }
-  return map[priority] ?? priority
-}
-
-function priorityColor(priority: string) {
-  const map: Record<string, string> = {
-    low: 'text-gray-400',
-    medium: 'text-yellow-400',
-    high: 'text-orange-400',
-    very_high: 'text-red-400',
-  }
-  return map[priority] ?? 'text-gray-400'
-}
+// ─── Page ──────────────────────────────────────────────────────────────────────
 
 export default async function DashboardPage() {
-  const data = await getDashboardData()
+  const { meetingWeekData, taskWeekData, calendarTasks } = await getDashboardData()
 
-  const formatWeekDate = (date: Date) =>
-    date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })
+  const today = new Date()
+  const label = today.toLocaleDateString("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  })
 
   return (
     <div className="flex flex-col gap-6 p-8">
       {/* Header */}
       <div>
         <h1 className="text-gray-100 font-bold">Dashboard</h1>
-        <p className="text-gray-400 mt-1">
-          Week of {formatWeekDate(data.weekStart)} – {formatWeekDate(data.weekEnd)}
-        </p>
+        <p className="text-gray-400 mt-1">{label}</p>
       </div>
 
-      {/* Quick Stats */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Tasks This Week</CardTitle>
-            <CheckSquare className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{data.tasksThisWeekCount}</div>
-            <p className="text-muted-foreground">
-              {data.overdueCount > 0 ? `${data.overdueCount} overdue` : 'None overdue'}
-            </p>
-          </CardContent>
-        </Card>
+      {/* ── Widgets row ── */}
+      <div className="grid grid-cols-3 gap-4">
+        {/* Meetings per week */}
+        <div className="bg-[#1c1c1c] border border-[#383838] rounded-xl p-5">
+          <div className="mb-4">
+            <h2 className="text-gray-100 font-semibold text-sm">Meetings</h2>
+            <p className="text-gray-500 text-xs mt-0.5">Per week, last 8 weeks</p>
+          </div>
+          <MeetingsBarChart data={meetingWeekData} />
+          {/* Legend */}
+          <div className="flex flex-wrap gap-x-3 gap-y-1 mt-3">
+            {(["1:1", "Team Sync", "Retro", "Planning", "Review", "Standup", "Other"] as const).map((t) => {
+              const colors: Record<string, string> = {
+                "1:1": "#84ffc4",
+                "Team Sync": "#60a5fa",
+                "Retro": "#34d399",
+                "Planning": "#fbbf24",
+                "Review": "#f87171",
+                "Standup": "#c084fc",
+                "Other": "#94a3b8",
+              }
+              return (
+                <div key={t} className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: colors[t] }} />
+                  <span className="text-[10px] text-gray-500">{t}</span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Meetings This Week</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{data.meetingsThisWeekCount}</div>
-            <p className="text-muted-foreground">
-              {data.oneOnOnesThisWeek} 1:1{data.oneOnOnesThisWeek !== 1 ? 's' : ''},{' '}
-              {data.otherMeetingsThisWeek} other
-            </p>
-          </CardContent>
-        </Card>
+        {/* Tasks due per week */}
+        <div className="bg-[#1c1c1c] border border-[#383838] rounded-xl p-5">
+          <div className="mb-4">
+            <h2 className="text-gray-100 font-semibold text-sm">Tasks Due</h2>
+            <p className="text-gray-500 text-xs mt-0.5">Per week, last 8 weeks</p>
+          </div>
+          <TasksBarChart data={taskWeekData} />
+          {/* Legend */}
+          <div className="flex flex-wrap gap-x-3 gap-y-1 mt-3">
+            {(["Not started", "In progress", "Blocked", "Done"] as const).map((s) => {
+              const colors: Record<string, string> = {
+                "Not started": "#4b5563",
+                "In progress": "#60a5fa",
+                "Blocked": "#f87171",
+                "Done": "#34d399",
+              }
+              return (
+                <div key={s} className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: colors[s] }} />
+                  <span className="text-[10px] text-gray-500">{s}</span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Teams</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{data.activeTeamCount}</div>
-            <p className="text-muted-foreground">
-              {data.totalMembers} total member{data.totalMembers !== 1 ? 's' : ''}
-            </p>
-          </CardContent>
-        </Card>
+        {/* Priority breakdown placeholder */}
+        <div className="bg-[#1c1c1c] border border-[#383838] rounded-xl p-5">
+          <div className="mb-4">
+            <h2 className="text-gray-100 font-semibold text-sm">Priority Breakdown</h2>
+            <p className="text-gray-500 text-xs mt-0.5">Tasks by priority</p>
+          </div>
+          <TaskPriorityChart />
+        </div>
       </div>
 
-      {/* This Week Section */}
-      <div className="grid md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Tasks This Week</CardTitle>
-            <CardDescription>Due this week</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {data.weekTasksDisplay.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No tasks due this week.</p>
-            ) : (
-              <div className="space-y-3">
-                {data.weekTasksDisplay.map((task: any) => {
-                  const isOverdue = task.due_date < data.todayStr && task.status !== 'completed'
-                  const isDone = task.status === 'completed'
-                  return (
-                    <div key={task.id} className="flex items-start gap-3">
-                      <div
-                        className={`mt-1 h-2 w-2 rounded-full flex-shrink-0 ${
-                          isDone
-                            ? 'bg-green-500'
-                            : isOverdue
-                            ? 'bg-red-500'
-                            : 'bg-gray-500'
-                        }`}
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className={`text-sm font-medium truncate ${isDone ? 'line-through text-muted-foreground' : 'text-gray-100'}`}>
-                          {task.title}
-                        </p>
-                        <p className={`text-xs ${isOverdue && !isDone ? 'text-red-400' : 'text-muted-foreground'}`}>
-                          {isOverdue && !isDone ? 'Overdue · ' : ''}
-                          {formatDisplayDate(task.due_date)}
-                          {' · '}
-                          <span className={priorityColor(task.priority)}>{priorityLabel(task.priority)}</span>
-                        </p>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Upcoming 1:1s</CardTitle>
-            <CardDescription>Next scheduled 1:1 meetings</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {data.upcoming1on1s.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No upcoming 1:1s scheduled.</p>
-            ) : (
-              <div className="space-y-3">
-                {data.upcoming1on1s.map((meeting: any) => {
-                  const personName = (meeting.people as any)?.full_name ?? meeting.title
-                  const initials = getInitials(personName)
-                  const isToday = meeting.sortDate === data.todayStr
-                  return (
-                    <div key={meeting.id} className="flex items-center gap-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-900/40 text-purple-300 flex-shrink-0">
-                        <span className="text-xs font-semibold">{initials}</span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-100 truncate">{personName}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {isToday ? 'Today' : formatDisplayDate(meeting.sortDate)}
-                        </p>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+      {/* ── Calendar ── */}
+      <div>
+        <DashboardCalendar tasks={calendarTasks} />
       </div>
     </div>
   )
