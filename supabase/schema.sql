@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS public.tasks (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   title TEXT NOT NULL,
   description TEXT,
-  status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'completed')),
+  status TEXT NOT NULL DEFAULT 'not_started' CHECK (status IN ('not_started', 'in_progress', 'blocked', 'completed')),
   due_date DATE,
   completion_date DATE,
   source TEXT NOT NULL DEFAULT 'manual' CHECK (source IN ('manual', 'meeting_action', 'recurring_meeting', 'growth', 'performance')),

@@ -283,58 +283,50 @@ export default function TasksPage() {
   }
 
   const handleDragEnd = (event: DragEndEvent) => {
+    const originalTask = activeTask
     setActiveTask(null)
 
     const { active, over } = event
-    if (!over) return
+    if (!over || !originalTask) return
 
     const activeId = active.id as string
-    const overId = over.id
 
-    if (activeId === overId) return
+    // handleDragOver already applied the visual update to tasks state.
+    // Use a ref-style approach: read current tasks synchronously via the
+    // functional updater pattern, capture the diff, then persist to DB.
+    setTasks((currentTasks) => {
+      const currentTask = currentTasks.find((t) => t.id === activeId)
+      if (!currentTask) return currentTasks
 
-    // Find the final state of the dragged task after handleDragOver updates
-    const finalTask = tasks.find((t) => t.id === activeId)
-    const originalTask = activeTask
-
-    if (finalTask && originalTask) {
-      // Persist list or status changes to the DB
-      const listChanged = finalTask.list !== originalTask.list
-      const statusChanged = finalTask.status !== originalTask.status
+      const listChanged = currentTask.list !== originalTask.list
+      const statusChanged = currentTask.status !== originalTask.status
 
       if (listChanged || statusChanged) {
-        const updates: Partial<Task> = {}
-        if (listChanged) updates.list = finalTask.list
-        if (statusChanged) updates.status = finalTask.status
-        handleUpdateTask(activeId, updates)
+        const updates = { list: currentTask.list, status: currentTask.status }
+        // Schedule DB write outside of the state updater
+        setTimeout(() => {
+          updateTask(activeId, updates).catch((error) => {
+            console.error('Failed to update task:', error)
+            loadTasks()
+          })
+        }, 0)
       }
-    }
 
-    // Final position adjustment on drop
-    const overTask = tasks.find((t) => t.id === overId)
-
-    if (overTask) {
-      setTasks((tasks) => {
-        const activeIndex = tasks.findIndex((t) => t.id === activeId)
-        const overIndex = tasks.findIndex((t) => t.id === overId)
-
-        if (activeIndex !== overIndex) {
-          return arrayMove(tasks, activeIndex, overIndex)
-        }
-
-        return tasks
-      })
-    }
+      return currentTasks
+    })
   }
 
   const handleUpdateTask = async (taskId: string, updates: Partial<Task>) => {
+    // Optimistically apply the update to local state immediately
+    setTasks((tasks) =>
+      tasks.map((t) => (t.id === taskId ? { ...t, ...updates } : t))
+    )
     try {
-      const updatedTask = await updateTask(taskId, updates)
-      setTasks((tasks) =>
-        tasks.map((t) => (t.id === taskId ? updatedTask : t))
-      )
+      await updateTask(taskId, updates)
     } catch (error) {
       console.error('Failed to update task:', error)
+      // Revert on failure by reloading from DB
+      loadTasks()
     }
   }
 

@@ -22,13 +22,25 @@ function resolveList(dueDate: string | null): 'week' | 'backlog' {
 }
 
 // Map database status to UI status
-function mapDbStatusToUi(status: 'open' | 'completed'): TaskStatus {
-  return status === 'completed' ? 'Done' : 'Not started'
+function mapDbStatusToUi(status: string): TaskStatus {
+  const map: Record<string, TaskStatus> = {
+    not_started: 'Not started',
+    in_progress: 'In progress',
+    blocked: 'Blocked',
+    completed: 'Done',
+  }
+  return map[status] ?? 'Not started'
 }
 
 // Map UI status to database status
-function mapUiStatusToDb(status: TaskStatus): 'open' | 'completed' {
-  return status === 'Done' ? 'completed' : 'open'
+function mapUiStatusToDb(status: TaskStatus): string {
+  const map: Record<TaskStatus, string> = {
+    'Not started': 'not_started',
+    'In progress': 'in_progress',
+    'Blocked': 'blocked',
+    'Done': 'completed',
+  }
+  return map[status]
 }
 
 // Map database priority to UI priority
