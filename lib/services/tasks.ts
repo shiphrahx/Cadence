@@ -11,6 +11,16 @@ type TaskRow = Database['public']['Tables']['tasks']['Row']
 type TaskInsert = Database['public']['Tables']['tasks']['Insert']
 type TaskUpdate = Database['public']['Tables']['tasks']['Update']
 
+// Determine list based on due date — only 'week' if due within the next 7 days
+function resolveList(dueDate: string | null): 'week' | 'backlog' {
+  if (!dueDate) return 'backlog'
+  const due = new Date(dueDate)
+  const now = new Date()
+  const sevenDaysFromNow = new Date(now)
+  sevenDaysFromNow.setDate(now.getDate() + 7)
+  return due <= sevenDaysFromNow ? 'week' : 'backlog'
+}
+
 // Map database status to UI status
 function mapDbStatusToUi(status: 'open' | 'completed'): TaskStatus {
   return status === 'completed' ? 'Done' : 'Not started'
@@ -70,7 +80,7 @@ export async function getTasks(): Promise<Task[]> {
     priority: mapDbPriorityToUi(task.priority),
     category: 'Task', // Default category for now
     status: mapDbStatusToUi(task.status),
-    list: task.due_date ? 'week' : 'backlog', // Simple logic: tasks with due dates go to week
+    list: resolveList(task.due_date),
   }))
 }
 
@@ -107,7 +117,7 @@ export async function createTask(task: Omit<Task, 'id'>): Promise<Task> {
     priority: mapDbPriorityToUi((data as any).priority),
     category: 'Task',
     status: mapDbStatusToUi((data as any).status),
-    list: (data as any).due_date ? 'week' : 'backlog',
+    list: resolveList((data as any).due_date),
   }
 }
 
@@ -149,7 +159,7 @@ export async function updateTask(id: string, updates: Partial<Task>): Promise<Ta
     priority: mapDbPriorityToUi((data as any).priority),
     category: 'Task',
     status: mapDbStatusToUi((data as any).status),
-    list: (data as any).due_date ? 'week' : 'backlog',
+    list: resolveList((data as any).due_date),
   }
 }
 
