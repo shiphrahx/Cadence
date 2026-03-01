@@ -107,6 +107,13 @@ export function DataTable<T extends { id?: number | string }>({
       }
     }
 
+    // Always push inactive items to the bottom (stable sort)
+    filtered.sort((a, b) => {
+      const aInactive = (a as any).status === "inactive" ? 1 : 0
+      const bInactive = (b as any).status === "inactive" ? 1 : 0
+      return aInactive - bInactive
+    })
+
     return filtered
   }, [data, searchQuery, searchKeys, filterValues, filters, sortField, sortDirection, columns])
 

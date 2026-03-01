@@ -105,7 +105,8 @@
       "Bash(cmd /c \"wmic process where \"\"commandline like ''%next dev%'' and name=''node.exe''\"\" delete 2>nul & timeout /t 2 >nul & if exist .next rmdir /s /q .next & npm run dev\")",
       "Bash(tasklist:*)",
       "Bash(python:*)",
-      "Bash(head:*)"
+      "Bash(head:*)",
+      "Bash(gh pr create:*)"
     ]
   }
 }

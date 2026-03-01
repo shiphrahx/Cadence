@@ -19,6 +19,7 @@ import {
 } from "@/lib/services/meetings"
 import { getPeople } from "@/lib/services/people"
 import { getTeams } from "@/lib/services/teams"
+import { createTask } from "@/lib/services/tasks"
 
 interface Meeting {
   id: string
@@ -45,6 +46,15 @@ interface TreeNode {
     [teamName: string]: Meeting[]
   }
   meetings?: Meeting[]
+}
+
+function parseActionItems(html: string): string[] {
+  if (!html) return []
+  // Extract text from <li> elements
+  const liMatches = html.match(/<li[^>]*>([\s\S]*?)<\/li>/gi) ?? []
+  return liMatches
+    .map((li) => li.replace(/<[^>]+>/g, "").trim())
+    .filter((text) => text.length > 0)
 }
 
 export default function MeetingsPage() {
@@ -266,6 +276,24 @@ export default function MeetingsPage() {
 
       setMeetings([uiMeeting, ...meetings])
       setSelectedMeeting(uiMeeting)
+
+      // Create tasks for each action item
+      const actionItemTexts = parseActionItems(newMeeting.actionItems || "")
+      if (actionItemTexts.length > 0) {
+        const dueDate = newMeeting.nextMeetingDate || null
+        await Promise.all(
+          actionItemTexts.map((title) =>
+            createTask({
+              title,
+              dueDate,
+              priority: "Medium",
+              category: "Task",
+              status: "Not started",
+              list: dueDate ? "week" : "backlog",
+            })
+          )
+        )
+      }
     } catch (error) {
       console.error('Failed to create meeting:', error)
       alert('Failed to create meeting. Please try again.')
