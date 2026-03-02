@@ -43,6 +43,8 @@ export interface Database {
           name: string
           description: string | null
           status: 'active' | 'inactive'
+          notes: string | null
+          documentation_url: string | null
           owning_user_id: string
           created_at: string
           updated_at: string
@@ -52,6 +54,8 @@ export interface Database {
           name: string
           description?: string | null
           status?: 'active' | 'inactive'
+          notes?: string | null
+          documentation_url?: string | null
           owning_user_id: string
           created_at?: string
           updated_at?: string
@@ -61,6 +65,8 @@ export interface Database {
           name?: string
           description?: string | null
           status?: 'active' | 'inactive'
+          notes?: string | null
+          documentation_url?: string | null
           owning_user_id?: string
           created_at?: string
           updated_at?: string
