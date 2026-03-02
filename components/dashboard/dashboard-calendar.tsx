@@ -3,6 +3,9 @@
 import { useState } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { TaskModal } from "@/components/tasks/task-modal"
+import { updateTask, deleteTask } from "@/lib/services/tasks"
+import type { Task } from "@/lib/types/task"
 
 export type CalendarTask = {
   id: string
@@ -62,11 +65,50 @@ export function DashboardCalendar({ tasks }: DashboardCalendarProps) {
   const today = new Date()
   const [viewYear, setViewYear] = useState(today.getFullYear())
   const [viewMonth, setViewMonth] = useState(today.getMonth())
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null)
+  const [localTasks, setLocalTasks] = useState<CalendarTask[]>(tasks)
+
+  const handleTaskClick = (task: CalendarTask) => {
+    setSelectedTask({
+      id: task.id,
+      title: task.title,
+      description: "",
+      dueDate: task.dueDate,
+      priority: task.priority,
+      category: "Task",
+      status: task.status,
+      list: "backlog",
+    })
+  }
+
+  const handleSave = async (updated: Task) => {
+    try {
+      await updateTask(updated.id, updated)
+      setLocalTasks(prev => prev.map(t =>
+        t.id === updated.id
+          ? { ...t, title: updated.title, priority: updated.priority, status: updated.status, dueDate: updated.dueDate ?? t.dueDate }
+          : t
+      ))
+    } catch (e) {
+      console.error("Failed to update task:", e)
+    }
+    setSelectedTask(null)
+  }
+
+  const handleDelete = async (taskId: string) => {
+    try {
+      await deleteTask(taskId)
+      setLocalTasks(prev => prev.filter(t => t.id !== taskId))
+    } catch (e) {
+      console.error("Failed to delete task:", e)
+    }
+    setSelectedTask(null)
+  }
 
   const weeks = getMonthGrid(viewYear, viewMonth)
 
   const tasksByDate: Record<string, CalendarTask[]> = {}
-  for (const task of tasks) {
+  for (const task of localTasks) {
     if (!task.dueDate) continue
     if (!tasksByDate[task.dueDate]) tasksByDate[task.dueDate] = []
     tasksByDate[task.dueDate].push(task)
@@ -128,6 +170,14 @@ export function DashboardCalendar({ tasks }: DashboardCalendarProps) {
         ))}
       </div>
 
+      <TaskModal
+        task={selectedTask}
+        isOpen={!!selectedTask}
+        onClose={() => setSelectedTask(null)}
+        onSave={handleSave}
+        onDelete={handleDelete}
+      />
+
       {/* Weeks */}
       <div className="divide-y divide-[#252525]">
         {weeks.map((week, wi) => (
@@ -176,8 +226,9 @@ export function DashboardCalendar({ tasks }: DashboardCalendarProps) {
                       <div
                         key={task.id}
                         title={task.title}
+                        onClick={() => handleTaskClick(task)}
                         className={cn(
-                          "flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium truncate",
+                          "flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium truncate cursor-pointer hover:opacity-80 transition-opacity",
                           STATUS_CHIP[task.status]
                         )}
                       >
