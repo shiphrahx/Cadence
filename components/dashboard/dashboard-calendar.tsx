@@ -26,17 +26,17 @@ export type CalendarTask = {
 }
 
 const PRIORITY_DOT: Record<CalendarTask["priority"], string> = {
-  "Very High": "bg-red-600",
-  "High": "bg-red-400",
+  "Very High": "bg-red-500",
+  "High": "bg-orange-400",
   "Medium": "bg-yellow-400",
   "Low": "bg-green-400",
 }
 
-const STATUS_CHIP: Record<CalendarTask["status"], string> = {
-  "Not started": "bg-gray-700 text-gray-300",
-  "In progress": "bg-blue-900/50 text-blue-300",
-  "Blocked": "bg-red-900/50 text-red-300",
-  "Done": "bg-green-900/50 text-green-300",
+const PRIORITY_BORDER: Record<CalendarTask["priority"], string> = {
+  "Very High": "border-l-2 border-red-500",
+  "High": "border-l-2 border-orange-400",
+  "Medium": "border-l-2 border-yellow-400",
+  "Low": "border-l-2 border-green-400",
 }
 
 const DAYS_OF_WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -86,17 +86,19 @@ function DraggableTaskChip({
       ref={setNodeRef}
       {...listeners}
       {...attributes}
-      title={task.title}
       onClick={onClick}
       className={cn(
-        "flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium truncate cursor-grab active:cursor-grabbing transition-opacity",
-        STATUS_CHIP[task.status],
+        "flex flex-col px-1.5 py-1 rounded text-[12px] font-medium cursor-grab active:cursor-grabbing transition-opacity bg-[#2a2a2a] text-gray-200 border border-[#383838]",
+        PRIORITY_BORDER[task.priority],
         isDragging && !overlay && "opacity-30",
         overlay && "shadow-lg opacity-95 rotate-1 cursor-grabbing",
       )}
     >
-      <span className={cn("flex-shrink-0 w-1.5 h-1.5 rounded-full", PRIORITY_DOT[task.priority])} />
       <span className="truncate">{task.title}</span>
+      <div className="flex items-center gap-1 mt-0.5">
+        <span className={cn("flex-shrink-0 w-1.5 h-1.5 rounded-full", PRIORITY_DOT[task.priority])} />
+        <span className="opacity-60 font-normal text-[12px]">{task.priority}</span>
+      </div>
     </div>
   )
 }

@@ -8,7 +8,7 @@ import { MeetingsBarChart, MeetingsWeekData } from "./meetings-bar-chart"
 const MEETING_COLORS: Record<string, string> = {
   "1:1": "#84ffc4",
   "Team Sync": "#60a5fa",
-  "Retro": "#34d399",
+  "Retro": "#fb923c",
   "Planning": "#fbbf24",
   "Review": "#f87171",
   "Standup": "#c084fc",
