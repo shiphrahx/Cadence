@@ -352,8 +352,8 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to People
         </Button>
-        <h1 className="text-gray-100 font-bold">{formData.name}</h1>
-        <p className="text-gray-400">{formData.role}</p>
+        <h1 className="text-2xl text-gray-100 font-bold">{formData.name}</h1>
+        <p className="text-sm text-gray-400">{formData.role}</p>
       </div>
 
       <Card>
@@ -540,8 +540,8 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
       <Card className="mt-6">
         <CardContent className="p-6">
           <div className="mb-4">
-            <h2 className="text-gray-100 font-semibold">Meetings</h2>
-            <p className="text-gray-400 mt-1">All meetings involving {formData.name}</p>
+            <h2 className="text-sm text-gray-100 font-semibold">Meetings</h2>
+            <p className="text-xs text-gray-400 mt-1">All meetings involving {formData.name}</p>
           </div>
 
           <div id="meetings-section" className="flex border h-[900px] border-[#383838] rounded-lg overflow-hidden">
@@ -552,7 +552,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
             >
               <div className="p-4 border-[#383838] bg-[#1c1c1c]">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-gray-100 font-semibold">Meeting History</h3>
+                  <h3 className="text-sm text-gray-100 font-semibold">Meeting History</h3>
                   <Button onClick={() => setIsAddMeetingDialogOpen(true)}>
                     <Plus className="h-4 w-4 mr-1" />
                     Log

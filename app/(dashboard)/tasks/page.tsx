@@ -411,11 +411,11 @@ export default function TasksPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-gray-100 font-bold">Tasks</h1>
-            <p className="text-gray-400 mt-1">Manage your tasks and priorities</p>
+            <h1 className="text-2xl text-gray-100 font-bold">Tasks</h1>
+            <p className="text-sm text-gray-400 mt-1">Manage your tasks and priorities</p>
           </div>
         </div>
-        <div className="text-gray-400 py-12">Loading...</div>
+        <div className="text-sm text-gray-400 py-12">Loading...</div>
       </div>
     )
   }
@@ -432,15 +432,15 @@ export default function TasksPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-gray-100 font-bold">Tasks</h1>
-            <p className="text-gray-400 mt-1">Manage your tasks and priorities</p>
+            <h1 className="text-2xl text-gray-100 font-bold">Tasks</h1>
+            <p className="text-sm text-gray-400 mt-1">Manage your tasks and priorities</p>
           </div>
         </div>
 
         {/* This Week Board */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-gray-100 font-semibold">This week</h2>
+            <h2 className="text-sm text-gray-100 font-semibold">This week</h2>
             <Button onClick={handleNewTaskHeader}>
               <Plus className="h-4 w-4 mr-2" />
               New task
@@ -465,7 +465,7 @@ export default function TasksPage() {
 
         {/* Backlog */}
         <div>
-          <h2 className="text-gray-100 font-semibold mb-4">Backlog</h2>
+          <h2 className="text-sm text-gray-100 font-semibold mb-4">Backlog</h2>
           <BacklogTable
             tasks={backlogTasks}
             onUpdateTask={handleUpdateTask}

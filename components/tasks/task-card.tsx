@@ -163,7 +163,7 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
         ) : (
           <Circle className="h-4 w-4 text-gray-600 flex-shrink-0 mt-0.5" />
         )}
-        <h4 className="text-gray-100 font-semibold line-clamp-2 break-words overflow-hidden flex-1 leading-tight">
+        <h4 className="text-sm text-gray-100 font-semibold line-clamp-2 break-words overflow-hidden flex-1 leading-tight">
           {task.title}
         </h4>
       </div>
@@ -192,7 +192,7 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
       {/* Row 3: Meta (Due Date) */}
       {task.dueDate && (
         <div className="flex items-center">
-          <p className="text-gray-400">{formatDate(task.dueDate)}</p>
+          <p className="text-xs text-gray-400">{formatDate(task.dueDate)}</p>
         </div>
       )}
     </div>

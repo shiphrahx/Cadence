@@ -143,8 +143,8 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
           )}
           {isOpen && (
             <div className="flex-1 text-left overflow-hidden">
-              <div className="text-gray-100 font-medium truncate">{userName}</div>
-              <div className="text-gray-400">Settings</div>
+              <div className="text-sm text-gray-100 font-medium truncate">{userName}</div>
+              <div className="text-xs text-gray-400">Settings</div>
             </div>
           )}
         </Link>

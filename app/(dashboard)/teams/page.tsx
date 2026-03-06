@@ -92,8 +92,8 @@ export default function TeamsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-gray-100 font-bold">Teams</h1>
-          <p className="text-gray-400 mt-1">
+          <h1 className="text-2xl text-gray-100 font-bold">Teams</h1>
+          <p className="text-sm text-gray-400 mt-1">
             Manage your teams and team members
           </p>
         </div>

@@ -585,8 +585,8 @@ export default function CareerGoalsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-gray-100 font-bold">Career Goals</h1>
-          <p className="text-gray-400 mt-1">
+          <h1 className="text-2xl text-gray-100 font-bold">Career Goals</h1>
+          <p className="text-sm text-gray-400 mt-1">
             Plan your career progression and track your goals
           </p>
         </div>
@@ -673,10 +673,10 @@ export default function CareerGoalsPage() {
               <table className="w-full border-collapse table-fixed">
                 <thead>
                   <tr className="border-[#383838]">
-                    <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[20%]">Category</th>
-                    <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[35%]">Current State</th>
-                    <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[35%]">Desired State</th>
-                    <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[10%]">Actions</th>
+                    <th className="text-sm text-gray-100 p-3 bg-[#262626] font-semibold w-[20%]">Category</th>
+                    <th className="text-sm text-gray-100 p-3 bg-[#262626] font-semibold w-[35%]">Current State</th>
+                    <th className="text-sm text-gray-100 p-3 bg-[#262626] font-semibold w-[35%]">Desired State</th>
+                    <th className="text-sm text-gray-100 p-3 bg-[#262626] font-semibold w-[10%]">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -731,14 +731,14 @@ export default function CareerGoalsPage() {
             {/* Desired Focus Distribution */}
             {categories.length > 0 && (
               <div>
-                <h3 className="text-gray-100 font-semibold mb-3">Desired Focus Distribution</h3>
+                <h3 className="text-sm text-gray-100 font-semibold mb-3">Desired Focus Distribution</h3>
                 <div className="border overflow-x-auto border-[#383838] rounded-lg bg-[#262626]">
                   <table className="w-full border-collapse table-fixed">
                     <thead>
                       <tr className="border-[#383838]">
-                        <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[30%]">Category</th>
-                        <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[10%]">Focus %</th>
-                        <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[60%]">Why</th>
+                        <th className="text-sm text-gray-100 p-3 bg-[#262626] font-semibold w-[30%]">Category</th>
+                        <th className="text-sm text-gray-100 p-3 bg-[#262626] font-semibold w-[10%]">Focus %</th>
+                        <th className="text-sm text-gray-100 p-3 bg-[#262626] font-semibold w-[60%]">Why</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -791,7 +791,7 @@ export default function CareerGoalsPage() {
             <div className="grid grid-cols-[60%_40%] gap-6">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-gray-100 font-semibold">Goals</h3>
+                  <h3 className="text-sm text-gray-100 font-semibold">Goals</h3>
                   <Button onClick={() => addGoal('short_term', setShortTermGoals, shortTermGoals)}>
                     <Plus className="h-4 w-4 mr-1" />
                     Add Goal
@@ -801,10 +801,10 @@ export default function CareerGoalsPage() {
                   <table className="w-full border-collapse">
                     <thead>
                       <tr className="border-[#383838] bg-[#262626]">
-                        <th className="text-gray-100 p-2 font-semibold w-[45%]">Goal</th>
-                        <th className="text-gray-100 p-2 font-semibold w-[12%]">Type</th>
-                        <th className="text-gray-100 p-2 font-semibold w-[18%]">Category</th>
-                        <th className="text-gray-100 p-2 font-semibold w-[15%]">Status</th>
+                        <th className="text-sm text-gray-100 p-2 font-semibold w-[45%]">Goal</th>
+                        <th className="text-sm text-gray-100 p-2 font-semibold w-[12%]">Type</th>
+                        <th className="text-sm text-gray-100 p-2 font-semibold w-[18%]">Category</th>
+                        <th className="text-sm text-gray-100 p-2 font-semibold w-[15%]">Status</th>
                         <th className="text-sm p-2 font-semibold w-10"></th>
                       </tr>
                     </thead>
@@ -882,7 +882,7 @@ export default function CareerGoalsPage() {
               </div>
 
               <div>
-                <h3 className="text-gray-100 font-semibold mb-3">Current Focus Distribution</h3>
+                <h3 className="text-sm text-gray-100 font-semibold mb-3">Current Focus Distribution</h3>
                 {renderPieChart(shortTermGoals)}
                 {(() => {
                   const currentDist = calculateGoalDistribution(shortTermGoals)
@@ -936,14 +936,14 @@ export default function CareerGoalsPage() {
             {/* Desired Focus Distribution */}
             {categories.length > 0 && (
               <div>
-                <h3 className="text-gray-100 font-semibold mb-3">Desired Focus Distribution</h3>
+                <h3 className="text-sm text-gray-100 font-semibold mb-3">Desired Focus Distribution</h3>
                 <div className="border overflow-x-auto border-[#383838] rounded-lg bg-[#262626]">
                   <table className="w-full border-collapse table-fixed">
                     <thead>
                       <tr className="border-[#383838]">
-                        <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[30%]">Category</th>
-                        <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[10%]">Focus %</th>
-                        <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[60%]">Why</th>
+                        <th className="text-sm text-gray-100 p-3 bg-[#262626] font-semibold w-[30%]">Category</th>
+                        <th className="text-sm text-gray-100 p-3 bg-[#262626] font-semibold w-[10%]">Focus %</th>
+                        <th className="text-sm text-gray-100 p-3 bg-[#262626] font-semibold w-[60%]">Why</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -996,7 +996,7 @@ export default function CareerGoalsPage() {
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-gray-100 font-semibold">Goals</h3>
+                  <h3 className="text-sm text-gray-100 font-semibold">Goals</h3>
                   <Button onClick={() => addGoal('mid_term', setMidTermGoals, midTermGoals)}>
                     <Plus className="h-4 w-4 mr-1" />
                     Add Goal
@@ -1006,10 +1006,10 @@ export default function CareerGoalsPage() {
                   <table className="w-full border-collapse">
                     <thead>
                       <tr className="border-[#383838] bg-[#262626]">
-                        <th className="text-gray-100 p-2 font-semibold w-[45%]">Goal</th>
-                        <th className="text-gray-100 p-2 font-semibold w-[12%]">Type</th>
-                        <th className="text-gray-100 p-2 font-semibold w-[18%]">Category</th>
-                        <th className="text-gray-100 p-2 font-semibold w-[15%]">Status</th>
+                        <th className="text-sm text-gray-100 p-2 font-semibold w-[45%]">Goal</th>
+                        <th className="text-sm text-gray-100 p-2 font-semibold w-[12%]">Type</th>
+                        <th className="text-sm text-gray-100 p-2 font-semibold w-[18%]">Category</th>
+                        <th className="text-sm text-gray-100 p-2 font-semibold w-[15%]">Status</th>
                         <th className="text-sm p-2 font-semibold w-10"></th>
                       </tr>
                     </thead>
@@ -1087,7 +1087,7 @@ export default function CareerGoalsPage() {
               </div>
 
               <div>
-                <h3 className="text-gray-100 font-semibold mb-3">Current Focus Distribution</h3>
+                <h3 className="text-sm text-gray-100 font-semibold mb-3">Current Focus Distribution</h3>
                 {renderPieChart(midTermGoals)}
                 {(() => {
                   const currentDist = calculateGoalDistribution(midTermGoals)
@@ -1138,14 +1138,14 @@ export default function CareerGoalsPage() {
             {/* Desired Focus Distribution */}
             {categories.length > 0 && (
               <div>
-                <h3 className="text-gray-100 font-semibold mb-3">Desired Focus Distribution</h3>
+                <h3 className="text-sm text-gray-100 font-semibold mb-3">Desired Focus Distribution</h3>
                 <div className="border overflow-x-auto border-[#383838] rounded-lg bg-[#262626]">
                   <table className="w-full border-collapse table-fixed">
                     <thead>
                       <tr className="border-[#383838]">
-                        <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[30%]">Category</th>
-                        <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[10%]">Focus %</th>
-                        <th className="text-gray-100 p-3 bg-[#262626] font-semibold w-[60%]">Why</th>
+                        <th className="text-sm text-gray-100 p-3 bg-[#262626] font-semibold w-[30%]">Category</th>
+                        <th className="text-sm text-gray-100 p-3 bg-[#262626] font-semibold w-[10%]">Focus %</th>
+                        <th className="text-sm text-gray-100 p-3 bg-[#262626] font-semibold w-[60%]">Why</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1198,7 +1198,7 @@ export default function CareerGoalsPage() {
             <div className="grid grid-cols-[60%_40%] gap-6">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-gray-100 font-semibold">Goals</h3>
+                  <h3 className="text-sm text-gray-100 font-semibold">Goals</h3>
                   <Button onClick={() => addGoal('long_term', setLongTermGoals, longTermGoals)}>
                     <Plus className="h-4 w-4 mr-1" />
                     Add Goal
@@ -1208,10 +1208,10 @@ export default function CareerGoalsPage() {
                   <table className="w-full border-collapse">
                     <thead>
                       <tr className="border-[#383838] bg-[#262626]">
-                        <th className="text-gray-100 p-2 font-semibold w-[45%]">Goal</th>
-                        <th className="text-gray-100 p-2 font-semibold w-[12%]">Type</th>
-                        <th className="text-gray-100 p-2 font-semibold w-[18%]">Category</th>
-                        <th className="text-gray-100 p-2 font-semibold w-[15%]">Status</th>
+                        <th className="text-sm text-gray-100 p-2 font-semibold w-[45%]">Goal</th>
+                        <th className="text-sm text-gray-100 p-2 font-semibold w-[12%]">Type</th>
+                        <th className="text-sm text-gray-100 p-2 font-semibold w-[18%]">Category</th>
+                        <th className="text-sm text-gray-100 p-2 font-semibold w-[15%]">Status</th>
                         <th className="text-sm p-2 font-semibold w-10"></th>
                       </tr>
                     </thead>
@@ -1289,7 +1289,7 @@ export default function CareerGoalsPage() {
               </div>
 
               <div>
-                <h3 className="text-gray-100 font-semibold mb-3">Current Focus Distribution</h3>
+                <h3 className="text-sm text-gray-100 font-semibold mb-3">Current Focus Distribution</h3>
                 {renderPieChart(longTermGoals)}
                 {(() => {
                   const currentDist = calculateGoalDistribution(longTermGoals)
@@ -1348,10 +1348,10 @@ export default function CareerGoalsPage() {
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="border-[#383838]">
-                    <th className="text-gray-100 p-3 bg-[#262626] font-semibold">Type</th>
-                    <th className="text-gray-100 p-3 bg-[#262626] font-semibold">Description</th>
-                    <th className="text-gray-100 p-3 bg-[#262626] font-semibold">Date</th>
-                    <th className="text-gray-100 p-3 bg-[#262626] font-semibold">Key Takeaway</th>
+                    <th className="text-sm text-gray-100 p-3 bg-[#262626] font-semibold">Type</th>
+                    <th className="text-sm text-gray-100 p-3 bg-[#262626] font-semibold">Description</th>
+                    <th className="text-sm text-gray-100 p-3 bg-[#262626] font-semibold">Date</th>
+                    <th className="text-sm text-gray-100 p-3 bg-[#262626] font-semibold">Key Takeaway</th>
                     <th className="text-sm p-3 bg-[#262626] font-semibold w-10"></th>
                   </tr>
                 </thead>
