@@ -29,8 +29,8 @@ export function BoardColumn({ status, tasks, onEdit, onDelete, onQuickAdd }: Boa
       {/* Column Header  */}
       <div className="flex items-center justify-between mb-3 pb-2 border-[#383838]">
         <div className="flex items-center gap-1.5">
-          <span className="text-gray-300 font-semibold p-2">{status}</span>
-          <span className="text-gray-500">{tasks.length}</span>
+          <span className="text-sm text-gray-300 font-semibold p-2">{status}</span>
+          <span className="text-xs text-gray-500">{tasks.length}</span>
         </div>
         <button
           onClick={() => onQuickAdd(status)}

@@ -92,8 +92,8 @@ export default function TeamsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-gray-100 font-bold">Teams</h1>
-          <p className="text-gray-400 mt-1">
+          <h1 className="text-2xl text-gray-100 font-bold">Teams</h1>
+          <p className="text-sm text-gray-400 mt-1">
             Manage your teams and team members
           </p>
         </div>
@@ -108,7 +108,7 @@ export default function TeamsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{teams.filter(t => t.status === "active").length}</div>
-            <p className="text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               {teams.filter(t => t.status === "inactive").length} inactive
             </p>
           </CardContent>
@@ -123,7 +123,7 @@ export default function TeamsPage() {
             <div className="text-2xl font-bold">
               {teams.filter(t => t.status === "active").reduce((sum, team) => sum + team.memberCount, 0)}
             </div>
-            <p className="text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               In active teams
             </p>
           </CardContent>
@@ -140,7 +140,7 @@ export default function TeamsPage() {
                 ? Math.round(teams.filter(t => t.status === "active").reduce((sum, team) => sum + team.memberCount, 0) / teams.filter(t => t.status === "active").length)
                 : 0}
             </div>
-            <p className="text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               Members per active team
             </p>
           </CardContent>
