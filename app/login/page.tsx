@@ -37,17 +37,16 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-[#171717] p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
+          <div className="flex justify-center mb-8">
             <Image
-              src="/icon_02.png"
+              src="/logo_transparent.png"
               alt="Cadence"
-              width={60}
+              width={270}
               height={60}
-              className="rounded-lg"
             />
           </div>
           <CardTitle className="text-2xl">Welcome to Cadence</CardTitle>
-          <CardDescription>
+          <CardDescription className="text-base">
             Your engineering management control centre
           </CardDescription>
         </CardHeader>
@@ -78,9 +77,8 @@ export default function LoginPage() {
             Continue with Google
           </Button>
 
-          <div className="text-gray-400">
-            <p>By signing in, you agree to our Terms of Service</p>
-            <p className="mt-1">and Privacy Policy</p>
+          <div className="text-gray-400 text-sm">
+            <p>By signing in, you agree to our Terms of Service and Privacy Policy</p>
           </div>
         </CardContent>
       </Card>
