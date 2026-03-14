@@ -90,8 +90,8 @@ export async function createPerson(person: Omit<Person, 'id' | 'createdAt'> & { 
     const teamNameToId = Object.fromEntries((allTeams ?? []).map((t: any) => [t.name, t.id]))
     const teamIds = teamNames.map(name => teamNameToId[name]).filter(Boolean)
     if (teamIds.length > 0) {
-      await supabase.from('team_memberships').insert(
-        teamIds.map((team_id: string) => ({ person_id: personId, team_id } as any))
+      await (supabase.from('team_memberships') as any).insert(
+        teamIds.map((team_id: string) => ({ person_id: personId, team_id }))
       )
     }
   }
@@ -148,8 +148,8 @@ export async function updatePerson(id: string, updates: Partial<Person>): Promis
     // Add missing memberships
     const toAdd = desiredTeamIds.filter((tid: string) => !currentTeamIds.includes(tid))
     if (toAdd.length > 0) {
-      await supabase.from('team_memberships').insert(
-        toAdd.map((team_id: string) => ({ person_id: id, team_id } as any))
+      await (supabase.from('team_memberships') as any).insert(
+        toAdd.map((team_id: string) => ({ person_id: id, team_id }))
       )
     }
 
