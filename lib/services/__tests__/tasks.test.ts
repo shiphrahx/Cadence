@@ -390,11 +390,13 @@ describe('Tasks Service', () => {
       }
 
       const mockFrom = vi.fn().mockReturnValue({
-        select: vi.fn().mockReturnValue({
+        update: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: mockTask,
-              error: null,
+            select: vi.fn().mockReturnValue({
+              single: vi.fn().mockResolvedValue({
+                data: mockTask,
+                error: null,
+              }),
             }),
           }),
         }),
@@ -420,11 +422,13 @@ describe('Tasks Service', () => {
       }
 
       const mockFrom = vi.fn().mockReturnValue({
-        select: vi.fn().mockReturnValue({
+        update: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: mockTask,
-              error: null,
+            select: vi.fn().mockReturnValue({
+              single: vi.fn().mockResolvedValue({
+                data: mockTask,
+                error: null,
+              }),
             }),
           }),
         }),

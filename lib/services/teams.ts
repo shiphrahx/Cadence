@@ -88,8 +88,8 @@ export async function createTeam(team: Omit<Team, 'id' | 'memberCount' | 'create
   const memberIds = team.memberIds ?? []
 
   if (memberIds.length > 0) {
-    await supabase.from('team_memberships').insert(
-      memberIds.map((person_id: string) => ({ team_id: teamId, person_id } as any))
+    await (supabase.from('team_memberships') as any).insert(
+      memberIds.map((person_id: string) => ({ team_id: teamId, person_id }))
     )
   }
 
@@ -139,8 +139,8 @@ export async function updateTeam(id: string, updates: Partial<Team>): Promise<Te
 
     const toAdd = desiredIds.filter((pid: string) => !currentIds.includes(pid))
     if (toAdd.length > 0) {
-      await supabase.from('team_memberships').insert(
-        toAdd.map((person_id: string) => ({ team_id: id, person_id } as any))
+      await (supabase.from('team_memberships') as any).insert(
+        toAdd.map((person_id: string) => ({ team_id: id, person_id }))
       )
     }
 

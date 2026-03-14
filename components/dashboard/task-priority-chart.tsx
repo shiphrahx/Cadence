@@ -67,7 +67,7 @@ async function fetchData(weeks: WeekOption): Promise<WeekRow[]> {
     .gte("created_at", toISO(start))
     .lte("created_at", toISO(end))
 
-  const rows = data ?? []
+  const rows = (data ?? []) as { created_at: string; priority: string }[]
 
   return Array.from({ length: weeks }, (_, i) => {
     const monday = addDays(start, i * 7)

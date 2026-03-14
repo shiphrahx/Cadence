@@ -375,7 +375,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                 <Label htmlFor="role">Role *</Label>
                 <Input
                   id="role"
-                  value={formData.role}
+                  value={formData.role ?? ''}
                   onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                   placeholder="e.g. Senior Software Engineer"
                   required
@@ -417,7 +417,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                 </div>
                 <Input
                   id="level"
-                  value={formData.level}
+                  value={formData.level ?? ''}
                   onChange={(e) => setFormData({ ...formData, level: e.target.value })}
                   placeholder="Or type custom level"
                   required
@@ -428,7 +428,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                 <Input
                   id="startDate"
                   type="date"
-                  value={formData.startDate}
+                  value={formData.startDate ?? ''}
                   onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                   required
                 />

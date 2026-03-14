@@ -9,8 +9,8 @@ import { MeetingTemplate } from '@/lib/hooks/use-templates'
 export async function getTemplates(): Promise<{ active: MeetingTemplate[]; deleted: MeetingTemplate[] }> {
   const supabase = createClient()
 
-  const { data, error } = await supabase
-    .from('meeting_templates')
+  const { data, error } = await (supabase
+    .from('meeting_templates') as any)
     .select('*')
     .order('created_at', { ascending: true })
 
@@ -41,8 +41,8 @@ export async function createTemplate(template: Omit<MeetingTemplate, 'id'>): Pro
 
   if (!user) throw new Error('Not authenticated')
 
-  const { data, error } = await supabase
-    .from('meeting_templates')
+  const { data, error } = await (supabase
+    .from('meeting_templates') as any)
     .insert({
       name: template.name,
       notes: template.notes,
@@ -63,8 +63,8 @@ export async function createTemplate(template: Omit<MeetingTemplate, 'id'>): Pro
 export async function updateTemplate(id: string, updates: Partial<Omit<MeetingTemplate, 'id'>>): Promise<void> {
   const supabase = createClient()
 
-  const { error } = await supabase
-    .from('meeting_templates')
+  const { error } = await (supabase
+    .from('meeting_templates') as any)
     .update({ name: updates.name, notes: updates.notes })
     .eq('id', id)
 
@@ -74,8 +74,8 @@ export async function updateTemplate(id: string, updates: Partial<Omit<MeetingTe
 export async function softDeleteTemplate(id: string): Promise<void> {
   const supabase = createClient()
 
-  const { error } = await supabase
-    .from('meeting_templates')
+  const { error } = await (supabase
+    .from('meeting_templates') as any)
     .update({ is_deleted: true })
     .eq('id', id)
 
@@ -85,8 +85,8 @@ export async function softDeleteTemplate(id: string): Promise<void> {
 export async function restoreTemplate(id: string): Promise<void> {
   const supabase = createClient()
 
-  const { error } = await supabase
-    .from('meeting_templates')
+  const { error } = await (supabase
+    .from('meeting_templates') as any)
     .update({ is_deleted: false })
     .eq('id', id)
 
@@ -99,8 +99,8 @@ export async function seedDefaultTemplates(defaults: MeetingTemplate[]): Promise
 
   if (!user) throw new Error('Not authenticated')
 
-  const { data, error } = await supabase
-    .from('meeting_templates')
+  const { data, error } = await (supabase
+    .from('meeting_templates') as any)
     .insert(
       defaults.map(t => ({
         name: t.name,
@@ -112,7 +112,7 @@ export async function seedDefaultTemplates(defaults: MeetingTemplate[]): Promise
 
   if (error) throw error
 
-  return (data ?? []).map(row => ({
+  return (data ?? [] as any[]).map((row: any) => ({
     id: row.id,
     name: row.name,
     notes: row.notes,

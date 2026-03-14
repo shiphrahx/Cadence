@@ -22,7 +22,7 @@ Cadence is a lightweight web platform for engineering managers to run their day-
 ## Design System
 
 ### Colors
-- **Primary Color:** #AEA6FD (Jellyfish purple from icon_02.png)
+- **Primary Color:** Gradient — `hsl(174,100%,50%)` → `hsl(142,100%,47%)` (cyan to bright green, `rgb(0,255,229)` → `rgb(0,240,88)`)
 - **Seniority Level Colors:**
   - Junior: Green (bg-green-100, text-green-700, border-green-300)
   - Mid: Yellow (bg-yellow-100, text-yellow-700, border-yellow-300)
@@ -30,9 +30,9 @@ Cadence is a lightweight web platform for engineering managers to run their day-
   - Custom: Blue (bg-blue-100, text-blue-700, border-blue-300)
 
 ### Logo
-- **File:** public/icon_02.png
-- **Size:** 35px × 35px
-- **Style:** Rounded corners
+- **File:** public/logo_transparent.png
+- **Login page size:** 270px × 60px (wide banner format, no border radius)
+- **Sidebar size:** 35px height (proportionally scaled)
 - **Placement:** Top-left of sidebar, clickable and navigates to dashboard
 
 ### Design Philosophy
@@ -50,11 +50,19 @@ Cadence/
 │   │   ├── layout.tsx          # Dashboard layout with sidebar
 │   │   ├── page.tsx             # Dashboard homepage
 │   │   ├── people/
-│   │   │   └── page.tsx         # People management (CRUD complete)
+│   │   │   ├── page.tsx         # People management (CRUD complete)
+│   │   │   └── [id]/
+│   │   │       └── page.tsx     # Person detail with meeting history
 │   │   ├── teams/
 │   │   │   └── page.tsx         # Teams management (CRUD complete)
 │   │   ├── tasks/
 │   │   │   └── page.tsx         # Tasks management (CRUD complete)
+│   │   ├── meetings/
+│   │   │   └── page.tsx         # Meetings management (CRUD complete)
+│   │   ├── career-goals/
+│   │   │   └── page.tsx         # Career Goals management (CRUD complete)
+│   │   ├── settings/
+│   │   │   └── page.tsx         # Settings (profile + template management)
 │   │   └── ...
 │   ├── auth/
 │   │   └── callback/
@@ -65,28 +73,53 @@ Cadence/
 │   └── layout.tsx               # Root layout
 ├── components/
 │   ├── sidebar.tsx              # Navigation sidebar component
+│   ├── dashboard-layout.tsx     # Dashboard layout wrapper
 │   ├── people-table.tsx         # People table component
 │   ├── teams-table.tsx          # Teams table component
+│   ├── person-form-dialog.tsx   # Reusable add/edit person dialog
+│   ├── team-form-dialog.tsx     # Reusable add/edit team dialog
+│   ├── meeting-form-dialog.tsx  # Reusable add/edit meeting dialog
+│   ├── delete-confirm-dialog.tsx # Reusable delete confirmation dialog
+│   ├── dashboard/
+│   │   ├── dashboard-calendar.tsx    # Calendar widget
+│   │   ├── tasks-widget.tsx          # Tasks summary widget
+│   │   ├── meetings-widget.tsx       # Meetings summary widget
+│   │   ├── task-priority-chart.tsx   # Priority breakdown chart
+│   │   ├── tasks-bar-chart.tsx       # Tasks bar chart
+│   │   └── meetings-bar-chart.tsx    # Meetings bar chart
 │   ├── tasks/
-│   │   ├── task-card.tsx        # Task card component
-│   │   ├── board-column.tsx     # Kanban board column
-│   │   └── backlog-table.tsx    # Backlog table
+│   │   ├── task-card.tsx             # Task card component
+│   │   ├── task-modal.tsx            # Task detail modal
+│   │   ├── board-column.tsx          # Kanban board column
+│   │   ├── backlog-table.tsx         # Backlog table
+│   │   ├── inline-task-form.tsx      # Inline task creation form
+│   │   ├── draggable-task-card.tsx   # Draggable task card
+│   │   └── draggable-table-row.tsx   # Draggable table row
 │   ├── __tests__/               # Component tests
 │   │   ├── people-table.test.tsx
 │   │   └── teams-table.test.tsx
 │   └── ui/                      # shadcn/ui components
 │       ├── button.tsx
 │       ├── dialog.tsx
+│       ├── badge-select.tsx
+│       ├── data-table.tsx
+│       ├── markdown-textarea.tsx
+│       ├── rich-text-editor.tsx
 │       └── ...
 ├── lib/
 │   ├── services/                # Service layer for data access
 │   │   ├── people.ts
 │   │   ├── teams.ts
 │   │   ├── tasks.ts
+│   │   ├── meetings.ts
+│   │   ├── career-goals.ts
+│   │   ├── templates.ts
 │   │   └── __tests__/           # Service layer tests
 │   │       ├── people.test.ts
 │   │       ├── teams.test.ts
 │   │       └── tasks.test.ts
+│   ├── hooks/
+│   │   └── use-templates.ts     # Template state management hook
 │   ├── supabase/                # Supabase clients and types
 │   │   ├── client.ts            # Browser client
 │   │   ├── server.ts            # Server client
@@ -212,12 +245,28 @@ Cadence/
   - [x] Vitest configuration
   - [x] Supabase mocks
 
+### ✅ Additionally Complete
+- [x] Meetings management
+  - [x] Full CRUD operations
+  - [x] Tree organization by type/person/team
+  - [x] Action item parsing to tasks
+  - [x] Recurrence support
+- [x] Career Goals tracking
+  - [x] Full CRUD operations
+  - [x] Profile, gap analysis, focus distributions
+  - [x] Goals and achievements management
+- [x] Settings page
+  - [x] Profile settings (name editable, email read-only)
+  - [x] Meeting template management (full CRUD with soft delete/restore)
+- [x] People detail page (`/people/[id]`)
+  - [x] Person-specific meeting history
+  - [x] Team membership management
+  - [x] Meeting logging from detail view
+
 ### 🚧 In Progress / Planned
 - [ ] Projects management
-- [ ] Meetings management
-- [ ] Career Goals tracking
 - [ ] CI/CD pipeline with GitHub Actions
-- [ ] Additional integration tests for People and Tasks
+- [ ] Additional integration tests for People, Tasks, Meetings, Career Goals
 - [ ] E2E tests with Playwright
 
 ## Key Files Reference
@@ -330,9 +379,16 @@ interface Task {
 
 ---
 
-Last Updated: 2026-01-04
+Last Updated: 2026-03-14
 
 ## Changelog
+
+### 2026-03-14 - Documentation Refresh
+- Updated logo reference from icon_02.png to logo_transparent.png
+- Added Meetings, Career Goals, Settings, and People detail pages to structure
+- Added dashboard components, form dialogs, and new UI components to structure
+- Added meetings, career-goals, and templates services + use-templates hook
+- Updated implementation status to reflect completed features
 
 ### 2026-01-04 - V1 Backend Complete
 - Implemented Supabase database integration with RLS policies
