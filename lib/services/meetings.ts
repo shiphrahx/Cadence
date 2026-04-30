@@ -26,6 +26,57 @@ export interface Meeting {
   updatedAt: string
 }
 
+type MeetingRow = {
+  id: string
+  title: string
+  meeting_type: string
+  meeting_date: string
+  next_meeting_date: string | null
+  recurrence: string | null
+  action_items: string | null
+  notes: string | null
+  person_id: string | null
+  team_id: string | null
+  owning_user_id: string
+  created_at: string
+  updated_at: string
+  person: { full_name: string } | null
+  team: { name: string } | null
+}
+
+function rowToMeeting(meeting: MeetingRow): Meeting {
+  const attendees =
+    meeting.meeting_type === '1:1' && meeting.person?.full_name
+      ? [meeting.person.full_name]
+      : meeting.meeting_type !== 'Other' && meeting.team?.name
+      ? [meeting.team.name]
+      : []
+
+  return {
+    id: meeting.id,
+    title: meeting.title,
+    meetingType: meeting.meeting_type as MeetingType,
+    meetingDate: meeting.meeting_date,
+    nextMeetingDate: meeting.next_meeting_date,
+    recurrence: meeting.recurrence as RecurrenceType | null,
+    actionItems: meeting.action_items,
+    notes: meeting.notes,
+    personId: meeting.person_id,
+    personName: meeting.person?.full_name ?? null,
+    teamId: meeting.team_id,
+    teamName: meeting.team?.name ?? null,
+    attendees,
+    createdAt: meeting.created_at,
+    updatedAt: meeting.updated_at,
+  }
+}
+
+const MEETING_SELECT = `
+  *,
+  person:people(full_name),
+  team:teams(name)
+` as const
+
 /**
  * Get all meetings for the current user
  */
@@ -34,42 +85,20 @@ export async function getMeetings(): Promise<Meeting[]> {
 
   const { data: meetings, error } = await supabase
     .from('meetings')
-    .select(`
-      *,
-      person:people(full_name),
-      team:teams(name)
-    `)
+    .select(MEETING_SELECT)
     .order('meeting_date', { ascending: false })
 
   if (error) throw error
 
-  return (meetings ?? []).map((meeting: any) => ({
-    id: meeting.id,
-    title: meeting.title,
-    meetingType: meeting.meeting_type,
-    meetingDate: meeting.meeting_date,
-    nextMeetingDate: meeting.next_meeting_date,
-    recurrence: meeting.recurrence,
-    actionItems: meeting.action_items,
-    notes: meeting.notes,
-    personId: meeting.person_id,
-    personName: meeting.person?.full_name || null,
-    teamId: meeting.team_id,
-    teamName: meeting.team?.name || null,
-    attendees: meeting.meeting_type === '1:1' && meeting.person?.full_name
-      ? [meeting.person.full_name]
-      : meeting.meeting_type !== 'Other' && meeting.team?.name
-      ? [meeting.team.name]
-      : [],
-    createdAt: meeting.created_at,
-    updatedAt: meeting.updated_at,
-  }))
+  return (meetings ?? []).map((m) => rowToMeeting(m as unknown as MeetingRow))
 }
 
 /**
  * Create a new meeting
  */
-export async function createMeeting(meeting: Omit<Meeting, 'id' | 'createdAt' | 'updatedAt' | 'personName' | 'teamName' | 'attendees'>): Promise<Meeting> {
+export async function createMeeting(
+  meeting: Omit<Meeting, 'id' | 'createdAt' | 'updatedAt' | 'personName' | 'teamName' | 'attendees'>
+): Promise<Meeting> {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -88,37 +117,13 @@ export async function createMeeting(meeting: Omit<Meeting, 'id' | 'createdAt' | 
       person_id: meeting.personId || null,
       team_id: meeting.teamId || null,
       owning_user_id: user.id,
-    } as any)
-    .select(`
-      *,
-      person:people(full_name),
-      team:teams(name)
-    `)
+    })
+    .select(MEETING_SELECT)
     .single()
 
   if (error) throw error
 
-  return {
-    id: (data as any).id,
-    title: (data as any).title,
-    meetingType: (data as any).meeting_type,
-    meetingDate: (data as any).meeting_date,
-    nextMeetingDate: (data as any).next_meeting_date,
-    recurrence: (data as any).recurrence,
-    actionItems: (data as any).action_items,
-    notes: (data as any).notes,
-    personId: (data as any).person_id,
-    personName: (data as any).person?.full_name || null,
-    teamId: (data as any).team_id,
-    teamName: (data as any).team?.name || null,
-    attendees: (data as any).meeting_type === '1:1' && (data as any).person?.full_name
-      ? [(data as any).person.full_name]
-      : (data as any).meeting_type !== 'Other' && (data as any).team?.name
-      ? [(data as any).team.name]
-      : [],
-    createdAt: (data as any).created_at,
-    updatedAt: (data as any).updated_at,
-  }
+  return rowToMeeting(data as unknown as MeetingRow)
 }
 
 /**
@@ -127,7 +132,7 @@ export async function createMeeting(meeting: Omit<Meeting, 'id' | 'createdAt' | 
 export async function updateMeeting(id: string, updates: Partial<Meeting>): Promise<Meeting> {
   const supabase = createClient()
 
-  const dbUpdates: any = {}
+  const dbUpdates: Record<string, unknown> = {}
   if (updates.title !== undefined) dbUpdates.title = updates.title
   if (updates.meetingType !== undefined) dbUpdates.meeting_type = updates.meetingType
   if (updates.meetingDate !== undefined) dbUpdates.meeting_date = updates.meetingDate
@@ -138,40 +143,16 @@ export async function updateMeeting(id: string, updates: Partial<Meeting>): Prom
   if (updates.personId !== undefined) dbUpdates.person_id = updates.personId || null
   if (updates.teamId !== undefined) dbUpdates.team_id = updates.teamId || null
 
-  const { data, error } = await (supabase
-    .from('meetings') as any)
+  const { data, error } = await supabase
+    .from('meetings')
     .update(dbUpdates)
     .eq('id', id)
-    .select(`
-      *,
-      person:people(full_name),
-      team:teams(name)
-    `)
+    .select(MEETING_SELECT)
     .single()
 
   if (error) throw error
 
-  return {
-    id: (data as any).id,
-    title: (data as any).title,
-    meetingType: (data as any).meeting_type,
-    meetingDate: (data as any).meeting_date,
-    nextMeetingDate: (data as any).next_meeting_date,
-    recurrence: (data as any).recurrence,
-    actionItems: (data as any).action_items,
-    notes: (data as any).notes,
-    personId: (data as any).person_id,
-    personName: (data as any).person?.full_name || null,
-    teamId: (data as any).team_id,
-    teamName: (data as any).team?.name || null,
-    attendees: (data as any).meeting_type === '1:1' && (data as any).person?.full_name
-      ? [(data as any).person.full_name]
-      : (data as any).meeting_type !== 'Other' && (data as any).team?.name
-      ? [(data as any).team.name]
-      : [],
-    createdAt: (data as any).created_at,
-    updatedAt: (data as any).updated_at,
-  }
+  return rowToMeeting(data as unknown as MeetingRow)
 }
 
 /**
@@ -196,33 +177,13 @@ export async function getMeetingsForPerson(personId: string): Promise<Meeting[]>
 
   const { data: meetings, error } = await supabase
     .from('meetings')
-    .select(`
-      *,
-      person:people(full_name),
-      team:teams(name)
-    `)
+    .select(MEETING_SELECT)
     .eq('person_id', personId)
     .order('meeting_date', { ascending: false })
 
   if (error) throw error
 
-  return (meetings ?? []).map((meeting: any) => ({
-    id: meeting.id,
-    title: meeting.title,
-    meetingType: meeting.meeting_type,
-    meetingDate: meeting.meeting_date,
-    nextMeetingDate: meeting.next_meeting_date,
-    recurrence: meeting.recurrence,
-    actionItems: meeting.action_items,
-    notes: meeting.notes,
-    personId: meeting.person_id,
-    personName: meeting.person?.full_name || null,
-    teamId: meeting.team_id,
-    teamName: meeting.team?.name || null,
-    attendees: meeting.person?.full_name ? [meeting.person.full_name] : [],
-    createdAt: meeting.created_at,
-    updatedAt: meeting.updated_at,
-  }))
+  return (meetings ?? []).map((m) => rowToMeeting(m as unknown as MeetingRow))
 }
 
 /**
@@ -233,31 +194,11 @@ export async function getMeetingsForTeam(teamId: string): Promise<Meeting[]> {
 
   const { data: meetings, error } = await supabase
     .from('meetings')
-    .select(`
-      *,
-      person:people(full_name),
-      team:teams(name)
-    `)
+    .select(MEETING_SELECT)
     .eq('team_id', teamId)
     .order('meeting_date', { ascending: false })
 
   if (error) throw error
 
-  return (meetings ?? []).map((meeting: any) => ({
-    id: meeting.id,
-    title: meeting.title,
-    meetingType: meeting.meeting_type,
-    meetingDate: meeting.meeting_date,
-    nextMeetingDate: meeting.next_meeting_date,
-    recurrence: meeting.recurrence,
-    actionItems: meeting.action_items,
-    notes: meeting.notes,
-    personId: meeting.person_id,
-    personName: meeting.person?.full_name || null,
-    teamId: meeting.team_id,
-    teamName: meeting.team?.name || null,
-    attendees: meeting.team?.name ? [meeting.team.name] : [],
-    createdAt: meeting.created_at,
-    updatedAt: meeting.updated_at,
-  }))
+  return (meetings ?? []).map((m) => rowToMeeting(m as unknown as MeetingRow))
 }

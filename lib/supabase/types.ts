@@ -141,7 +141,8 @@ export interface Database {
           id: string
           title: string
           description: string | null
-          status: 'open' | 'completed'
+          status: 'not_started' | 'in_progress' | 'blocked' | 'completed'
+          list: 'week' | 'backlog'
           due_date: string | null
           completion_date: string | null
           source: 'manual' | 'meeting_action' | 'recurring_meeting' | 'growth' | 'performance'
@@ -154,7 +155,8 @@ export interface Database {
           id?: string
           title: string
           description?: string | null
-          status?: 'open' | 'completed'
+          status?: 'not_started' | 'in_progress' | 'blocked' | 'completed'
+          list?: 'week' | 'backlog'
           due_date?: string | null
           completion_date?: string | null
           source?: 'manual' | 'meeting_action' | 'recurring_meeting' | 'growth' | 'performance'
@@ -167,7 +169,8 @@ export interface Database {
           id?: string
           title?: string
           description?: string | null
-          status?: 'open' | 'completed'
+          status?: 'not_started' | 'in_progress' | 'blocked' | 'completed'
+          list?: 'week' | 'backlog'
           due_date?: string | null
           completion_date?: string | null
           source?: 'manual' | 'meeting_action' | 'recurring_meeting' | 'growth' | 'performance'

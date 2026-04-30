@@ -4,7 +4,10 @@
  */
 
 import { createClient } from '@/lib/supabase/server'
+import type { Database } from '@/lib/supabase/types'
 import { NextResponse } from 'next/server'
+
+type UserProfileInsert = Database['public']['Tables']['user_profiles']['Insert']
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
@@ -14,7 +17,6 @@ export async function GET(request: Request) {
   if (code) {
     const supabase = await createClient()
 
-    // Exchange code for session
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (error) {
@@ -23,22 +25,25 @@ export async function GET(request: Request) {
     }
 
     if (data.user) {
-      // Check if user profile exists
       const { data: profile } = await supabase
         .from('user_profiles')
         .select('id')
         .eq('id', data.user.id)
         .single()
 
-      // Create user profile if it doesn't exist (first login)
       if (!profile) {
+        const metadata = data.user.user_metadata ?? {}
+        const insert: UserProfileInsert = {
+          id: data.user.id,
+          name: (metadata['full_name'] as string | undefined)
+            ?? (metadata['name'] as string | undefined)
+            ?? 'User',
+          email: data.user.email ?? null,
+        }
+
         const { error: profileError } = await supabase
           .from('user_profiles')
-          .insert({
-            id: data.user.id,
-            name: (data.user.user_metadata.full_name || data.user.user_metadata.name || 'User') as string,
-            email: data.user.email || null,
-          } as any)
+          .insert(insert)
 
         if (profileError) {
           console.error('Error creating user profile:', profileError)
@@ -47,6 +52,5 @@ export async function GET(request: Request) {
     }
   }
 
-  // Redirect to dashboard after successful auth
   return NextResponse.redirect(`${origin}/`)
 }

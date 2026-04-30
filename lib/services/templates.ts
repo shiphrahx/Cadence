@@ -4,13 +4,22 @@
  */
 
 import { createClient } from '@/lib/supabase/client'
+import type { Database } from '@/lib/supabase/types'
 import { MeetingTemplate } from '@/lib/hooks/use-templates'
+
+type TemplateRow = Database['public']['Tables']['meeting_templates']['Row']
+type TemplateInsert = Database['public']['Tables']['meeting_templates']['Insert']
+type TemplateUpdate = Database['public']['Tables']['meeting_templates']['Update']
+
+function rowToTemplate(row: TemplateRow): MeetingTemplate {
+  return { id: row.id, name: row.name, notes: row.notes }
+}
 
 export async function getTemplates(): Promise<{ active: MeetingTemplate[]; deleted: MeetingTemplate[] }> {
   const supabase = createClient()
 
-  const { data, error } = await (supabase
-    .from('meeting_templates') as any)
+  const { data, error } = await supabase
+    .from('meeting_templates')
     .select('*')
     .order('created_at', { ascending: true })
 
@@ -20,15 +29,10 @@ export async function getTemplates(): Promise<{ active: MeetingTemplate[]; delet
   const deleted: MeetingTemplate[] = []
 
   for (const row of data ?? []) {
-    const template: MeetingTemplate = {
-      id: row.id,
-      name: row.name,
-      notes: row.notes,
-    }
     if (row.is_deleted) {
-      deleted.push(template)
+      deleted.push(rowToTemplate(row))
     } else {
-      active.push(template)
+      active.push(rowToTemplate(row))
     }
   }
 
@@ -41,31 +45,31 @@ export async function createTemplate(template: Omit<MeetingTemplate, 'id'>): Pro
 
   if (!user) throw new Error('Not authenticated')
 
-  const { data, error } = await (supabase
-    .from('meeting_templates') as any)
-    .insert({
-      name: template.name,
-      notes: template.notes,
-      owning_user_id: user.id,
-    })
+  const insert: TemplateInsert = {
+    name: template.name,
+    notes: template.notes,
+    owning_user_id: user.id,
+  }
+
+  const { data, error } = await supabase
+    .from('meeting_templates')
+    .insert(insert)
     .select()
     .single()
 
   if (error) throw error
 
-  return {
-    id: data.id,
-    name: data.name,
-    notes: data.notes,
-  }
+  return rowToTemplate(data)
 }
 
 export async function updateTemplate(id: string, updates: Partial<Omit<MeetingTemplate, 'id'>>): Promise<void> {
   const supabase = createClient()
 
-  const { error } = await (supabase
-    .from('meeting_templates') as any)
-    .update({ name: updates.name, notes: updates.notes })
+  const patch: TemplateUpdate = { name: updates.name, notes: updates.notes }
+
+  const { error } = await supabase
+    .from('meeting_templates')
+    .update(patch)
     .eq('id', id)
 
   if (error) throw error
@@ -74,9 +78,9 @@ export async function updateTemplate(id: string, updates: Partial<Omit<MeetingTe
 export async function softDeleteTemplate(id: string): Promise<void> {
   const supabase = createClient()
 
-  const { error } = await (supabase
-    .from('meeting_templates') as any)
-    .update({ is_deleted: true })
+  const { error } = await supabase
+    .from('meeting_templates')
+    .update({ is_deleted: true } satisfies TemplateUpdate)
     .eq('id', id)
 
   if (error) throw error
@@ -85,9 +89,9 @@ export async function softDeleteTemplate(id: string): Promise<void> {
 export async function restoreTemplate(id: string): Promise<void> {
   const supabase = createClient()
 
-  const { error } = await (supabase
-    .from('meeting_templates') as any)
-    .update({ is_deleted: false })
+  const { error } = await supabase
+    .from('meeting_templates')
+    .update({ is_deleted: false } satisfies TemplateUpdate)
     .eq('id', id)
 
   if (error) throw error
@@ -99,22 +103,18 @@ export async function seedDefaultTemplates(defaults: MeetingTemplate[]): Promise
 
   if (!user) throw new Error('Not authenticated')
 
-  const { data, error } = await (supabase
-    .from('meeting_templates') as any)
-    .insert(
-      defaults.map(t => ({
-        name: t.name,
-        notes: t.notes,
-        owning_user_id: user.id,
-      }))
-    )
+  const inserts: TemplateInsert[] = defaults.map((t) => ({
+    name: t.name,
+    notes: t.notes,
+    owning_user_id: user.id,
+  }))
+
+  const { data, error } = await supabase
+    .from('meeting_templates')
+    .insert(inserts)
     .select()
 
   if (error) throw error
 
-  return (data ?? [] as any[]).map((row: any) => ({
-    id: row.id,
-    name: row.name,
-    notes: row.notes,
-  }))
+  return (data ?? []).map(rowToTemplate)
 }
