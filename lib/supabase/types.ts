@@ -232,6 +232,213 @@ export interface Database {
           updated_at?: string
         }
       }
+      meetings: {
+        Row: {
+          id: string
+          title: string
+          meeting_type: string
+          meeting_date: string
+          next_meeting_date: string | null
+          recurrence: string | null
+          action_items: string | null
+          notes: string | null
+          person_id: string | null
+          team_id: string | null
+          owning_user_id: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          meeting_type: string
+          meeting_date: string
+          next_meeting_date?: string | null
+          recurrence?: string | null
+          action_items?: string | null
+          notes?: string | null
+          person_id?: string | null
+          team_id?: string | null
+          owning_user_id: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          meeting_type?: string
+          meeting_date?: string
+          next_meeting_date?: string | null
+          recurrence?: string | null
+          action_items?: string | null
+          notes?: string | null
+          person_id?: string | null
+          team_id?: string | null
+          owning_user_id?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      career_goals_profiles: {
+        Row: {
+          id: string
+          where_you_are: string | null
+          where_you_want_to_go: string | null
+          owning_user_id: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          where_you_are?: string | null
+          where_you_want_to_go?: string | null
+          owning_user_id: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          where_you_are?: string | null
+          where_you_want_to_go?: string | null
+          owning_user_id?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      gap_analysis_categories: {
+        Row: {
+          id: string
+          category: string
+          current_state: string | null
+          desired_state: string | null
+          display_order: number | null
+          owning_user_id: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          category: string
+          current_state?: string | null
+          desired_state?: string | null
+          display_order?: number | null
+          owning_user_id: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          category?: string
+          current_state?: string | null
+          desired_state?: string | null
+          display_order?: number | null
+          owning_user_id?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      focus_distributions: {
+        Row: {
+          id: string
+          time_period: string
+          category_id: string
+          focus_percent: number | null
+          why: string | null
+          owning_user_id: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          time_period: string
+          category_id: string
+          focus_percent?: number | null
+          why?: string | null
+          owning_user_id: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          time_period?: string
+          category_id?: string
+          focus_percent?: number | null
+          why?: string | null
+          owning_user_id?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      career_goals: {
+        Row: {
+          id: string
+          time_period: string
+          goal: string
+          type: string
+          category_id: string
+          status: string
+          display_order: number | null
+          owning_user_id: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          time_period: string
+          goal: string
+          type: string
+          category_id: string
+          status: string
+          display_order?: number | null
+          owning_user_id: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          time_period?: string
+          goal?: string
+          type?: string
+          category_id?: string
+          status?: string
+          display_order?: number | null
+          owning_user_id?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      achievements: {
+        Row: {
+          id: string
+          type: string
+          description: string
+          achievement_date: string
+          key_takeaway: string | null
+          owning_user_id: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          type: string
+          description: string
+          achievement_date: string
+          key_takeaway?: string | null
+          owning_user_id: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          type?: string
+          description?: string
+          achievement_date?: string
+          key_takeaway?: string | null
+          owning_user_id?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never

@@ -11,14 +11,12 @@ import { ChevronRight, ChevronLeft, ArrowLeft, ChevronDown, Plus } from "lucide-
 import { MeetingFormDialog } from "@/components/meeting-form-dialog"
 import { getPeople, updatePerson, type Person } from "@/lib/services/people"
 import { getTeams, type Team } from "@/lib/services/teams"
-import { getMeetingsForPerson, createMeeting, type Meeting as BackendMeeting, type MeetingType, type RecurrenceType } from "@/lib/services/meetings"
+import { getMeetingsForPerson, createMeeting, type MeetingType, type RecurrenceType } from "@/lib/services/meetings"
 
 interface TreeNode {
   type: string
   meetings: ExtendedMeeting[]
 }
-
-const seniorityLevels = ["Junior", "Mid", "Senior", "Staff", "Principal"]
 
 interface ExtendedMeeting {
   id: string
@@ -34,40 +32,6 @@ interface ExtendedMeeting {
   notes?: string
   personId?: string
   teamId?: string
-}
-
-const getLevelBadgeClass = (level: string) => {
-  switch (level) {
-    case "Junior":
-      return "!bg-green-100 !text-green-700 !border-green-300 hover:!bg-green-200"
-    case "Mid":
-      return "!bg-yellow-100 !text-yellow-700 !border-yellow-300 hover:!bg-yellow-200"
-    case "Senior":
-      return "!bg-pink-100 !text-pink-700 !border-pink-300 hover:!bg-pink-200"
-    case "Staff":
-      return "!bg-purple-100 !text-purple-700 !border-purple-300 hover:!bg-purple-200"
-    case "Principal":
-      return "!bg-blue-100 !text-blue-700 !border-blue-300 hover:!bg-blue-200"
-    default:
-      return "!bg-gray-100 !text-gray-700 !border-gray-300 hover:!bg-gray-200"
-  }
-}
-
-const getLevelHoverClass = (level: string) => {
-  switch (level) {
-    case "Junior":
-      return "hover:!bg-green-50"
-    case "Mid":
-      return "hover:!bg-yellow-50"
-    case "Senior":
-      return "hover:!bg-pink-50"
-    case "Staff":
-      return "hover:!bg-purple-50"
-    case "Principal":
-      return "hover:!bg-blue-50"
-    default:
-      return "hover:!bg-gray-50"
-  }
 }
 
 export default function PersonDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -180,6 +144,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
         document.body.style.userSelect = ''
       }
     }
+    return undefined
   }, [isResizing])
 
   const getPersonMeetings = (): ExtendedMeeting[] => {

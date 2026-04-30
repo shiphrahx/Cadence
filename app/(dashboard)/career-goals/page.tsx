@@ -41,9 +41,6 @@ import {
   createAchievement,
   updateAchievement,
   deleteAchievement,
-  type GapAnalysisCategory,
-  type CareerGoal,
-  type Achievement,
 } from "@/lib/services/career-goals"
 
 interface GapAnalysisRow {
@@ -237,6 +234,7 @@ export default function CareerGoalsPage() {
       }, 1000)
       return () => clearTimeout(timer)
     }
+    return undefined
   }, [whereYouAre, whereYouWantToGo, isLoading, handleProfileUpdate])
 
   // Sync focus distributions when gap analysis changes

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent, within } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { TeamsTable } from '../teams-table'
 import type { Team } from '@/lib/services/teams'
@@ -114,7 +114,6 @@ describe('TeamsTable', () => {
   })
 
   it('should filter teams by status', async () => {
-    const user = userEvent.setup()
     render(<TeamsTable teams={mockTeams} {...mockHandlers} />)
 
     // Initially both teams should be visible
@@ -127,7 +126,6 @@ describe('TeamsTable', () => {
   })
 
   it('should search teams by name', async () => {
-    const user = userEvent.setup()
     render(<TeamsTable teams={mockTeams} {...mockHandlers} />)
 
     // Search functionality test

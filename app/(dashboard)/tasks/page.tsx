@@ -15,10 +15,8 @@ import {
   closestCenter,
   pointerWithin,
   rectIntersection,
-  getFirstCollision,
   CollisionDetection
 } from "@dnd-kit/core"
-import { arrayMove } from "@dnd-kit/sortable"
 import { BoardColumn } from "@/components/tasks/board-column"
 import { BacklogTable } from "@/components/tasks/backlog-table"
 import { TaskModal } from "@/components/tasks/task-modal"
@@ -34,100 +32,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 
-// Mock data
-const INITIAL_TASKS: Task[] = [
-  {
-    id: "1",
-    title: "Team meeting sync up",
-    dueDate: "2025-12-23",
-    priority: "High",
-    category: "Meeting",
-    status: "Not started",
-    list: "week",
-  },
-  {
-    id: "2",
-    title: "Performance reviews",
-    dueDate: "2025-12-24",
-    priority: "Low",
-    category: "Task",
-    status: "In progress",
-    list: "week",
-  },
-  {
-    id: "3",
-    title: "AWS Access",
-    dueDate: "2025-12-26",
-    priority: "Low",
-    category: "Task",
-    status: "Blocked",
-    list: "week",
-  },
-  {
-    id: "4",
-    title: "Book 1:1 with Tommy",
-    dueDate: "2025-12-23",
-    priority: "High",
-    category: "Meeting",
-    status: "Done",
-    list: "week",
-  },
-  {
-    id: "5",
-    title: "Prepare presentation",
-    dueDate: "2025-12-22",
-    priority: "High",
-    category: "Task",
-    status: "Not started",
-    list: "week",
-  },
-  {
-    id: "6",
-    title: "Prepare Sprint 1",
-    dueDate: "2025-12-25",
-    priority: "Medium",
-    category: "Task",
-    status: "Not started",
-    list: "week",
-  },
-  {
-    id: "7",
-    title: "Review DevOps backlog",
-    dueDate: "2026-01-06",
-    priority: "High",
-    category: "Task",
-    status: "Not started",
-    list: "backlog",
-  },
-  {
-    id: "8",
-    title: "Schedule 1:1 with product",
-    dueDate: "2025-12-31",
-    priority: "Low",
-    category: "Meeting",
-    status: "Not started",
-    list: "backlog",
-  },
-  {
-    id: "9",
-    title: "Lorem ipsum",
-    dueDate: "2026-01-01",
-    priority: "Medium",
-    category: "Task",
-    status: "Not started",
-    list: "backlog",
-  },
-  {
-    id: "10",
-    title: "ImplementtheauthenticationflowwithGoogleOAuthintegrationandsupabasebackendwithoutanyspacesinthetext",
-    dueDate: "2026-01-15",
-    priority: "High",
-    category: "Task",
-    status: "Not started",
-    list: "backlog",
-  },
-]
-
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [activeTask, setActiveTask] = useState<Task | null>(null)
@@ -136,7 +40,7 @@ export default function TasksPage() {
   const [modalDefaults, setModalDefaults] = useState<Partial<Task>>({})
   const [isMounted, setIsMounted] = useState(false)
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [, setIsLoading] = useState(true)
 
   // Load tasks from Supabase on mount
   useEffect(() => {

@@ -2,10 +2,9 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Plus, User } from "lucide-react"
+import { User } from "lucide-react"
 import { PersonFormDialog } from "@/components/person-form-dialog"
 import { PeopleTable } from "@/components/people-table"
 import { DeleteConfirmDialog } from "@/components/delete-confirm-dialog"
@@ -19,7 +18,7 @@ export default function PeoplePage() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [editingPerson, setEditingPerson] = useState<Person | null>(null)
   const [deletingPerson, setDeletingPerson] = useState<Person | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [, setIsLoading] = useState(true)
 
   // Load people and teams from Supabase on mount
   useEffect(() => {

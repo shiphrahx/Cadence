@@ -10,7 +10,6 @@ import {
   deleteMeeting,
   getMeetingsForPerson,
   getMeetingsForTeam,
-  type Meeting,
 } from '../meetings'
 import { createClient } from '@/lib/supabase/client'
 

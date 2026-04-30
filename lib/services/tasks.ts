@@ -4,12 +4,7 @@
  */
 
 import { createClient } from '@/lib/supabase/client'
-import type { Database } from '@/lib/supabase/types'
 import type { Task, TaskStatus, TaskPriority } from '@/lib/types/task'
-
-type TaskRow = Database['public']['Tables']['tasks']['Row']
-type TaskInsert = Database['public']['Tables']['tasks']['Insert']
-type TaskUpdate = Database['public']['Tables']['tasks']['Update']
 
 // Determine list based on due date — 'week' if due date is this week or overdue
 function resolveList(dueDate: string | null): 'week' | 'backlog' {
