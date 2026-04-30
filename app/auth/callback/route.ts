@@ -41,7 +41,8 @@ export async function GET(request: Request) {
           email: data.user.email ?? null,
         }
 
-        const { error: profileError } = await supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { error: profileError } = await (supabase as any)
           .from('user_profiles')
           .insert(insert)
 
