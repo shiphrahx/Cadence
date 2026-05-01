@@ -321,9 +321,9 @@ export default function TasksPage() {
           alignItems: "center",
           justifyContent: "space-between",
         }}>
-          <span style={{ fontSize: "12px", fontWeight: 500, color: "var(--text-1)", fontFamily: "var(--font-sans)" }}>Tasks</span>
+          <span style={{ fontSize: "var(--text-label)", fontWeight: 500, color: "var(--text-1)", fontFamily: "var(--font-sans)" }}>Tasks</span>
         </div>
-        <div style={{ fontSize: "11px", color: "var(--text-3)", padding: "48px 32px" }}>Loading...</div>
+        <div style={{ fontSize: "var(--text-meta)", color: "var(--text-3)", padding: "48px 32px" }}>Loading...</div>
       </>
     )
   }
@@ -350,7 +350,7 @@ export default function TasksPage() {
         zIndex: 10,
         flexShrink: 0,
       }}>
-        <span style={{ fontSize: "12px", fontWeight: 500, color: "var(--text-1)", fontFamily: "var(--font-sans)" }}>Tasks</span>
+        <span style={{ fontSize: "var(--text-label)", fontWeight: 500, color: "var(--text-1)", fontFamily: "var(--font-sans)" }}>Tasks</span>
         <button
           onClick={handleNewTaskHeader}
           style={{
@@ -362,7 +362,7 @@ export default function TasksPage() {
             color: "#0a1a0a",
             padding: "4px 10px",
             borderRadius: "4px",
-            fontSize: "10px",
+            fontSize: "var(--text-caption)",
             fontWeight: 600,
             cursor: "pointer",
             fontFamily: "var(--font-sans)",
@@ -378,7 +378,7 @@ export default function TasksPage() {
           {/* Section header */}
           <div className="flex items-center justify-between mb-3">
             <span style={{
-              fontSize: "9px",
+              fontSize: "var(--text-overline)",
               fontWeight: 500,
               letterSpacing: "0.07em",
               color: "var(--text-3)",
@@ -389,7 +389,7 @@ export default function TasksPage() {
                 background: "transparent",
                 border: "1px solid var(--border-2)",
                 color: "var(--text-2)",
-                fontSize: "10px",
+                fontSize: "var(--text-caption)",
                 padding: "3px 8px",
                 borderRadius: "4px",
                 cursor: "pointer",
@@ -401,7 +401,7 @@ export default function TasksPage() {
                 background: "transparent",
                 border: "1px solid var(--border-2)",
                 color: "var(--text-2)",
-                fontSize: "10px",
+                fontSize: "var(--text-caption)",
                 padding: "3px 8px",
                 borderRadius: "4px",
                 cursor: "pointer",
@@ -432,7 +432,7 @@ export default function TasksPage() {
           {/* Section header */}
           <div className="flex items-center justify-between mb-3">
             <span style={{
-              fontSize: "9px",
+              fontSize: "var(--text-overline)",
               fontWeight: 500,
               letterSpacing: "0.07em",
               color: "var(--text-3)",
