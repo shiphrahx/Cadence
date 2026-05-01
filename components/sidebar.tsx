@@ -15,7 +15,6 @@ import {
   ChevronLeft,
   ChevronRight
 } from "lucide-react"
-import { cn } from "@/lib/utils"
 import { createClient } from "@/lib/supabase/client"
 
 const navigation = [
@@ -27,7 +26,6 @@ const navigation = [
   { name: "Meetings", href: "/meetings", icon: Calendar },
   { name: "Career Goals", href: "/career-goals", icon: Target },
 ]
-
 
 interface SidebarProps {
   isOpen: boolean
@@ -53,150 +51,151 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
   }, [])
 
   return (
-    <div className={cn(
-      "flex h-full flex-col transition-all duration-300",
-      "border-r",
-      isOpen ? "w-64" : "w-16"
-    )}
+    <div
+      className="flex h-full flex-col flex-shrink-0 transition-all duration-300"
       style={{
-        background: "var(--bg-surface)",
-        borderColor: "var(--border-subtle)",
+        width: isOpen ? "200px" : "44px",
+        background: "var(--surf)",
+        borderRight: "1px solid var(--border-1)",
       }}
     >
-      {/* Logo */}
-      <div className="flex h-16 items-center">
-        <Link href="/" className={cn(
-          "flex items-center gap-3 transition-colors flex-1",
-          isOpen ? "px-6" : "px-3 justify-center"
-        )}
-          style={{ ["--tw-hover-bg" as string]: "var(--bg-surface-2)" }}
-          onMouseEnter={e => (e.currentTarget.style.background = "var(--bg-surface-2)")}
-          onMouseLeave={e => (e.currentTarget.style.background = "")}
-        >
-          <Image
-            src="/logo_transparent.png"
-            alt="Cadence"
-            width={isOpen ? 140 : 35}
-            height={35}
-            className={cn(
-              "object-contain flex-shrink-0",
-              isOpen ? "h-[35px] w-auto" : "h-[35px] w-[35px]"
-            )}
-          />
-        </Link>
+      {/* Logo + collapse toggle */}
+      <div style={{ display: "flex", alignItems: "center", height: "48px", padding: "0 10px", gap: "6px" }}>
         {isOpen && (
-          <button
-            onClick={onToggle}
-            className="px-3 h-full transition-colors"
-            style={{ color: "var(--text-tertiary)" }}
-            onMouseEnter={e => (e.currentTarget.style.background = "var(--bg-surface-2)")}
-            onMouseLeave={e => (e.currentTarget.style.background = "")}
-            aria-label="Collapse sidebar"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
+          <Link href="/" style={{ flex: 1, display: "flex", alignItems: "center" }}>
+            <Image
+              src="/logo_transparent.png"
+              alt="Cadence"
+              width={110}
+              height={28}
+              className="object-contain"
+              style={{ height: "28px", width: "auto" }}
+            />
+          </Link>
         )}
+        <button
+          onClick={onToggle}
+          style={{
+            background: "none",
+            border: "none",
+            color: "var(--text-3)",
+            cursor: "pointer",
+            padding: "4px",
+            borderRadius: "4px",
+            display: "flex",
+            alignItems: "center",
+            marginLeft: isOpen ? "auto" : "0",
+          }}
+          onMouseEnter={e => (e.currentTarget.style.color = "var(--text-1)")}
+          onMouseLeave={e => (e.currentTarget.style.color = "var(--text-3)")}
+          aria-label={isOpen ? "Collapse sidebar" : "Expand sidebar"}
+        >
+          {isOpen
+            ? <ChevronLeft style={{ width: "12px", height: "12px" }} />
+            : <ChevronRight style={{ width: "12px", height: "12px" }} />
+          }
+        </button>
       </div>
 
-      {/* Main Navigation */}
-      <nav className="relative flex-1 space-y-0.5 p-3">
-        {!isOpen && (
-          <button
-            onClick={onToggle}
-            className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors w-full justify-center"
-            style={{ color: "var(--text-tertiary)" }}
-            onMouseEnter={e => (e.currentTarget.style.background = "var(--bg-surface-2)")}
-            onMouseLeave={e => (e.currentTarget.style.background = "")}
-            aria-label="Expand sidebar"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
-        )}
+      {/* Nav */}
+      <nav style={{ flex: 1, padding: "4px 10px", display: "flex", flexDirection: "column" }}>
         {navigation.map((item) => {
           const isActive = pathname === item.href
           return (
             <Link
               key={item.name}
               href={item.href}
-              className={cn(
-                "flex items-center gap-3 rounded-md transition-colors",
-                !isOpen && "justify-center"
-              )}
+              title={!isOpen ? item.name : undefined}
               style={{
-                fontSize: "13px",
-                padding: "6px 16px",
-                color: isActive ? "var(--text-primary)" : "var(--text-secondary)",
-                background: isActive ? "var(--bg-surface-3)" : "transparent",
-                borderRight: isActive ? "2px solid #84cc16" : "2px solid transparent",
-                fontWeight: 400,
+                display: "flex",
+                alignItems: "center",
+                gap: "7px",
+                padding: isOpen ? "4px 7px" : "4px 6px",
+                borderRadius: "4px",
+                marginBottom: "1px",
+                fontSize: "11px",
+                fontFamily: "var(--font-sans)",
+                color: isActive ? "var(--text-1)" : "var(--text-2)",
+                background: isActive ? "var(--surf-3)" : "transparent",
+                borderRight: isActive ? "2px solid #00f058" : "2px solid transparent",
+                textDecoration: "none",
+                justifyContent: isOpen ? "flex-start" : "center",
               }}
               onMouseEnter={e => {
-                if (!isActive) {
-                  e.currentTarget.style.background = "var(--bg-surface-2)"
-                  e.currentTarget.style.color = "var(--text-primary)"
-                }
+                if (!isActive) (e.currentTarget as HTMLElement).style.background = "var(--surf-2)"
               }}
               onMouseLeave={e => {
-                if (!isActive) {
-                  e.currentTarget.style.background = "transparent"
-                  e.currentTarget.style.color = "var(--text-secondary)"
-                }
+                if (!isActive) (e.currentTarget as HTMLElement).style.background = "transparent"
               }}
-              title={!isOpen ? item.name : undefined}
             >
-              <item.icon className="h-4 w-4 flex-shrink-0" />
+              <item.icon
+                style={{
+                  width: "12px",
+                  height: "12px",
+                  flexShrink: 0,
+                  opacity: isActive ? 1 : 0.5,
+                }}
+              />
               {isOpen && item.name}
             </Link>
           )
         })}
       </nav>
 
-      {/* User Profile → Settings */}
-      <div className="p-3">
+      {/* User / Settings */}
+      <div style={{ padding: "8px 10px" }}>
         <Link
           href="/settings"
-          className={cn(
-            "flex w-full items-center gap-3 rounded-md transition-colors",
-            !isOpen && "justify-center"
-          )}
+          title={!isOpen ? "Settings" : undefined}
           style={{
-            padding: "6px 12px",
-            color: pathname === "/settings" ? "var(--text-primary)" : "var(--text-secondary)",
-            background: pathname === "/settings" ? "var(--bg-surface-3)" : "transparent",
-            fontSize: "13px",
+            display: "flex",
+            alignItems: "center",
+            gap: "7px",
+            padding: "4px 7px",
+            borderRadius: "4px",
+            fontSize: "11px",
+            fontFamily: "var(--font-sans)",
+            color: pathname === "/settings" ? "var(--text-1)" : "var(--text-2)",
+            background: pathname === "/settings" ? "var(--surf-3)" : "transparent",
+            borderRight: pathname === "/settings" ? "2px solid #00f058" : "2px solid transparent",
+            textDecoration: "none",
+            justifyContent: isOpen ? "flex-start" : "center",
           }}
           onMouseEnter={e => {
-            if (pathname !== "/settings") {
-              e.currentTarget.style.background = "var(--bg-surface-2)"
-              e.currentTarget.style.color = "var(--text-primary)"
-            }
+            if (pathname !== "/settings") (e.currentTarget as HTMLElement).style.background = "var(--surf-2)"
           }}
           onMouseLeave={e => {
-            if (pathname !== "/settings") {
-              e.currentTarget.style.background = "transparent"
-              e.currentTarget.style.color = "var(--text-secondary)"
-            }
+            if (pathname !== "/settings") (e.currentTarget as HTMLElement).style.background = "transparent"
           }}
-          title={!isOpen ? "Settings" : undefined}
         >
           {userAvatar ? (
             <img
               src={userAvatar}
               alt={userName}
               referrerPolicy="no-referrer"
-              className="h-8 w-8 min-w-[2rem] rounded-full object-cover flex-shrink-0"
+              style={{ width: "20px", height: "20px", borderRadius: "50%", objectFit: "cover", flexShrink: 0 }}
             />
           ) : (
-            <div className="flex h-8 w-8 min-w-[2rem] items-center justify-center rounded-full flex-shrink-0"
-              style={{ background: "var(--bg-surface-3)", color: "#84cc16" }}
-            >
-              <span style={{ fontSize: "13px", fontWeight: 500 }}>{userInitials}</span>
+            <div style={{
+              width: "20px",
+              height: "20px",
+              borderRadius: "50%",
+              background: "var(--surf-3)",
+              color: "var(--text-2)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "8px",
+              fontWeight: 500,
+              flexShrink: 0,
+            }}>
+              {userInitials}
             </div>
           )}
           {isOpen && (
-            <div className="flex-1 text-left overflow-hidden">
-              <div className="truncate" style={{ fontSize: "13px", color: "var(--text-primary)", fontWeight: 400 }}>{userName}</div>
-              <div style={{ fontSize: "11px", color: "var(--text-tertiary)" }}>Settings</div>
+            <div style={{ overflow: "hidden", flex: 1 }}>
+              <div style={{ fontSize: "11px", color: "var(--text-1)", fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{userName}</div>
+              <div style={{ fontSize: "9px", color: "var(--text-3)" }}>Settings</div>
             </div>
           )}
         </Link>
