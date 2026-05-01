@@ -317,21 +317,19 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                         required
                       />
                       {showSuggestions && (
-                        <div className="absolute border z-50 w-full mt-1 bg-[#1c1c1c] border-[#383838] rounded-md shadow-lg max-h-48 overflow-y-auto">
+                        <div style={{ position: "absolute", zIndex: 50, width: "100%", marginTop: "4px", background: "var(--surf-2)", border: "1px solid var(--border-2)", borderRadius: "4px", boxShadow: "0 4px 16px rgba(0,0,0,0.4)", maxHeight: "192px", overflowY: "auto" }}>
                           {filteredPeople.map((person, index) => (
-                            <div
-                              key={index}
-                              onClick={() => handlePersonSelect(person)}
-                              className="hover:bg-[#292929] px-3 py-2 text-sm cursor-pointer text-gray-100"
-                            >
-                              {person}
-                            </div>
+                            <div key={index} onClick={() => handlePersonSelect(person)}
+                              style={{ padding: "6px 12px", fontSize: "var(--text-label)", cursor: "pointer", color: "var(--text-2)" }}
+                              onMouseEnter={e => (e.currentTarget.style.background = "var(--surf-3)")}
+                              onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+                            >{person}</div>
                           ))}
                         </div>
                       )}
                       {personInput.length >= 2 && availablePeople.length > 0 && filteredPeople.length === 0 && !showSuggestions && (
-                        <div className="absolute right-2 top-1/2 -translate-y-1/2">
-                          <span className="text-xs bg-amber-900/40 text-amber-400 border border-amber-700/50 rounded px-1.5 py-0.5">New person</span>
+                        <div style={{ position: "absolute", right: "8px", top: "50%", transform: "translateY(-50%)" }}>
+                          <span style={{ fontSize: "var(--text-overline)", background: "var(--surf-3)", color: "var(--text-2)", border: "1px solid var(--border-2)", borderRadius: "3px", padding: "2px 6px" }}>New person</span>
                         </div>
                       )}
                     </div>
@@ -420,15 +418,13 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                         required
                       />
                       {showTeamSuggestions && (
-                        <div className="absolute border z-50 w-full mt-1 bg-[#1c1c1c] border-[#383838] rounded-md shadow-lg max-h-48 overflow-y-auto">
+                        <div style={{ position: "absolute", zIndex: 50, width: "100%", marginTop: "4px", background: "var(--surf-2)", border: "1px solid var(--border-2)", borderRadius: "4px", boxShadow: "0 4px 16px rgba(0,0,0,0.4)", maxHeight: "192px", overflowY: "auto" }}>
                           {filteredTeams.map((team, index) => (
-                            <div
-                              key={index}
-                              onClick={() => handleTeamSelect(team)}
-                              className="hover:bg-[#292929] px-3 py-2 text-sm cursor-pointer text-gray-100"
-                            >
-                              {team}
-                            </div>
+                            <div key={index} onClick={() => handleTeamSelect(team)}
+                              style={{ padding: "6px 12px", fontSize: "var(--text-label)", cursor: "pointer", color: "var(--text-2)" }}
+                              onMouseEnter={e => (e.currentTarget.style.background = "var(--surf-3)")}
+                              onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+                            >{team}</div>
                           ))}
                         </div>
                       )}
@@ -577,24 +573,23 @@ export function MeetingFormDialog({ open, onOpenChange, meeting, onSave, availab
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {templates.map((template) => (
-                      <Button
+                      <button
                         key={template.id}
                         type="button"
-                        variant="outline"
-                        size="sm"
                         onClick={() => {
                           setSelectedTemplate(template.id)
                           const html = marked.parse(template.notes) as string
                           setFormData(prev => ({ ...prev, notes: html }))
                         }}
-                        className={`text-xs border ${
-                          selectedTemplate === template.id
-                            ? "bg-primary-100 bg-primary-dark-900 text-primary-700 text-primary-dark-400 border-primary-300"
-                            : "bg-white text-gray-700 hover:bg-gray-50"
-                        }`}
+                        style={{
+                          padding: "3px 10px", borderRadius: "4px", fontSize: "var(--text-label)", fontFamily: "var(--font-sans)", cursor: "pointer",
+                          background: selectedTemplate === template.id ? "var(--surf-3)" : "var(--surf-2)",
+                          color: selectedTemplate === template.id ? "var(--text-1)" : "var(--text-2)",
+                          border: `1px solid ${selectedTemplate === template.id ? "var(--border-3)" : "var(--border-2)"}`,
+                        }}
                       >
                         {template.name}
-                      </Button>
+                      </button>
                     ))}
                   </div>
                 </div>
