@@ -34,7 +34,7 @@ function LevelChip({ level }: { level: string }) {
       alignItems: "center",
       padding: "2px 7px",
       borderRadius: "3px",
-      fontSize: "9px",
+      fontSize: "var(--text-overline)",
       fontWeight: 500,
       fontFamily: "var(--font-mono)",
       background: bg,
@@ -85,7 +85,7 @@ export function PeopleTable({
             borderRadius: "50%",
             background: "var(--surf-3)",
             color: "var(--text-2)",
-            fontSize: "9px",
+            fontSize: "var(--text-overline)",
             fontWeight: 500,
             display: "flex",
             alignItems: "center",
@@ -105,7 +105,7 @@ export function PeopleTable({
       cell: (person) => {
         const isInactive = person.status === "inactive"
         return (
-          <span style={{ fontWeight: 500, fontSize: "11px", color: isInactive ? "var(--text-3)" : "var(--text-1)" }}>
+          <span style={{ fontWeight: 500, fontSize: "var(--text-meta)", color: isInactive ? "var(--text-3)" : "var(--text-1)" }}>
             {person.name}
           </span>
         )
@@ -118,7 +118,7 @@ export function PeopleTable({
       cell: (person) => {
         const isInactive = person.status === "inactive"
         return (
-          <span style={{ color: isInactive ? "var(--text-3)" : "var(--text-2)", fontSize: "11px" }}>
+          <span style={{ color: isInactive ? "var(--text-3)" : "var(--text-2)", fontSize: "var(--text-meta)" }}>
             {person.role}
           </span>
         )
@@ -144,7 +144,7 @@ export function PeopleTable({
                 color: isInactive ? "var(--text-3)" : "var(--text-2)",
                 padding: "1px 5px",
                 borderRadius: "3px",
-                fontSize: "9px",
+                fontSize: "var(--text-overline)",
                 marginRight: "2px",
               }}>
                 {team}
@@ -161,7 +161,7 @@ export function PeopleTable({
       cell: (person) => (
         <span style={{
           color: person.status === "active" ? "#00f058" : "var(--text-3)",
-          fontSize: "10px",
+          fontSize: "var(--text-caption)",
         }}>
           ● {person.status}
         </span>
@@ -186,7 +186,7 @@ export function PeopleTable({
               borderRadius: "3px",
               padding: "2px 6px",
               cursor: "pointer",
-              fontSize: "10px",
+              fontSize: "var(--text-caption)",
             }}
             onMouseEnter={e => (e.currentTarget.style.color = "var(--text-1)")}
             onMouseLeave={e => (e.currentTarget.style.color = "var(--text-3)")}
@@ -208,7 +208,7 @@ export function PeopleTable({
             }}>
               <button
                 onClick={(e) => { e.stopPropagation(); onEdit(person); setSelectedPersonMenu(null) }}
-                style={{ display: "flex", width: "100%", alignItems: "center", gap: "6px", padding: "7px 10px", fontSize: "11px", color: "var(--text-2)", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}
+                style={{ display: "flex", width: "100%", alignItems: "center", gap: "6px", padding: "7px 10px", fontSize: "var(--text-meta)", color: "var(--text-2)", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}
                 onMouseEnter={e => (e.currentTarget.style.background = "var(--surf-3)")}
                 onMouseLeave={e => (e.currentTarget.style.background = "none")}
               >
@@ -216,7 +216,7 @@ export function PeopleTable({
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); onToggleStatus(person) }}
-                style={{ display: "flex", width: "100%", alignItems: "center", gap: "6px", padding: "7px 10px", fontSize: "11px", color: "var(--text-2)", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}
+                style={{ display: "flex", width: "100%", alignItems: "center", gap: "6px", padding: "7px 10px", fontSize: "var(--text-meta)", color: "var(--text-2)", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}
                 onMouseEnter={e => (e.currentTarget.style.background = "var(--surf-3)")}
                 onMouseLeave={e => (e.currentTarget.style.background = "none")}
               >
@@ -227,7 +227,7 @@ export function PeopleTable({
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); onDelete(person); setSelectedPersonMenu(null) }}
-                style={{ display: "flex", width: "100%", alignItems: "center", gap: "6px", padding: "7px 10px", fontSize: "11px", color: "#f87171", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}
+                style={{ display: "flex", width: "100%", alignItems: "center", gap: "6px", padding: "7px 10px", fontSize: "var(--text-meta)", color: "#f87171", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}
                 onMouseEnter={e => (e.currentTarget.style.background = "var(--surf-3)")}
                 onMouseLeave={e => (e.currentTarget.style.background = "none")}
               >
