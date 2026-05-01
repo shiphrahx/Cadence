@@ -130,7 +130,7 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
                 left: "10px",
                 top: "50%",
                 transform: "translateY(-50%)",
-                color: "var(--text-tertiary)",
+                color: "var(--text-3)",
                 pointerEvents: "none",
               }}
             />
@@ -140,17 +140,17 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
-                background: "var(--bg-surface)",
-                border: "1px solid var(--border-subtle)",
+                background: "var(--surf)",
+                border: "1px solid var(--border-1)",
                 borderRadius: "6px",
                 padding: "5px 10px 5px 30px",
                 fontSize: "12px",
-                color: "var(--text-primary)",
+                color: "var(--text-1)",
                 width: "180px",
                 outline: "none",
               }}
-              onFocus={e => (e.currentTarget.style.borderColor = "var(--border-default)")}
-              onBlur={e => (e.currentTarget.style.borderColor = "var(--border-subtle)")}
+              onFocus={e => (e.currentTarget.style.borderColor = "var(--border-2)")}
+              onBlur={e => (e.currentTarget.style.borderColor = "var(--border-1)")}
             />
           </div>
 
@@ -158,16 +158,16 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
           <button
             onClick={() => setShowFilters(!showFilters)}
             style={{
-              background: showFilters ? "var(--bg-surface-3)" : "transparent",
-              border: "1px solid var(--border-default)",
-              color: "var(--text-secondary)",
+              background: showFilters ? "var(--surf-3)" : "transparent",
+              border: "1px solid var(--border-2)",
+              color: "var(--text-2)",
               fontSize: "12px",
               padding: "5px 10px",
               borderRadius: "6px",
               cursor: "pointer",
             }}
-            onMouseEnter={e => (e.currentTarget.style.color = "var(--text-primary)")}
-            onMouseLeave={e => (e.currentTarget.style.color = "var(--text-secondary)")}
+            onMouseEnter={e => (e.currentTarget.style.color = "var(--text-1)")}
+            onMouseLeave={e => (e.currentTarget.style.color = "var(--text-2)")}
           >
             Filters
           </button>
@@ -177,12 +177,12 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
         <button
           onClick={onQuickAdd}
           style={{
-            background: "#84cc16",
-            color: "#0d1a00",
-            fontSize: "12px",
-            fontWeight: 500,
-            padding: "5px 12px",
-            borderRadius: "6px",
+            background: "linear-gradient(90deg, #00ffe5 0%, #00f058 100%)",
+            color: "#0a1a0a",
+            fontSize: "10px",
+            fontWeight: 600,
+            padding: "4px 10px",
+            borderRadius: "4px",
             border: "none",
             cursor: "pointer",
             display: "flex",
@@ -202,8 +202,8 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
           alignItems: "center",
           gap: "16px",
           padding: "12px 16px",
-          background: "var(--bg-surface)",
-          border: "1px solid var(--border-subtle)",
+          background: "var(--surf)",
+          border: "1px solid var(--border-1)",
           borderRadius: "8px",
           marginBottom: "12px",
         }}>
@@ -213,17 +213,17 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
             { label: "Category", value: categoryFilter, onChange: (v: string) => setCategoryFilter(v as TaskCategory | "all"), options: TASK_CATEGORIES },
           ].map(({ label, value, onChange, options }) => (
             <div key={label} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <label style={{ fontSize: "12px", color: "var(--text-secondary)", fontWeight: 500 }}>{label}:</label>
+              <label style={{ fontSize: "12px", color: "var(--text-2)", fontWeight: 500 }}>{label}:</label>
               <select
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 style={{
-                  background: "var(--bg-surface-2)",
-                  border: "1px solid var(--border-default)",
+                  background: "var(--surf-2)",
+                  border: "1px solid var(--border-2)",
                   borderRadius: "4px",
                   padding: "3px 6px",
                   fontSize: "12px",
-                  color: "var(--text-primary)",
+                  color: "var(--text-1)",
                   cursor: "pointer",
                 }}
               >
@@ -241,8 +241,8 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
       <div
         ref={setNodeRef}
         style={{
-          background: "var(--bg-surface)",
-          border: isOver ? "1px solid var(--border-default)" : "1px solid var(--border-subtle)",
+          background: "var(--surf)",
+          border: isOver ? "1px solid var(--border-2)" : "1px solid var(--border-1)",
           borderRadius: "8px",
           overflow: "hidden",
         }}
@@ -259,9 +259,9 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
             <col style={{ width: "80px" }} />
           </colgroup>
           <thead>
-            <tr style={{ borderBottom: "1px solid var(--border-subtle)" }}>
+            <tr style={{ borderBottom: "1px solid var(--border-1)" }}>
               {/* Drag handle col */}
-              <th style={{ padding: "8px 12px", background: "var(--bg-surface)" }} />
+              <th style={{ padding: "8px 12px", background: "var(--surf)" }} />
               {/* Sortable columns */}
               {(["title", "status", "dueDate", "priority", "category"] as SortField[]).map((field) => {
                 const labels: Record<SortField, string> = {
@@ -277,10 +277,10 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
                     style={{
                       textAlign: "left",
                       padding: "8px 12px",
-                      background: "var(--bg-surface)",
+                      background: "var(--surf)",
                       fontWeight: 500,
-                      fontSize: "11px",
-                      color: "var(--text-tertiary)",
+                      fontSize: "9px",
+                      color: "var(--text-3)",
                       textTransform: "uppercase",
                       letterSpacing: "0.06em",
                     }}
@@ -291,18 +291,18 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
                         display: "flex",
                         alignItems: "center",
                         gap: "4px",
-                        color: "var(--text-tertiary)",
+                        color: "var(--text-3)",
                         background: "none",
                         border: "none",
                         cursor: "pointer",
-                        fontSize: "11px",
+                        fontSize: "9px",
                         fontWeight: 500,
                         textTransform: "uppercase",
                         letterSpacing: "0.06em",
                         padding: 0,
                       }}
-                      onMouseEnter={e => (e.currentTarget.style.color = "var(--text-secondary)")}
-                      onMouseLeave={e => (e.currentTarget.style.color = "var(--text-tertiary)")}
+                      onMouseEnter={e => (e.currentTarget.style.color = "var(--text-2)")}
+                      onMouseLeave={e => (e.currentTarget.style.color = "var(--text-3)")}
                     >
                       {labels[field]}
                       <ArrowUpDown style={{ width: "11px", height: "11px", flexShrink: 0 }} />
@@ -311,7 +311,7 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
                 )
               })}
               {/* Actions col */}
-              <th style={{ padding: "8px 12px", background: "var(--bg-surface)" }} />
+              <th style={{ padding: "8px 12px", background: "var(--surf)" }} />
             </tr>
           </thead>
           <tbody>
@@ -328,13 +328,13 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
                     onDoubleClick={(e) => e.stopPropagation()}
                   >
                     <div className="active:cursor-grabbing drag-handle cursor-grab inline-flex">
-                      <GripVertical style={{ width: "14px", height: "14px", color: "var(--text-tertiary)" }} />
+                      <GripVertical style={{ width: "14px", height: "14px", color: "var(--text-3)" }} />
                     </div>
                   </td>
 
                   {/* Name */}
                   <td
-                    style={{ padding: "9px 12px", color: "var(--text-primary)", fontSize: "13px", overflow: "hidden" }}
+                    style={{ padding: "9px 12px", color: "var(--text-1)", fontSize: "11px", overflow: "hidden" }}
                     title={task.title}
                   >
                     <div className="line-clamp-2 break-all max-md:break-words">{task.title}</div>
@@ -352,8 +352,8 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
                         style: {
                           background: STATUS_PILL_BG[status],
                           color: STATUS_PILL_TEXT[status],
-                          fontSize: "11px",
-                          fontFamily: "ui-monospace, monospace",
+                          fontSize: "9px",
+                          fontFamily: "var(--font-mono)",
                           fontWeight: 500,
                           borderRadius: "4px",
                           padding: "2px 7px",
@@ -365,9 +365,9 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
                   {/* Due date */}
                   <td style={{
                     padding: "9px 12px",
-                    fontSize: "11px",
-                    color: "var(--text-tertiary)",
-                    fontFamily: "ui-monospace, monospace",
+                    fontSize: "9px",
+                    color: "var(--text-3)",
+                    fontFamily: "var(--font-mono)",
                   }}>
                     {formatDate(task.dueDate) || "—"}
                   </td>
@@ -384,8 +384,8 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
                         style: {
                           background: PRIORITY_PILL_BG[priority],
                           color: PRIORITY_PILL_TEXT[priority],
-                          fontSize: "11px",
-                          fontFamily: "ui-monospace, monospace",
+                          fontSize: "9px",
+                          fontFamily: "var(--font-mono)",
                           fontWeight: 500,
                           borderRadius: "4px",
                           padding: "2px 7px",
@@ -404,10 +404,10 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
                         label: category,
                         className: "",
                         style: {
-                          background: "var(--bg-surface-3)",
-                          color: "var(--text-secondary)",
-                          fontSize: "11px",
-                          fontFamily: "ui-monospace, monospace",
+                          background: "var(--surf-3)",
+                          color: "var(--text-2)",
+                          fontSize: "9px",
+                          fontFamily: "var(--font-mono)",
                           fontWeight: 500,
                           borderRadius: "4px",
                           padding: "2px 7px",
@@ -426,16 +426,16 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
                       <button
                         onClick={(e) => { e.stopPropagation(); onEdit(task) }}
                         style={{
-                          border: "1px solid var(--border-default)",
-                          color: "var(--text-tertiary)",
+                          border: "1px solid var(--border-2)",
+                          color: "var(--text-3)",
                           borderRadius: "4px",
                           padding: "2px 7px",
                           fontSize: "11px",
                           background: "none",
                           cursor: "pointer",
                         }}
-                        onMouseEnter={e => (e.currentTarget.style.color = "var(--text-primary)")}
-                        onMouseLeave={e => (e.currentTarget.style.color = "var(--text-tertiary)")}
+                        onMouseEnter={e => (e.currentTarget.style.color = "var(--text-1)")}
+                        onMouseLeave={e => (e.currentTarget.style.color = "var(--text-3)")}
                       >
                         Edit
                       </button>
@@ -443,8 +443,8 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
                         <button
                           onClick={(e) => { e.stopPropagation(); onDelete(task.id) }}
                           style={{
-                            border: "1px solid var(--border-default)",
-                            color: "var(--text-tertiary)",
+                            border: "1px solid var(--border-2)",
+                            color: "var(--text-3)",
                             borderRadius: "4px",
                             padding: "2px 7px",
                             fontSize: "11px",
@@ -452,7 +452,7 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
                             cursor: "pointer",
                           }}
                           onMouseEnter={e => (e.currentTarget.style.color = "#f87171")}
-                          onMouseLeave={e => (e.currentTarget.style.color = "var(--text-tertiary)")}
+                          onMouseLeave={e => (e.currentTarget.style.color = "var(--text-3)")}
                           aria-label="Delete task"
                         >
                           Delete

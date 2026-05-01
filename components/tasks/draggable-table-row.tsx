@@ -40,9 +40,9 @@ export function DraggableTableRow({ task, children, onDoubleClick }: DraggableTa
         <td colSpan={7} style={{ padding: "6px 12px" }}>
           <div style={{
             height: "32px",
-            border: "1px dashed var(--border-default)",
+            border: "1px dashed var(--border-2)",
             borderRadius: "4px",
-            background: "var(--bg-surface-2)",
+            background: "var(--surf-2)",
             opacity: 0.5,
           }} />
         </td>
@@ -66,11 +66,11 @@ export function DraggableTableRow({ task, children, onDoubleClick }: DraggableTa
   return (
     <tr
       ref={setNodeRef}
-      style={{ ...style, borderBottom: "1px solid var(--border-subtle)" }}
+      style={{ ...style, borderBottom: "1px solid var(--border-1)" }}
       {...attributes}
       onDoubleClick={onDoubleClick}
       className="group transition-colors cursor-pointer"
-      onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = "var(--bg-surface-2)")}
+      onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = "var(--surf-2)")}
       onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = "transparent")}
     >
       {modifiedChildren}

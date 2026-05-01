@@ -13,10 +13,10 @@ interface TaskCardProps {
 
 // Status left-border accent
 const STATUS_BORDER: Record<Task["status"], string> = {
-  "Not started": "#3a3a58",
+  "Not started": "#2a2a2a",
   "In progress": "#2563eb",
   "Blocked":     "#ea580c",
-  "Done":        "#84cc16",
+  "Done":        "#00f058",
 }
 
 // Priority pill colours: [bg, text, dot]
@@ -44,9 +44,9 @@ function PriorityPill({ priority }: { priority: Task["priority"] }) {
       gap: "4px",
       padding: "2px 7px",
       borderRadius: "4px",
-      fontSize: "11px",
+      fontSize: "9px",
       fontWeight: 500,
-      fontFamily: "ui-monospace, monospace",
+      fontFamily: "var(--font-mono)",
       background: bg,
       color: text,
     }}>
@@ -65,9 +65,9 @@ function StatusPill({ status }: { status: Task["status"] }) {
       gap: "4px",
       padding: "2px 7px",
       borderRadius: "4px",
-      fontSize: "11px",
+      fontSize: "9px",
       fontWeight: 500,
-      fontFamily: "ui-monospace, monospace",
+      fontFamily: "var(--font-mono)",
       background: bg,
       color: text,
     }}>
@@ -139,8 +139,8 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
     <div
       className="group relative"
       style={{
-        background: isDragging ? "var(--bg-surface-3)" : "var(--bg-surface-2)",
-        border: `1px solid ${isDragging ? "var(--border-default)" : "var(--border-subtle)"}`,
+        background: isDragging ? "var(--surf-3)" : "var(--surf-2)",
+        border: `1px solid ${isDragging ? "var(--border-2)" : "var(--border-1)"}`,
         borderLeft: `3px solid ${leftBorder}`,
         borderRadius: "6px",
         padding: "10px 12px",
@@ -149,15 +149,15 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
       }}
       onMouseEnter={e => {
         if (!isDragging) {
-          (e.currentTarget as HTMLDivElement).style.background = "var(--bg-surface-3)"
-          ;(e.currentTarget as HTMLDivElement).style.borderColor = `var(--border-default)`
+          (e.currentTarget as HTMLDivElement).style.background = "var(--surf-3)"
+          ;(e.currentTarget as HTMLDivElement).style.borderColor = `var(--border-2)`
           ;(e.currentTarget as HTMLDivElement).style.borderLeftColor = leftBorder
         }
       }}
       onMouseLeave={e => {
         if (!isDragging) {
-          (e.currentTarget as HTMLDivElement).style.background = "var(--bg-surface-2)"
-          ;(e.currentTarget as HTMLDivElement).style.borderColor = "var(--border-subtle)"
+          (e.currentTarget as HTMLDivElement).style.background = "var(--surf-2)"
+          ;(e.currentTarget as HTMLDivElement).style.borderColor = "var(--border-1)"
           ;(e.currentTarget as HTMLDivElement).style.borderLeftColor = leftBorder
         }
       }}
@@ -171,7 +171,7 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
           style={{
             background: "none",
             border: "none",
-            color: "var(--text-tertiary)",
+            color: "var(--text-3)",
             cursor: "pointer",
             padding: "2px",
             borderRadius: "4px",
@@ -187,8 +187,8 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
             right: 0,
             marginTop: "4px",
             width: "128px",
-            background: "var(--bg-surface-2)",
-            border: "1px solid var(--border-default)",
+            background: "var(--surf-2)",
+            border: "1px solid var(--border-2)",
             borderRadius: "8px",
             boxShadow: "0 4px 16px rgba(0,0,0,0.4)",
             zIndex: 50,
@@ -203,12 +203,12 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
                 textAlign: "left",
                 padding: "8px 12px",
                 fontSize: "12px",
-                color: "var(--text-primary)",
+                color: "var(--text-1)",
                 background: "none",
                 border: "none",
                 cursor: "pointer",
               }}
-              onMouseEnter={e => (e.currentTarget.style.background = "var(--bg-surface-3)")}
+              onMouseEnter={e => (e.currentTarget.style.background = "var(--surf-3)")}
               onMouseLeave={e => (e.currentTarget.style.background = "none")}
             >
               Edit
@@ -228,7 +228,7 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
                   border: "none",
                   cursor: "pointer",
                 }}
-                onMouseEnter={e => (e.currentTarget.style.background = "var(--bg-surface-3)")}
+                onMouseEnter={e => (e.currentTarget.style.background = "var(--surf-3)")}
                 onMouseLeave={e => (e.currentTarget.style.background = "none")}
               >
                 Delete
@@ -240,9 +240,9 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
 
       {/* Task name */}
       <p style={{
-        fontSize: "13px",
+        fontSize: "11px",
         fontWeight: 400,
-        color: "var(--text-primary)",
+        color: "var(--text-1)",
         marginBottom: "9px",
         lineHeight: 1.4,
         paddingRight: "20px",
@@ -258,9 +258,9 @@ export function TaskCard({ task, onEdit, onDelete, isDragging = false }: TaskCar
         <StatusPill status={task.status} />
         {task.dueDate && (
           <span style={{
-            fontSize: "11px",
-            color: "var(--text-tertiary)",
-            fontFamily: "ui-monospace, monospace",
+            fontSize: "9px",
+            color: "var(--text-3)",
+            fontFamily: "var(--font-mono)",
             marginLeft: "auto",
           }}>
             {formatDate(task.dueDate)}

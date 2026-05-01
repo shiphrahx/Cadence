@@ -22,7 +22,6 @@ import { BacklogTable } from "@/components/tasks/backlog-table"
 import { TaskModal } from "@/components/tasks/task-modal"
 import { TaskCard } from "@/components/tasks/task-card"
 import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -314,17 +313,17 @@ export default function TasksPage() {
       <>
         {/* Top bar */}
         <div style={{
-          background: "var(--bg-surface)",
-          borderBottom: "1px solid var(--border-subtle)",
-          height: "48px",
-          padding: "0 24px",
+          background: "var(--surf)",
+          borderBottom: "1px solid var(--border-1)",
+          height: "40px",
+          padding: "0 16px",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
         }}>
-          <span style={{ fontSize: "13px", color: "var(--text-secondary)" }}>Tasks &amp; priorities</span>
+          <span style={{ fontSize: "12px", fontWeight: 500, color: "var(--text-1)", fontFamily: "var(--font-sans)" }}>Tasks</span>
         </div>
-        <div style={{ fontSize: "13px", color: "var(--text-tertiary)", padding: "48px 32px" }}>Loading...</div>
+        <div style={{ fontSize: "11px", color: "var(--text-3)", padding: "48px 32px" }}>Loading...</div>
       </>
     )
   }
@@ -339,75 +338,76 @@ export default function TasksPage() {
     >
       {/* Top bar */}
       <div style={{
-        background: "var(--bg-surface)",
-        borderBottom: "1px solid var(--border-subtle)",
-        height: "48px",
-        padding: "0 24px",
+        background: "var(--surf)",
+        borderBottom: "1px solid var(--border-1)",
+        height: "40px",
+        padding: "0 16px",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
         position: "sticky",
         top: 0,
         zIndex: 10,
+        flexShrink: 0,
       }}>
-        <span style={{ fontSize: "13px", color: "var(--text-secondary)" }}>Tasks &amp; priorities</span>
+        <span style={{ fontSize: "12px", fontWeight: 500, color: "var(--text-1)", fontFamily: "var(--font-sans)" }}>Tasks</span>
         <button
           onClick={handleNewTaskHeader}
           style={{
-            background: "#84cc16",
-            color: "#0d1a00",
-            fontSize: "12px",
-            fontWeight: 500,
-            padding: "5px 12px",
-            borderRadius: "6px",
-            border: "none",
-            cursor: "pointer",
-            display: "flex",
+            display: "inline-flex",
             alignItems: "center",
-            gap: "5px",
+            gap: "4px",
+            background: "linear-gradient(90deg, #00ffe5 0%, #00f058 100%)",
+            border: "none",
+            color: "#0a1a0a",
+            padding: "4px 10px",
+            borderRadius: "4px",
+            fontSize: "10px",
+            fontWeight: 600,
+            cursor: "pointer",
+            fontFamily: "var(--font-sans)",
           }}
         >
-          <Plus className="h-3.5 w-3.5" />
-          New task
+          + New task
         </button>
       </div>
 
-      <div className="flex flex-col gap-8 p-6">
+      <div className="flex flex-col gap-8 p-4">
         {/* This Week Board */}
         <div>
           {/* Section header */}
           <div className="flex items-center justify-between mb-3">
             <span style={{
-              fontSize: "11px",
+              fontSize: "9px",
               fontWeight: 500,
               letterSpacing: "0.07em",
-              color: "var(--text-tertiary)",
+              color: "var(--text-3)",
               textTransform: "uppercase",
             }}>This week</span>
             <div style={{ display: "flex", gap: "6px" }}>
               <button style={{
                 background: "transparent",
-                border: "1px solid var(--border-default)",
-                color: "var(--text-secondary)",
-                fontSize: "12px",
-                padding: "5px 10px",
-                borderRadius: "6px",
+                border: "1px solid var(--border-2)",
+                color: "var(--text-2)",
+                fontSize: "10px",
+                padding: "3px 8px",
+                borderRadius: "4px",
                 cursor: "pointer",
               }}
-                onMouseEnter={e => { e.currentTarget.style.color = "var(--text-primary)" }}
-                onMouseLeave={e => { e.currentTarget.style.color = "var(--text-secondary)" }}
+                onMouseEnter={e => { e.currentTarget.style.color = "var(--text-1)" }}
+                onMouseLeave={e => { e.currentTarget.style.color = "var(--text-2)" }}
               >Filter</button>
               <button style={{
                 background: "transparent",
-                border: "1px solid var(--border-default)",
-                color: "var(--text-secondary)",
-                fontSize: "12px",
-                padding: "5px 10px",
-                borderRadius: "6px",
+                border: "1px solid var(--border-2)",
+                color: "var(--text-2)",
+                fontSize: "10px",
+                padding: "3px 8px",
+                borderRadius: "4px",
                 cursor: "pointer",
               }}
-                onMouseEnter={e => { e.currentTarget.style.color = "var(--text-primary)" }}
-                onMouseLeave={e => { e.currentTarget.style.color = "var(--text-secondary)" }}
+                onMouseEnter={e => { e.currentTarget.style.color = "var(--text-1)" }}
+                onMouseLeave={e => { e.currentTarget.style.color = "var(--text-2)" }}
               >Sort</button>
             </div>
           </div>
@@ -432,10 +432,10 @@ export default function TasksPage() {
           {/* Section header */}
           <div className="flex items-center justify-between mb-3">
             <span style={{
-              fontSize: "11px",
+              fontSize: "9px",
               fontWeight: 500,
               letterSpacing: "0.07em",
-              color: "var(--text-tertiary)",
+              color: "var(--text-3)",
               textTransform: "uppercase",
             }}>Backlog</span>
           </div>
