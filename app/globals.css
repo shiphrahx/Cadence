@@ -45,6 +45,20 @@
     --font-sans:  'Inter', system-ui, sans-serif;
     --font-mono:  'JetBrains Mono', 'Fira Mono', monospace;
 
+    /* ── Type scale ── */
+    --text-page-title:   24px;   /* h1: page headings */
+    --text-section:      14px;   /* h2: widget/section titles */
+    --text-body:         14px;   /* default body text */
+    --text-label:        12px;   /* secondary labels, captions */
+    --text-meta:         11px;   /* table cells, metadata */
+    --text-caption:      10px;   /* tags, badges, tiny labels */
+    --text-overline:      9px;   /* uppercase column/stat headers */
+
+    --weight-title:      700;
+    --weight-section:    600;
+    --weight-body:       400;
+    --weight-label:      500;
+
     /* shadcn/ui compatibility tokens */
     --background: 240 6% 6%;
     --foreground: 240 20% 92%;
@@ -114,10 +128,14 @@ input:-webkit-autofill:active {
 
 body {
   background-color: var(--bg-base);
-  color: var(--text-primary);
+  color: var(--text-1);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
   font-feature-settings: "rlig" 1, "calt" 1;
 }
 
-p {
-  color: var(--paragraph);
-}
+h1 { font-size: var(--text-page-title); font-weight: var(--weight-title); color: var(--text-1); }
+h2 { font-size: var(--text-section);    font-weight: var(--weight-section); color: var(--text-1); }
+h3 { font-size: var(--text-section);    font-weight: var(--weight-section); color: var(--text-1); }
+p  { font-size: var(--text-body);       color: var(--text-2); }
+label { font-size: var(--text-label); color: var(--text-2); }
