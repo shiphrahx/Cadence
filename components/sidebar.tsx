@@ -113,7 +113,7 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 padding: isOpen ? "4px 7px" : "4px 6px",
                 borderRadius: "4px",
                 marginBottom: "1px",
-                fontSize: "11px",
+                fontSize: "var(--text-meta)",
                 fontFamily: "var(--font-sans)",
                 color: isActive ? "var(--text-1)" : "var(--text-2)",
                 background: isActive ? "var(--surf-3)" : "transparent",
@@ -153,7 +153,7 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
             gap: "7px",
             padding: "4px 7px",
             borderRadius: "4px",
-            fontSize: "11px",
+            fontSize: "var(--text-meta)",
             fontFamily: "var(--font-sans)",
             color: pathname === "/settings" ? "var(--text-1)" : "var(--text-2)",
             background: pathname === "/settings" ? "var(--surf-3)" : "transparent",
@@ -185,7 +185,7 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: "8px",
+              fontSize: "var(--text-overline)",
               fontWeight: 500,
               flexShrink: 0,
             }}>
@@ -194,8 +194,8 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
           )}
           {isOpen && (
             <div style={{ overflow: "hidden", flex: 1 }}>
-              <div style={{ fontSize: "11px", color: "var(--text-1)", fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{userName}</div>
-              <div style={{ fontSize: "9px", color: "var(--text-3)" }}>Settings</div>
+              <div style={{ fontSize: "var(--text-meta)", color: "var(--text-1)", fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{userName}</div>
+              <div style={{ fontSize: "var(--text-overline)", color: "var(--text-3)" }}>Settings</div>
             </div>
           )}
         </Link>
