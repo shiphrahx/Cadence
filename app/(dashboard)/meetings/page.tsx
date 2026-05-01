@@ -1,12 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { MarkdownTextarea } from "@/components/ui/markdown-textarea"
 import { Input } from "@/components/ui/input"
-import { Plus, ChevronRight, ChevronDown, ChevronsRight, ChevronsDown } from "lucide-react"
+import { ChevronRight, ChevronDown, ChevronsRight, ChevronsDown } from "lucide-react"
 import { MeetingFormDialog } from "@/components/meeting-form-dialog"
 import {
   getMeetings,
@@ -37,22 +33,15 @@ interface Meeting {
 
 interface TreeNode {
   type: string
-  people?: {
-    [personName: string]: Meeting[]
-  }
-  teams?: {
-    [teamName: string]: Meeting[]
-  }
+  people?: { [personName: string]: Meeting[] }
+  teams?: { [teamName: string]: Meeting[] }
   meetings?: Meeting[]
 }
 
 function parseActionItems(html: string): string[] {
   if (!html) return []
-  // Extract text from <li> elements
   const liMatches = html.match(/<li[^>]*>([\s\S]*?)<\/li>/gi) ?? []
-  return liMatches
-    .map((li) => li.replace(/<[^>]+>/g, "").trim())
-    .filter((text) => text.length > 0)
+  return liMatches.map((li) => li.replace(/<[^>]+>/g, "").trim()).filter((text) => text.length > 0)
 }
 
 export default function MeetingsPage() {
@@ -66,10 +55,9 @@ export default function MeetingsPage() {
   const [expandedTypes, setExpandedTypes] = useState<Set<string>>(new Set(["1:1"]))
   const [expandedPeople, setExpandedPeople] = useState<Set<string>>(new Set())
   const [expandedTeams, setExpandedTeams] = useState<Set<string>>(new Set())
-  const [leftPanelWidth, setLeftPanelWidth] = useState(320)
+  const [leftPanelWidth, setLeftPanelWidth] = useState(220)
   const [isResizing, setIsResizing] = useState(false)
 
-  // Load meetings, people, and teams from backend
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -79,7 +67,6 @@ export default function MeetingsPage() {
           getTeams(),
         ])
 
-        // Map backend meetings to UI format
         const uiMeetings: Meeting[] = meetingsData.map((m) => ({
           id: m.id,
           title: m.title,
@@ -106,19 +93,14 @@ export default function MeetingsPage() {
         setPeopleWithIds(activePeople.map(p => ({ id: p.id, name: p.name })))
         setTeamsWithIds(activeTeams.map(t => ({ id: t.id, name: t.name })))
 
-        // Auto-select first meeting if available
-        if (uiMeetings.length > 0) {
-          setSelectedMeeting(uiMeetings[0])
-        }
+        if (uiMeetings.length > 0) setSelectedMeeting(uiMeetings[0])
       } catch (error) {
         console.error('Failed to load data:', error)
       }
     }
-
     loadData()
   }, [])
 
-  // Organize meetings into tree structure
   const organizeTree = (): { [type: string]: TreeNode } => {
     const tree: { [type: string]: TreeNode } = {}
     const teamBasedTypes = ["Team Sync", "Retro", "Planning", "Review", "Standup"]
@@ -137,39 +119,22 @@ export default function MeetingsPage() {
 
       if (meeting.type === "1:1") {
         const key = meeting.personName || meeting.attendees[0] || "Unknown"
-        if (!tree[meeting.type].people![key]) {
-          tree[meeting.type].people![key] = []
-        }
+        if (!tree[meeting.type].people![key]) tree[meeting.type].people![key] = []
         tree[meeting.type].people![key].push(meeting)
       } else if (isTeamBased) {
         const key = meeting.teamName || meeting.attendees[0] || "Unknown"
-        if (!tree[meeting.type].teams![key]) {
-          tree[meeting.type].teams![key] = []
-        }
+        if (!tree[meeting.type].teams![key]) tree[meeting.type].teams![key] = []
         tree[meeting.type].teams![key].push(meeting)
       } else {
-        if (!tree[meeting.type].meetings) {
-          tree[meeting.type].meetings = []
-        }
+        if (!tree[meeting.type].meetings) tree[meeting.type].meetings = []
         tree[meeting.type].meetings!.push(meeting)
       }
     })
 
-    // Sort meetings by date (most recent first)
     Object.values(tree).forEach((node) => {
-      if (node.people) {
-        Object.values(node.people).forEach((personMeetings) => {
-          personMeetings.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-        })
-      }
-      if (node.teams) {
-        Object.values(node.teams).forEach((teamMeetings) => {
-          teamMeetings.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-        })
-      }
-      if (node.meetings) {
-        node.meetings.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      }
+      if (node.people) Object.values(node.people).forEach((ms) => ms.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()))
+      if (node.teams) Object.values(node.teams).forEach((ms) => ms.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()))
+      if (node.meetings) node.meetings.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     })
 
     return tree
@@ -178,71 +143,43 @@ export default function MeetingsPage() {
   const tree = organizeTree()
 
   const toggleType = (type: string) => {
-    const newExpanded = new Set(expandedTypes)
-    if (newExpanded.has(type)) {
-      newExpanded.delete(type)
-    } else {
-      newExpanded.add(type)
-    }
-    setExpandedTypes(newExpanded)
+    const s = new Set(expandedTypes)
+    s.has(type) ? s.delete(type) : s.add(type)
+    setExpandedTypes(s)
   }
-
-  const togglePerson = (personName: string) => {
-    const newExpanded = new Set(expandedPeople)
-    if (newExpanded.has(personName)) {
-      newExpanded.delete(personName)
-    } else {
-      newExpanded.add(personName)
-    }
-    setExpandedPeople(newExpanded)
+  const togglePerson = (name: string) => {
+    const s = new Set(expandedPeople)
+    s.has(name) ? s.delete(name) : s.add(name)
+    setExpandedPeople(s)
   }
-
-  const toggleTeam = (teamName: string) => {
-    const newExpanded = new Set(expandedTeams)
-    if (newExpanded.has(teamName)) {
-      newExpanded.delete(teamName)
-    } else {
-      newExpanded.add(teamName)
-    }
-    setExpandedTeams(newExpanded)
+  const toggleTeam = (name: string) => {
+    const s = new Set(expandedTeams)
+    s.has(name) ? s.delete(name) : s.add(name)
+    setExpandedTeams(s)
   }
 
   const expandAll = () => {
-    const allTypes = Object.keys(tree)
     const allPeople: string[] = []
     const allTeams: string[] = []
-
     Object.values(tree).forEach(node => {
-      if (node.people) {
-        allPeople.push(...Object.keys(node.people))
-      }
-      if (node.teams) {
-        allTeams.push(...Object.keys(node.teams))
-      }
+      if (node.people) allPeople.push(...Object.keys(node.people))
+      if (node.teams) allTeams.push(...Object.keys(node.teams))
     })
-
-    setExpandedTypes(new Set(allTypes))
+    setExpandedTypes(new Set(Object.keys(tree)))
     setExpandedPeople(new Set(allPeople))
     setExpandedTeams(new Set(allTeams))
   }
-
   const collapseAll = () => {
     setExpandedTypes(new Set())
     setExpandedPeople(new Set())
     setExpandedTeams(new Set())
   }
 
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    })
-  }
+  const formatDate = (dateStr: string) =>
+    new Date(dateStr).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
 
   const handleAddMeeting = async (newMeeting: Omit<Meeting, "id">) => {
     try {
-      // Map UI format to backend format
       const backendMeeting = await createMeeting({
         title: newMeeting.title,
         meetingType: newMeeting.type as MeetingType,
@@ -255,7 +192,6 @@ export default function MeetingsPage() {
         teamId: newMeeting.teamId || null,
       })
 
-      // Map backend format back to UI format
       const uiMeeting: Meeting = {
         id: backendMeeting.id,
         title: backendMeeting.title,
@@ -275,20 +211,12 @@ export default function MeetingsPage() {
       setMeetings([uiMeeting, ...meetings])
       setSelectedMeeting(uiMeeting)
 
-      // Create tasks for each action item
       const actionItemTexts = parseActionItems(newMeeting.actionItems || "")
       if (actionItemTexts.length > 0) {
         const dueDate = newMeeting.nextMeetingDate || null
         await Promise.all(
           actionItemTexts.map((title) =>
-            createTask({
-              title,
-              dueDate,
-              priority: "Medium",
-              category: "Task",
-              status: "Not started",
-              list: dueDate ? "week" : "backlog",
-            })
+            createTask({ title, dueDate, priority: "Medium", category: "Task", status: "Not started", list: dueDate ? "week" : "backlog" })
           )
         )
       }
@@ -299,18 +227,14 @@ export default function MeetingsPage() {
   }
 
   const handleUpdateMeeting = async (updatedMeeting: Meeting) => {
-    // Validate next meeting date is after meeting date
     if (updatedMeeting.nextMeetingDate && updatedMeeting.date) {
-      const meetingDate = new Date(updatedMeeting.date)
-      const nextMeetingDate = new Date(updatedMeeting.nextMeetingDate)
-      if (nextMeetingDate <= meetingDate) {
+      if (new Date(updatedMeeting.nextMeetingDate) <= new Date(updatedMeeting.date)) {
         alert("Next meeting date must be after the meeting date")
         return
       }
     }
 
     try {
-      // Map UI format to backend format
       const backendMeeting = await updateMeeting(updatedMeeting.id, {
         title: updatedMeeting.title,
         meetingType: updatedMeeting.type as MeetingType,
@@ -323,7 +247,6 @@ export default function MeetingsPage() {
         teamId: updatedMeeting.teamId || null,
       })
 
-      // Map backend format back to UI format
       const uiMeeting: Meeting = {
         id: backendMeeting.id,
         title: backendMeeting.title,
@@ -353,33 +276,22 @@ export default function MeetingsPage() {
     setIsResizing(true)
   }
 
-  // Add mouse event listeners
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isResizing) return
-
-      // Get the main container element (the meetings page container)
       const mainContainer = document.querySelector('main')
       if (!mainContainer) return
-
       const containerRect = mainContainer.getBoundingClientRect()
       const newWidth = e.clientX - containerRect.left
-
-      if (newWidth >= 240 && newWidth <= 600) {
-        setLeftPanelWidth(newWidth)
-      }
+      if (newWidth >= 160 && newWidth <= 400) setLeftPanelWidth(newWidth)
     }
-
-    const handleMouseUp = () => {
-      setIsResizing(false)
-    }
+    const handleMouseUp = () => setIsResizing(false)
 
     if (isResizing) {
       document.addEventListener('mousemove', handleMouseMove)
       document.addEventListener('mouseup', handleMouseUp)
       document.body.style.cursor = 'col-resize'
       document.body.style.userSelect = 'none'
-
       return () => {
         document.removeEventListener('mousemove', handleMouseMove)
         document.removeEventListener('mouseup', handleMouseUp)
@@ -391,256 +303,462 @@ export default function MeetingsPage() {
   }, [isResizing])
 
   return (
-    <div className="flex h-full">
-      {/* Left Panel - Tree View */}
-      <div
-        className="border-[#383838] bg-[#262626] overflow-y-auto flex-shrink-0"
-        style={{ width: `${leftPanelWidth}px` }}
-      >
-        <div className="p-4 border-[#383838]">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-sm text-gray-100 font-semibold">Meetings</h2>
-            <Button onClick={() => setIsAddDialogOpen(true)}>
-              <Plus className="h-4 w-4 mr-1" />
-              Log
-            </Button>
-          </div>
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-gray-400">
-              Select a meeting to view details
-            </p>
-            <div className="flex gap-1">
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={expandAll}
-                className="h-6 px-2 text-xs"
-                title="Expand all"
-              >
-                <ChevronsDown className="h-3 w-3" />
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={collapseAll}
-                className="h-6 px-2 text-xs"
-                title="Collapse all"
-              >
-                <ChevronsRight className="h-3 w-3" />
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        <div className="p-2">
-          {Object.entries(tree).map(([type, node]) => (
-            <div key={type} className="mb-1">
-              {/* Meeting Type */}
-              <button
-                onClick={() => toggleType(type)}
-                className="flex hover:bg-[#292929] rounded items-center gap-2 w-full px-2 py-1.5 text-gray-100 font-medium"
-              >
-                {expandedTypes.has(type) ? (
-                  <ChevronDown className="h-4 w-4 flex-shrink-0" />
-                ) : (
-                  <ChevronRight className="h-4 w-4 flex-shrink-0" />
-                )}
-                {type}
-              </button>
-
-              {/* Expanded content */}
-              {expandedTypes.has(type) && (
-                <div className="ml-4">
-                  {/* For 1:1 meetings, group by person */}
-                  {node.people && Object.entries(node.people).map(([personName, personMeetings]) => (
-                    <div key={personName} className="mb-1">
-                      <button
-                        onClick={() => togglePerson(personName)}
-                        className="flex hover:bg-[#292929] rounded items-center gap-2 w-full px-2 py-1.5 text-gray-300"
-                      >
-                        {expandedPeople.has(personName) ? (
-                          <ChevronDown className="h-4 w-4 flex-shrink-0" />
-                        ) : (
-                          <ChevronRight className="h-4 w-4 flex-shrink-0" />
-                        )}
-                        {personName}
-                      </button>
-
-                      {/* Person's meetings */}
-                      {expandedPeople.has(personName) && (
-                        <div className="ml-4">
-                          {personMeetings.map((meeting) => (
-                            <button
-                              key={meeting.id}
-                              onClick={() => setSelectedMeeting(meeting)}
-                              className={`block w-full text-left px-2 py-1.5 text-xs rounded ${
-                                selectedMeeting?.id === meeting.id
-                                  ? "bg-primary-50 bg-primary-dark-900/30 bg-primary-dark-900/30 text-primary-700 text-primary-dark-400 text-primary-dark-400 font-medium"
-                                  : "text-gray-300 hover:bg-[#292929]"
-                              }`}
-                            >
-                              {formatDate(meeting.date)}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-
-                  {/* For team-based meetings, group by team */}
-                  {node.teams && Object.entries(node.teams).map(([teamName, teamMeetings]) => (
-                    <div key={teamName} className="mb-1">
-                      <button
-                        onClick={() => toggleTeam(teamName)}
-                        className="flex hover:bg-[#292929] rounded items-center gap-2 w-full px-2 py-1.5 text-gray-300"
-                      >
-                        {expandedTeams.has(teamName) ? (
-                          <ChevronDown className="h-4 w-4 flex-shrink-0" />
-                        ) : (
-                          <ChevronRight className="h-4 w-4 flex-shrink-0" />
-                        )}
-                        {teamName}
-                      </button>
-
-                      {/* Team's meetings */}
-                      {expandedTeams.has(teamName) && (
-                        <div className="ml-4">
-                          {teamMeetings.map((meeting) => (
-                            <button
-                              key={meeting.id}
-                              onClick={() => setSelectedMeeting(meeting)}
-                              className={`block w-full text-left px-2 py-1.5 text-xs rounded ${
-                                selectedMeeting?.id === meeting.id
-                                  ? "bg-primary-50 bg-primary-dark-900/30 bg-primary-dark-900/30 text-primary-700 text-primary-dark-400 text-primary-dark-400 font-medium"
-                                  : "text-gray-300 hover:bg-[#292929]"
-                              }`}
-                            >
-                              {formatDate(meeting.date)}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-
-                  {/* For other meetings, just list them */}
-                  {node.meetings && node.meetings.map((meeting) => (
-                    <button
-                      key={meeting.id}
-                      onClick={() => setSelectedMeeting(meeting)}
-                      className={`block w-full text-left px-2 py-1.5 text-xs rounded ml-4 ${
-                        selectedMeeting?.id === meeting.id
-                          ? "bg-primary-50 bg-primary-dark-900/30 bg-primary-dark-900/30 text-primary-700 text-primary-dark-400 text-primary-dark-400 font-medium"
-                          : "text-gray-300 hover:bg-[#292929]"
-                      }`}
-                    >
-                      {formatDate(meeting.date)}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      {/* Top bar */}
+      <div style={{
+        height: "40px",
+        padding: "0 16px",
+        borderBottom: "1px solid var(--border-1)",
+        background: "var(--surf)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        flexShrink: 0,
+      }}>
+        <span style={{ fontSize: "var(--text-label)", fontWeight: 500, color: "var(--text-1)", fontFamily: "var(--font-sans)" }}>
+          Meetings
+        </span>
+        <button
+          onClick={() => setIsAddDialogOpen(true)}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "4px",
+            background: "linear-gradient(90deg, #00ffe5 0%, #00f058 100%)",
+            border: "none",
+            color: "#0a1a0a",
+            padding: "4px 10px",
+            borderRadius: "4px",
+            fontSize: "var(--text-caption)",
+            fontWeight: 600,
+            cursor: "pointer",
+            fontFamily: "var(--font-sans)",
+          }}
+        >
+          + Log meeting
+        </button>
       </div>
 
-      {/* Resizable Divider */}
-      <div
-        className={`w-1 bg-gray-200 hover:bg-primary-400 hover:bg-primary-dark-400 cursor-col-resize flex-shrink-0 ${
-          isResizing ? 'bg-primary-500' : ''
-        }`}
-        onMouseDown={handleMouseDown}
-      />
+      {/* Split panel */}
+      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+        {/* Left panel */}
+        <div style={{
+          width: `${leftPanelWidth}px`,
+          background: "var(--surf)",
+          borderRight: "1px solid var(--border-1)",
+          overflowY: "auto",
+          display: "flex",
+          flexDirection: "column",
+          flexShrink: 0,
+        }}>
+          {/* Panel header */}
+          <div style={{
+            padding: "10px 12px",
+            borderBottom: "1px solid var(--border-1)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}>
+            <span style={{ fontSize: "var(--text-meta)", fontWeight: 500, color: "var(--text-1)" }}>All meetings</span>
+            <div style={{ display: "flex", gap: "2px" }}>
+              <button
+                onClick={expandAll}
+                title="Expand all"
+                style={{ background: "none", border: "none", color: "var(--text-3)", cursor: "pointer", padding: "2px" }}
+                onMouseEnter={e => (e.currentTarget.style.color = "var(--text-2)")}
+                onMouseLeave={e => (e.currentTarget.style.color = "var(--text-3)")}
+              >
+                <ChevronsDown style={{ width: "11px", height: "11px" }} />
+              </button>
+              <button
+                onClick={collapseAll}
+                title="Collapse all"
+                style={{ background: "none", border: "none", color: "var(--text-3)", cursor: "pointer", padding: "2px" }}
+                onMouseEnter={e => (e.currentTarget.style.color = "var(--text-2)")}
+                onMouseLeave={e => (e.currentTarget.style.color = "var(--text-3)")}
+              >
+                <ChevronsRight style={{ width: "11px", height: "11px" }} />
+              </button>
+            </div>
+          </div>
 
-      {/* Right Panel - Meeting Details */}
-      <div className="flex-1 overflow-y-auto bg-[#1c1c1c]">
-        {selectedMeeting ? (
-          <div className="p-8">
-            <Card>
-              <CardContent className="p-6">
-                <div className="space-y-6">
-                  {/* Date and Next Meeting Date */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="grid gap-1">
-                      <Label className="text-gray-300 font-medium">Date</Label>
+          {/* Tree */}
+          <div style={{ padding: "4px 0" }}>
+            {Object.entries(tree).map(([type, node]) => (
+              <div key={type}>
+                {/* Group header */}
+                <button
+                  onClick={() => toggleType(type)}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px",
+                    padding: "6px 12px",
+                    fontSize: "var(--text-caption)",
+                    fontWeight: 500,
+                    color: "var(--text-3)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    width: "100%",
+                    textAlign: "left",
+                  }}
+                  onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = "var(--surf-2)")}
+                  onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = "none")}
+                >
+                  {expandedTypes.has(type)
+                    ? <ChevronDown style={{ width: "9px", height: "9px" }} />
+                    : <ChevronRight style={{ width: "9px", height: "9px" }} />
+                  }
+                  {type}
+                </button>
+
+                {expandedTypes.has(type) && (
+                  <div>
+                    {/* 1:1 — grouped by person */}
+                    {node.people && Object.entries(node.people).map(([personName, personMeetings]) => (
+                      <div key={personName}>
+                        <button
+                          onClick={() => togglePerson(personName)}
+                          style={{
+                            padding: "4px 12px 2px 24px",
+                            fontSize: "var(--text-caption)",
+                            color: "var(--text-3)",
+                            fontWeight: 500,
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                            width: "100%",
+                            textAlign: "left",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "4px",
+                          }}
+                          onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = "var(--surf-2)")}
+                          onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = "none")}
+                        >
+                          {expandedPeople.has(personName)
+                            ? <ChevronDown style={{ width: "8px", height: "8px" }} />
+                            : <ChevronRight style={{ width: "8px", height: "8px" }} />
+                          }
+                          {personName}
+                        </button>
+                        {expandedPeople.has(personName) && personMeetings.map((meeting) => {
+                          const isActive = selectedMeeting?.id === meeting.id
+                          return (
+                            <button
+                              key={meeting.id}
+                              onClick={() => setSelectedMeeting(meeting)}
+                              style={{
+                                padding: "5px 12px 5px 24px",
+                                cursor: "pointer",
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: "1px",
+                                background: isActive ? "var(--surf-3)" : "none",
+                                borderTop: "none",
+                                borderRight: "none",
+                                borderBottom: "none",
+                                borderLeft: `2px solid ${isActive ? "#00f058" : "transparent"}`,
+                                width: "100%",
+                                textAlign: "left",
+                              } as React.CSSProperties}
+                              onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "var(--surf-2)" }}
+                              onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "none" }}
+                            >
+                              <span style={{ fontSize: "var(--text-meta)", color: isActive ? "#00f058" : "var(--text-2)" }}>
+                                {formatDate(meeting.date)}
+                              </span>
+                              {meeting.title && (
+                                <span style={{ fontSize: "var(--text-overline)", color: "var(--text-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>
+                                  {meeting.title}
+                                </span>
+                              )}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    ))}
+
+                    {/* Team-based — grouped by team */}
+                    {node.teams && Object.entries(node.teams).map(([teamName, teamMeetings]) => (
+                      <div key={teamName}>
+                        <button
+                          onClick={() => toggleTeam(teamName)}
+                          style={{
+                            padding: "4px 12px 2px 24px",
+                            fontSize: "var(--text-caption)",
+                            color: "var(--text-3)",
+                            fontWeight: 500,
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                            width: "100%",
+                            textAlign: "left",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "4px",
+                          }}
+                          onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = "var(--surf-2)")}
+                          onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = "none")}
+                        >
+                          {expandedTeams.has(teamName)
+                            ? <ChevronDown style={{ width: "8px", height: "8px" }} />
+                            : <ChevronRight style={{ width: "8px", height: "8px" }} />
+                          }
+                          {teamName}
+                        </button>
+                        {expandedTeams.has(teamName) && teamMeetings.map((meeting) => {
+                          const isActive = selectedMeeting?.id === meeting.id
+                          return (
+                            <button
+                              key={meeting.id}
+                              onClick={() => setSelectedMeeting(meeting)}
+                              style={{
+                                padding: "5px 12px 5px 24px",
+                                cursor: "pointer",
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: "1px",
+                                background: isActive ? "var(--surf-3)" : "none",
+                                borderTop: "none",
+                                borderRight: "none",
+                                borderBottom: "none",
+                                borderLeft: `2px solid ${isActive ? "#00f058" : "transparent"}`,
+                                width: "100%",
+                                textAlign: "left",
+                              } as React.CSSProperties}
+                              onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "var(--surf-2)" }}
+                              onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "none" }}
+                            >
+                              <span style={{ fontSize: "var(--text-meta)", color: isActive ? "#00f058" : "var(--text-2)" }}>
+                                {formatDate(meeting.date)}
+                              </span>
+                              {meeting.title && (
+                                <span style={{ fontSize: "var(--text-overline)", color: "var(--text-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>
+                                  {meeting.title}
+                                </span>
+                              )}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    ))}
+
+                    {/* Other meetings — flat list */}
+                    {node.meetings && node.meetings.map((meeting) => {
+                      const isActive = selectedMeeting?.id === meeting.id
+                      return (
+                        <button
+                          key={meeting.id}
+                          onClick={() => setSelectedMeeting(meeting)}
+                          style={{
+                            padding: "5px 12px 5px 24px",
+                            cursor: "pointer",
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "1px",
+                            background: isActive ? "var(--surf-3)" : "none",
+                            borderTop: "none",
+                            borderRight: "none",
+                            borderBottom: "none",
+                            borderLeft: `2px solid ${isActive ? "#00f058" : "transparent"}`,
+                            width: "100%",
+                            textAlign: "left",
+                          } as React.CSSProperties}
+                          onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "var(--surf-2)" }}
+                          onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "none" }}
+                        >
+                          <span style={{ fontSize: "var(--text-meta)", color: isActive ? "#00f058" : "var(--text-2)" }}>
+                            {formatDate(meeting.date)}
+                          </span>
+                          {meeting.title && (
+                            <span style={{ fontSize: "var(--text-overline)", color: "var(--text-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>
+                              {meeting.title}
+                            </span>
+                          )}
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Resizable divider */}
+        <div
+          style={{
+            width: "4px",
+            background: isResizing ? "var(--accent)" : "var(--border-1)",
+            cursor: "col-resize",
+            flexShrink: 0,
+            transition: "background 150ms",
+          }}
+          onMouseDown={handleMouseDown}
+          onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = "var(--border-2)")}
+          onMouseLeave={e => { if (!isResizing) (e.currentTarget as HTMLElement).style.background = "var(--border-1)" }}
+        />
+
+        {/* Right panel — meeting detail */}
+        <div style={{ flex: 1, overflowY: "auto", padding: "22px 24px" }}>
+          {selectedMeeting ? (
+            <div>
+              {/* Title */}
+              <h1 style={{ marginBottom: "4px" }}>
+                {selectedMeeting.title}
+              </h1>
+              {/* Meta line */}
+              <p style={{ marginBottom: "16px" }}>
+                {formatDate(selectedMeeting.date)}
+                {selectedMeeting.nextMeetingDate && ` · next ${formatDate(selectedMeeting.nextMeetingDate)}`}
+                {selectedMeeting.attendees.length > 0 && ` · ${selectedMeeting.attendees.join(", ")}`}
+              </p>
+
+              {/* Meta fields grid */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "16px" }}>
+                <div>
+                  <div style={{ fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "3px" }}>Date</div>
+                  <div style={{ background: "var(--surf-2)", border: "1px solid var(--border-1)", borderRadius: "5px", overflow: "hidden" }}>
+                    <Input
+                      type="date"
+                      value={selectedMeeting.date}
+                      onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, date: e.target.value })}
+                      style={{ fontSize: "var(--text-meta)", color: "var(--text-1)", background: "transparent", border: "none", padding: "6px 9px" }}
+                    />
+                  </div>
+                </div>
+                {selectedMeeting.type === "1:1" && selectedMeeting.recurrence && selectedMeeting.recurrence !== "none" && selectedMeeting.nextMeetingDate && (
+                  <div>
+                    <div style={{ fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "3px" }}>Next Meeting</div>
+                    <div style={{ background: "var(--surf-2)", border: "1px solid var(--border-1)", borderRadius: "5px", overflow: "hidden" }}>
                       <Input
                         type="date"
-                        value={selectedMeeting.date}
-                        onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, date: e.target.value })}
-                      />
-                    </div>
-                    {selectedMeeting.type === "1:1" && selectedMeeting.recurrence && selectedMeeting.recurrence !== "none" && selectedMeeting.nextMeetingDate && (
-                      <div className="grid gap-1">
-                        <Label className="text-gray-300 font-medium">Next Meeting</Label>
-                        <Input
-                          type="date"
-                          value={selectedMeeting.nextMeetingDate}
-                          onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, nextMeetingDate: e.target.value })}
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Title and Attendees */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="grid gap-1">
-                      <Label className="text-gray-300 font-medium">Title</Label>
-                      <Input
-                        value={selectedMeeting.title}
-                        onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, title: e.target.value })}
-                        placeholder="Meeting title"
-                      />
-                    </div>
-                    <div className="grid gap-1">
-                      <Label className="text-gray-300 font-medium">Attendees</Label>
-                      <Input
-                        value={selectedMeeting.attendees.join(", ")}
-                        onChange={(e) => handleUpdateMeeting({
-                          ...selectedMeeting,
-                          attendees: e.target.value.split(",").map(a => a.trim()).filter(a => a.length > 0)
-                        })}
-                        placeholder="Enter names separated by commas"
+                        value={selectedMeeting.nextMeetingDate}
+                        onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, nextMeetingDate: e.target.value })}
+                        style={{ fontSize: "var(--text-meta)", color: "var(--text-1)", background: "transparent", border: "none", padding: "6px 9px" }}
                       />
                     </div>
                   </div>
-
-                  {/* Action Items */}
-                  <div>
-                    <Label className="text-gray-300 font-medium">Action Items</Label>
-                    <MarkdownTextarea
-                      value={selectedMeeting.actionItems || ""}
-                      onValueChange={(value) => handleUpdateMeeting({ ...selectedMeeting, actionItems: value })}
-                      placeholder={"- Action item 1\n- Action item 2"}
-                      rows={4}
-                      className="mt-1 text-sm"
-                    />
-                  </div>
-
-                  {/* Meeting Notes */}
-                  <div>
-                    <Label className="text-gray-300 font-medium">Meeting Notes</Label>
-                    <MarkdownTextarea
-                      value={selectedMeeting.notes || ""}
-                      onValueChange={(value) => handleUpdateMeeting({ ...selectedMeeting, notes: value })}
-                      placeholder="Meeting notes, discussion points, decisions..."
-                      rows={12}
-                      className="mt-1 text-sm"
+                )}
+                <div>
+                  <div style={{ fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "3px" }}>Title</div>
+                  <div style={{ background: "var(--surf-2)", border: "1px solid var(--border-1)", borderRadius: "5px", overflow: "hidden" }}>
+                    <Input
+                      value={selectedMeeting.title}
+                      onChange={(e) => handleUpdateMeeting({ ...selectedMeeting, title: e.target.value })}
+                      placeholder="Meeting title"
+                      style={{ fontSize: "var(--text-meta)", color: "var(--text-1)", background: "transparent", border: "none", padding: "6px 9px" }}
                     />
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-        ) : (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-center">
-              <p className="text-gray-500">Select a meeting to view details</p>
+                <div>
+                  <div style={{ fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "3px" }}>Attendees</div>
+                  <div style={{ background: "var(--surf-2)", border: "1px solid var(--border-1)", borderRadius: "5px", overflow: "hidden" }}>
+                    <Input
+                      value={selectedMeeting.attendees.join(", ")}
+                      onChange={(e) => handleUpdateMeeting({
+                        ...selectedMeeting,
+                        attendees: e.target.value.split(",").map(a => a.trim()).filter(a => a.length > 0)
+                      })}
+                      placeholder="Names separated by commas"
+                      style={{ fontSize: "var(--text-meta)", color: "var(--text-1)", background: "transparent", border: "none", padding: "6px 9px" }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Action items */}
+              <div style={{ marginBottom: "16px" }}>
+                <div style={{ fontSize: "var(--text-caption)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "7px" }}>
+                  Action items
+                </div>
+                <div style={{
+                  background: "var(--surf-2)",
+                  border: "1px solid var(--border-1)",
+                  borderRadius: "6px",
+                  overflow: "hidden",
+                }}>
+                  {parseActionItems(selectedMeeting.actionItems || "").length > 0 ? (
+                    parseActionItems(selectedMeeting.actionItems || "").map((item, idx, arr) => (
+                      <div key={idx} style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        padding: "7px 12px",
+                        borderBottom: idx < arr.length - 1 ? "1px solid var(--border-1)" : "none",
+                      }}>
+                        <div style={{
+                          width: "13px",
+                          height: "13px",
+                          borderRadius: "50%",
+                          border: "1.5px solid var(--border-3)",
+                          flexShrink: 0,
+                        }} />
+                        <span style={{ fontSize: "var(--text-label)", color: "var(--text-2)" }}>{item}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div style={{ padding: "7px 12px" }}>
+                      <span style={{ fontSize: "var(--text-meta)", color: "var(--text-3)" }}>No action items</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Meeting notes */}
+              <div>
+                <div style={{ fontSize: "var(--text-caption)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "7px" }}>
+                  Meeting notes
+                </div>
+                <div style={{
+                  background: "var(--surf-2)",
+                  border: "1px solid var(--border-1)",
+                  borderRadius: "6px",
+                  overflow: "hidden",
+                }}>
+                  {/* Toolbar */}
+                  <div style={{ display: "flex", gap: "2px", padding: "6px 8px", borderBottom: "1px solid var(--border-1)" }}>
+                    {["B", "I", "H1", "H2", "H3", "≡", "</>", "⊞"].map((label) => (
+                      <button key={label} style={{
+                        background: "transparent",
+                        border: "1px solid var(--border-2)",
+                        color: "var(--text-3)",
+                        borderRadius: "3px",
+                        padding: "2px 7px",
+                        fontSize: "var(--text-caption)",
+                        cursor: "pointer",
+                        fontFamily: "var(--font-sans)",
+                      }}
+                        onMouseEnter={e => (e.currentTarget.style.color = "var(--text-1)")}
+                        onMouseLeave={e => (e.currentTarget.style.color = "var(--text-3)")}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                  {/* Body */}
+                  <div style={{ padding: "12px 14px", fontSize: "var(--text-label)", color: "var(--text-2)", lineHeight: 1.75 }}>
+                    {selectedMeeting.notes ? (
+                      <div dangerouslySetInnerHTML={{ __html: selectedMeeting.notes }} />
+                    ) : (
+                      <span style={{ color: "var(--text-3)" }}>Meeting notes, discussion points, decisions...</span>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        )}
+          ) : (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
+              <p style={{ color: "var(--text-3)" }}>Select a meeting to view details</p>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Add Meeting Dialog */}
       <MeetingFormDialog
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}

@@ -15,7 +15,6 @@ import {
   ChevronLeft,
   ChevronRight
 } from "lucide-react"
-import { cn } from "@/lib/utils"
 import { createClient } from "@/lib/supabase/client"
 
 const navigation = [
@@ -27,7 +26,6 @@ const navigation = [
   { name: "Meetings", href: "/meetings", icon: Calendar },
   { name: "Career Goals", href: "/career-goals", icon: Target },
 ]
-
 
 interface SidebarProps {
   isOpen: boolean
@@ -53,99 +51,151 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
   }, [])
 
   return (
-    <div className={cn(
-      "flex h-full flex-col border-r bg-white bg-[#212121] border-[#383838] transition-all duration-300",
-      isOpen ? "w-64" : "w-16"
-    )}>
-      {/* Logo */}
-      <div className="flex h-16 items-center border-[#383838]">
-        <Link href="/" className={cn(
-          "flex items-center gap-3 hover:bg-[#292929] transition-colors flex-1",
-          isOpen ? "px-6" : "px-3 justify-center"
-        )}>
-          <Image
-            src="/logo_transparent.png"
-            alt="Cadence"
-            width={isOpen ? 140 : 35}
-            height={35}
-            className={cn(
-              "object-contain flex-shrink-0",
-              isOpen ? "h-[35px] w-auto" : "h-[35px] w-[35px]"
-            )}
-          />
-        </Link>
+    <div
+      className="flex h-full flex-col flex-shrink-0 transition-all duration-300"
+      style={{
+        width: isOpen ? "200px" : "44px",
+        background: "var(--surf)",
+        borderRight: "1px solid var(--border-1)",
+      }}
+    >
+      {/* Logo + collapse toggle */}
+      <div style={{ display: "flex", alignItems: "center", height: "48px", padding: "0 10px", gap: "6px" }}>
         {isOpen && (
-          <button
-            onClick={onToggle}
-            className="hover:bg-[#292929] px-3 h-full transition-colors"
-            aria-label="Collapse sidebar"
-          >
-            <ChevronLeft className="h-5 w-5 text-gray-400" />
-          </button>
+          <Link href="/" style={{ flex: 1, display: "flex", alignItems: "center" }}>
+            <Image
+              src="/logo_transparent.png"
+              alt="Cadence"
+              width={110}
+              height={28}
+              className="object-contain"
+              style={{ height: "28px", width: "auto" }}
+            />
+          </Link>
         )}
+        <button
+          onClick={onToggle}
+          style={{
+            background: "none",
+            border: "none",
+            color: "var(--text-3)",
+            cursor: "pointer",
+            padding: "4px",
+            borderRadius: "4px",
+            display: "flex",
+            alignItems: "center",
+            marginLeft: isOpen ? "auto" : "0",
+          }}
+          onMouseEnter={e => (e.currentTarget.style.color = "var(--text-1)")}
+          onMouseLeave={e => (e.currentTarget.style.color = "var(--text-3)")}
+          aria-label={isOpen ? "Collapse sidebar" : "Expand sidebar"}
+        >
+          {isOpen
+            ? <ChevronLeft style={{ width: "12px", height: "12px" }} />
+            : <ChevronRight style={{ width: "12px", height: "12px" }} />
+          }
+        </button>
       </div>
 
-      {/* Main Navigation */}
-      <nav className="relative flex-1 space-y-1 p-4">
-        {!isOpen && (
-          <button
-            onClick={onToggle}
-            className="flex hover:bg-gray-100 hover:bg-[#292929] items-center gap-3 rounded-md px-2 py-2 text-sm font-medium transition-colors"
-            aria-label="Expand sidebar"
-          >
-            <ChevronRight className="h-5 w-5 text-gray-400" />
-          </button>
-
-        )}
+      {/* Nav */}
+      <nav style={{ flex: 1, padding: "4px 10px", display: "flex", flexDirection: "column" }}>
         {navigation.map((item) => {
           const isActive = pathname === item.href
           return (
             <Link
               key={item.name}
               href={item.href}
-              className={cn(
-                "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-primary-50 bg-[#292929] text-primary-700 text-[#84ffc4]"
-                  : "text-gray-700 hover:bg-gray-100 hover:text-gray-900 text-gray-300 hover:bg-[#292929] hover:text-gray-100",
-                !isOpen && "justify-center"
-              )}
               title={!isOpen ? item.name : undefined}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "7px",
+                padding: isOpen ? "4px 7px" : "4px 6px",
+                borderRadius: "4px",
+                marginBottom: "1px",
+                fontSize: "var(--text-meta)",
+                fontFamily: "var(--font-sans)",
+                color: isActive ? "var(--text-1)" : "var(--text-2)",
+                background: isActive ? "var(--surf-3)" : "transparent",
+                borderRight: isActive ? "2px solid #00f058" : "2px solid transparent",
+                textDecoration: "none",
+                justifyContent: isOpen ? "flex-start" : "center",
+              }}
+              onMouseEnter={e => {
+                if (!isActive) (e.currentTarget as HTMLElement).style.background = "var(--surf-2)"
+              }}
+              onMouseLeave={e => {
+                if (!isActive) (e.currentTarget as HTMLElement).style.background = "transparent"
+              }}
             >
-              <item.icon className="h-5 w-5 flex-shrink-0" />
+              <item.icon
+                style={{
+                  width: "12px",
+                  height: "12px",
+                  flexShrink: 0,
+                  opacity: isActive ? 1 : 0.5,
+                }}
+              />
               {isOpen && item.name}
             </Link>
           )
         })}
       </nav>
 
-      {/* User Profile → Settings */}
-      <div className="border-[#383838] p-4">
+      {/* User / Settings */}
+      <div style={{ padding: "8px 10px" }}>
         <Link
           href="/settings"
-          className={cn(
-            "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
-            pathname === "/settings" ? "bg-[#292929] text-[#84ffc4]" : "text-gray-300 hover:bg-[#292929] hover:text-gray-100",
-            !isOpen && "justify-center"
-          )}
           title={!isOpen ? "Settings" : undefined}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "7px",
+            padding: "4px 7px",
+            borderRadius: "4px",
+            fontSize: "var(--text-meta)",
+            fontFamily: "var(--font-sans)",
+            color: pathname === "/settings" ? "var(--text-1)" : "var(--text-2)",
+            background: pathname === "/settings" ? "var(--surf-3)" : "transparent",
+            borderRight: pathname === "/settings" ? "2px solid #00f058" : "2px solid transparent",
+            textDecoration: "none",
+            justifyContent: isOpen ? "flex-start" : "center",
+          }}
+          onMouseEnter={e => {
+            if (pathname !== "/settings") (e.currentTarget as HTMLElement).style.background = "var(--surf-2)"
+          }}
+          onMouseLeave={e => {
+            if (pathname !== "/settings") (e.currentTarget as HTMLElement).style.background = "transparent"
+          }}
         >
           {userAvatar ? (
             <img
               src={userAvatar}
               alt={userName}
               referrerPolicy="no-referrer"
-              className="h-8 w-8 min-w-[2rem] rounded-full object-cover flex-shrink-0"
+              style={{ width: "20px", height: "20px", borderRadius: "50%", objectFit: "cover", flexShrink: 0 }}
             />
           ) : (
-            <div className="flex h-8 w-8 min-w-[2rem] items-center justify-center rounded-full bg-[#292929] text-[#84ffc4] flex-shrink-0">
-              <span className="text-sm font-semibold">{userInitials}</span>
+            <div style={{
+              width: "20px",
+              height: "20px",
+              borderRadius: "50%",
+              background: "var(--surf-3)",
+              color: "var(--text-2)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "var(--text-overline)",
+              fontWeight: 500,
+              flexShrink: 0,
+            }}>
+              {userInitials}
             </div>
           )}
           {isOpen && (
-            <div className="flex-1 text-left overflow-hidden">
-              <div className="text-sm text-gray-100 font-medium truncate">{userName}</div>
-              <div className="text-xs text-gray-400">Settings</div>
+            <div style={{ overflow: "hidden", flex: 1 }}>
+              <div style={{ fontSize: "var(--text-meta)", color: "var(--text-1)", fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{userName}</div>
+              <div style={{ fontSize: "var(--text-overline)", color: "var(--text-3)" }}>Settings</div>
             </div>
           )}
         </Link>

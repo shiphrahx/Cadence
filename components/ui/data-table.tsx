@@ -1,9 +1,7 @@
 "use client"
 
 import { useState, useMemo, ReactNode } from "react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Search, Plus, ArrowUpDown, Filter } from "lucide-react"
+import { ArrowUpDown, Search } from "lucide-react"
 
 export interface ColumnDef<T> {
   id: string
@@ -63,7 +61,6 @@ export function DataTable<T extends { id?: number | string }>({
 
   const filteredAndSortedData = useMemo(() => {
     let filtered = data.filter((item) => {
-      // Search filter
       if (searchQuery && searchKeys.length > 0) {
         const matchesSearch = searchKeys.some((key) => {
           const value = item[key]
@@ -72,7 +69,6 @@ export function DataTable<T extends { id?: number | string }>({
         if (!matchesSearch) return false
       }
 
-      // Custom filters
       for (const filter of filters) {
         const filterValue = filterValues[filter.id]
         if (filterValue && filterValue !== "all") {
@@ -83,7 +79,6 @@ export function DataTable<T extends { id?: number | string }>({
       return true
     })
 
-    // Sorting
     if (sortField) {
       const column = columns.find((col) => col.id === sortField)
       if (column && column.accessorKey) {
@@ -107,7 +102,6 @@ export function DataTable<T extends { id?: number | string }>({
       }
     }
 
-    // Always push inactive items to the bottom (stable sort)
     filtered.sort((a, b) => {
       const aInactive = (a as any).status === "inactive" ? 1 : 0
       const bInactive = (b as any).status === "inactive" ? 1 : 0
@@ -118,54 +112,110 @@ export function DataTable<T extends { id?: number | string }>({
   }, [data, searchQuery, searchKeys, filterValues, filters, sortField, sortDirection, columns])
 
   return (
-    <div className="space-y-4">
-      {/* Search and Filters Bar */}
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2 flex-1">
-          {searchKeys.length > 0 && (
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute -translate-y-1/2 left-3 top-1/2 h-4 w-4 text-gray-500" />
-              <Input
-                placeholder={searchPlaceholder}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
-              />
-            </div>
-          )}
-          {filters.length > 0 && (
-            <Button
-              variant={showFilters ? "default" : "outline"}
-              size="sm"
-              onClick={() => setShowFilters(!showFilters)}
-            >
-              <Filter className="h-4 w-4 mr-2" />
-              Filters
-            </Button>
-          )}
-        </div>
+    <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
+      {/* Search + controls row */}
+      <div style={{ display: "flex", gap: "5px", marginBottom: "10px", alignItems: "center" }}>
+        {searchKeys.length > 0 && (
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "5px",
+            background: "var(--surf)",
+            border: "1px solid var(--border-1)",
+            borderRadius: "4px",
+            padding: "4px 8px",
+            flex: 1,
+          }}>
+            <Search style={{ width: "9px", height: "9px", color: "var(--text-3)", flexShrink: 0 }} />
+            <input
+              type="text"
+              placeholder={searchPlaceholder}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                background: "transparent",
+                border: "none",
+                outline: "none",
+                color: "var(--text-1)",
+                fontSize: "var(--text-label)",
+                fontFamily: "var(--font-sans)",
+                width: "100%",
+              }}
+            />
+          </div>
+        )}
+        {filters.length > 0 && (
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            style={{
+              background: showFilters ? "var(--surf-3)" : "transparent",
+              border: "1px solid var(--border-2)",
+              color: "var(--text-2)",
+              padding: "4px 8px",
+              borderRadius: "4px",
+              fontSize: "var(--text-label)",
+              cursor: "pointer",
+              fontFamily: "var(--font-sans)",
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = "var(--text-1)")}
+            onMouseLeave={e => (e.currentTarget.style.color = "var(--text-2)")}
+          >
+            Filters
+          </button>
+        )}
         {onQuickAdd && (
-          <Button onClick={onQuickAdd}>
-            <Plus className="h-4 w-4 mr-2" />
-            {quickAddLabel}
-          </Button>
+          <button
+            onClick={onQuickAdd}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "4px",
+              background: "linear-gradient(90deg, #00ffe5 0%, #00f058 100%)",
+              border: "none",
+              color: "#0a1a0a",
+              padding: "4px 10px",
+              borderRadius: "4px",
+              fontSize: "var(--text-label)",
+              fontWeight: 600,
+              cursor: "pointer",
+              fontFamily: "var(--font-sans)",
+            }}
+          >
+            + {quickAddLabel}
+          </button>
         )}
       </div>
 
-      {/* Filters Panel */}
+      {/* Filter panel */}
       {showFilters && filters.length > 0 && (
-        <div className="flex border items-center gap-4 p-4 bg-[#262626] rounded-lg border-[#383838]">
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "12px",
+          padding: "8px 12px",
+          background: "var(--surf)",
+          border: "1px solid var(--border-1)",
+          borderRadius: "4px",
+          marginBottom: "10px",
+        }}>
           {filters.map((filter) => (
-            <div key={filter.id} className="flex items-center gap-2">
-              <label className="text-gray-100 font-medium">
+            <div key={filter.id} style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+              <label style={{ fontSize: "var(--text-label)", color: "var(--text-2)", fontFamily: "var(--font-sans)" }}>
                 {filter.label}:
               </label>
               <select
                 value={filterValues[filter.id]}
-                onChange={(e) =>
-                  setFilterValues({ ...filterValues, [filter.id]: e.target.value })
-                }
-                className="border text-gray-100 border-[#383838] bg-[#262626] rounded-md px-2 py-1"
+                onChange={(e) => setFilterValues({ ...filterValues, [filter.id]: e.target.value })}
+                style={{
+                  background: "var(--surf-2)",
+                  border: "1px solid var(--border-2)",
+                  borderRadius: "3px",
+                  padding: "2px 6px",
+                  fontSize: "var(--text-label)",
+                  color: "var(--text-1)",
+                  cursor: "pointer",
+                  fontFamily: "var(--font-sans)",
+                }}
               >
                 <option value="all">All</option>
                 {filter.options.map((option) => (
@@ -180,22 +230,54 @@ export function DataTable<T extends { id?: number | string }>({
       )}
 
       {/* Table */}
-      <div className="border border-[#383838] rounded-lg bg-[#262626] max-md:overflow-x-auto">
-        <table className="w-full border-collapse">
+      <div style={{
+        background: "var(--surf)",
+        border: "1px solid var(--border-1)",
+        borderRadius: "6px",
+        overflow: "hidden",
+      }}>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
-            <tr className="border-[#383838]">
+            <tr>
               {columns.map((column) => (
                 <th
                   key={column.id}
-                  className={`text-left p-3 bg-[#262626] font-semibold text-sm text-gray-100 ${column.className || ""}`}
+                  style={{
+                    textAlign: "left",
+                    padding: "6px 10px",
+                    fontSize: "var(--text-overline)",
+                    fontWeight: 500,
+                    color: "var(--text-3)",
+                    letterSpacing: "0.06em",
+                    textTransform: "uppercase",
+                    borderBottom: "1px solid var(--border-1)",
+                    background: "var(--surf)",
+                  }}
+                  className={column.className}
                 >
                   {column.sortable !== false ? (
                     <button
                       onClick={() => handleSort(column.id)}
-                      className="flex hover:text-[#84ffc4] items-center gap-1 text-gray-300"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "3px",
+                        color: "var(--text-3)",
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: "var(--text-overline)",
+                        fontWeight: 500,
+                        letterSpacing: "0.06em",
+                        textTransform: "uppercase",
+                        padding: 0,
+                        fontFamily: "var(--font-sans)",
+                      }}
+                      onMouseEnter={e => (e.currentTarget.style.color = "var(--text-2)")}
+                      onMouseLeave={e => (e.currentTarget.style.color = "var(--text-3)")}
                     >
                       {column.header}
-                      <ArrowUpDown className="h-3 w-3" />
+                      <ArrowUpDown style={{ width: "9px", height: "9px" }} />
                     </button>
                   ) : (
                     column.header
@@ -206,16 +288,22 @@ export function DataTable<T extends { id?: number | string }>({
           </thead>
           <tbody>
             {filteredAndSortedData.length > 0 ? (
-              filteredAndSortedData.map((item) => (
+              filteredAndSortedData.map((item, idx) => (
                 <tr
                   key={item.id}
                   onClick={() => onRowClick?.(item)}
-                  className="hover:bg-[#2a2a2a] border-[#383838] transition-colors cursor-pointer"
+                  style={{
+                    borderBottom: idx < filteredAndSortedData.length - 1 ? "1px solid var(--border-1)" : "none",
+                    cursor: onRowClick ? "pointer" : "default",
+                  }}
+                  onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = "var(--surf-2)")}
+                  onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = "transparent")}
                 >
                   {columns.map((column) => (
                     <td
                       key={column.id}
-                      className={`p-3 text-sm ${column.className || ""}`}
+                      style={{ padding: "6px 10px", fontSize: "var(--text-meta)", color: "var(--text-1)" }}
+                      className={column.className}
                     >
                       {column.cell
                         ? column.cell(item)
@@ -228,10 +316,10 @@ export function DataTable<T extends { id?: number | string }>({
               ))
             ) : (
               <tr>
-                <td colSpan={columns.length} className="p-0">
+                <td colSpan={columns.length} style={{ padding: 0 }}>
                   {emptyState || (
-                    <div className="flex flex-col items-center justify-center py-12 text-center">
-                      <p className="text-gray-400">No items found</p>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "40px", textAlign: "center" }}>
+                      <p style={{ fontSize: "var(--text-meta)", color: "var(--text-3)" }}>No items found</p>
                     </div>
                   )}
                 </td>

@@ -22,7 +22,6 @@ import { BacklogTable } from "@/components/tasks/backlog-table"
 import { TaskModal } from "@/components/tasks/task-modal"
 import { TaskCard } from "@/components/tasks/task-card"
 import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -311,16 +310,21 @@ export default function TasksPage() {
   // Show a loading state until mounted to prevent hydration mismatch
   if (!isMounted) {
     return (
-      <div className="flex flex-col gap-8 p-8">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl text-gray-100 font-bold">Tasks</h1>
-            <p className="text-sm text-gray-400 mt-1">Manage your tasks and priorities</p>
-          </div>
+      <>
+        {/* Top bar */}
+        <div style={{
+          background: "var(--surf)",
+          borderBottom: "1px solid var(--border-1)",
+          height: "40px",
+          padding: "0 16px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}>
+          <span style={{ fontSize: "var(--text-label)", fontWeight: 500, color: "var(--text-1)", fontFamily: "var(--font-sans)" }}>Tasks</span>
         </div>
-        <div className="text-sm text-gray-400 py-12">Loading...</div>
-      </div>
+        <div style={{ fontSize: "var(--text-meta)", color: "var(--text-3)", padding: "48px 32px" }}>Loading...</div>
+      </>
     )
   }
 
@@ -332,44 +336,109 @@ export default function TasksPage() {
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex flex-col gap-8 p-8">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl text-gray-100 font-bold">Tasks</h1>
-            <p className="text-sm text-gray-400 mt-1">Manage your tasks and priorities</p>
-          </div>
-        </div>
+      {/* Top bar */}
+      <div style={{
+        background: "var(--surf)",
+        borderBottom: "1px solid var(--border-1)",
+        height: "40px",
+        padding: "0 16px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        position: "sticky",
+        top: 0,
+        zIndex: 10,
+        flexShrink: 0,
+      }}>
+        <span style={{ fontSize: "var(--text-label)", fontWeight: 500, color: "var(--text-1)", fontFamily: "var(--font-sans)" }}>Tasks</span>
+        <button
+          onClick={handleNewTaskHeader}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "4px",
+            background: "linear-gradient(90deg, #00ffe5 0%, #00f058 100%)",
+            border: "none",
+            color: "#0a1a0a",
+            padding: "4px 10px",
+            borderRadius: "4px",
+            fontSize: "var(--text-caption)",
+            fontWeight: 600,
+            cursor: "pointer",
+            fontFamily: "var(--font-sans)",
+          }}
+        >
+          + New task
+        </button>
+      </div>
 
+      <div className="flex flex-col gap-8 p-4">
         {/* This Week Board */}
         <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm text-gray-100 font-semibold">This week</h2>
-            <Button onClick={handleNewTaskHeader}>
-              <Plus className="h-4 w-4 mr-2" />
-              New task
-            </Button>
-          </div>
-          <div className="rounded-lg p-4 max-md:p-2">
-            {/* Desktop: grid layout unchanged, Mobile: horizontal scroll */}
-            <div className="grid grid-cols-4 gap-6 max-md:px-2">
-              {TASK_STATUSES.map((status) => (
-                <BoardColumn
-                  key={status}
-                  status={status}
-                  tasks={weekTasks.filter((t) => t.status === status)}
-                  onEdit={handleEditTask}
-                  onDelete={handleDeleteRequest}
-                  onQuickAdd={handleQuickAddBoard}
-                />
-              ))}
+          {/* Section header */}
+          <div className="flex items-center justify-between mb-3">
+            <span style={{
+              fontSize: "var(--text-overline)",
+              fontWeight: 500,
+              letterSpacing: "0.07em",
+              color: "var(--text-3)",
+              textTransform: "uppercase",
+            }}>This week</span>
+            <div style={{ display: "flex", gap: "6px" }}>
+              <button style={{
+                background: "transparent",
+                border: "1px solid var(--border-2)",
+                color: "var(--text-2)",
+                fontSize: "var(--text-caption)",
+                padding: "3px 8px",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+                onMouseEnter={e => { e.currentTarget.style.color = "var(--text-1)" }}
+                onMouseLeave={e => { e.currentTarget.style.color = "var(--text-2)" }}
+              >Filter</button>
+              <button style={{
+                background: "transparent",
+                border: "1px solid var(--border-2)",
+                color: "var(--text-2)",
+                fontSize: "var(--text-caption)",
+                padding: "3px 8px",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+                onMouseEnter={e => { e.currentTarget.style.color = "var(--text-1)" }}
+                onMouseLeave={e => { e.currentTarget.style.color = "var(--text-2)" }}
+              >Sort</button>
             </div>
+          </div>
+
+          {/* Kanban grid */}
+          <div className="grid grid-cols-4 gap-3 max-md:px-2">
+            {TASK_STATUSES.map((status) => (
+              <BoardColumn
+                key={status}
+                status={status}
+                tasks={weekTasks.filter((t) => t.status === status)}
+                onEdit={handleEditTask}
+                onDelete={handleDeleteRequest}
+                onQuickAdd={handleQuickAddBoard}
+              />
+            ))}
           </div>
         </div>
 
         {/* Backlog */}
         <div>
-          <h2 className="text-sm text-gray-100 font-semibold mb-4">Backlog</h2>
+          {/* Section header */}
+          <div className="flex items-center justify-between mb-3">
+            <span style={{
+              fontSize: "var(--text-overline)",
+              fontWeight: 500,
+              letterSpacing: "0.07em",
+              color: "var(--text-3)",
+              textTransform: "uppercase",
+            }}>Backlog</span>
+          </div>
           <BacklogTable
             tasks={backlogTasks}
             onUpdateTask={handleUpdateTask}

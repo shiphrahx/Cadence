@@ -1,8 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Users as UsersIcon } from "lucide-react"
 import { TeamFormDialog } from "@/components/team-form-dialog"
 import { TeamsTable } from "@/components/teams-table"
 import { DeleteConfirmDialog } from "@/components/delete-confirm-dialog"
@@ -17,7 +15,6 @@ export default function TeamsPage() {
   const [deletingTeam, setDeletingTeam] = useState<Team | null>(null)
   const [, setIsLoading] = useState(true)
 
-  // Load teams and people from Supabase on mount
   useEffect(() => {
     loadTeams()
     loadPeople()
@@ -85,84 +82,93 @@ export default function TeamsPage() {
     }
   }
 
+  const activeTeams = teams.filter(t => t.status === "active")
+  const totalMembers = activeTeams.reduce((sum, t) => sum + t.memberCount, 0)
+  const avgSize = activeTeams.length > 0 ? Math.round(totalMembers / activeTeams.length) : 0
+
   return (
-    <div className="flex flex-col gap-6 p-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl text-gray-100 font-bold">Teams</h1>
-          <p className="text-sm text-gray-400 mt-1">
-            Manage your teams and team members
-          </p>
+    <>
+      {/* Top bar */}
+      <div style={{
+        height: "40px",
+        padding: "0 16px",
+        borderBottom: "1px solid var(--border-1)",
+        background: "var(--surf)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        flexShrink: 0,
+        position: "sticky",
+        top: 0,
+        zIndex: 10,
+      }}>
+        <span style={{ fontSize: "var(--text-label)", fontWeight: 500, color: "var(--text-1)", fontFamily: "var(--font-sans)" }}>
+          Teams
+        </span>
+        <button
+          onClick={() => setIsAddDialogOpen(true)}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "4px",
+            background: "linear-gradient(90deg, #00ffe5 0%, #00f058 100%)",
+            border: "none",
+            color: "#0a1a0a",
+            padding: "4px 10px",
+            borderRadius: "4px",
+            fontSize: "var(--text-caption)",
+            fontWeight: 600,
+            cursor: "pointer",
+            fontFamily: "var(--font-sans)",
+          }}
+        >
+          + Create team
+        </button>
+      </div>
+
+      <div style={{ padding: "16px" }}>
+        {/* Stat cards */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "7px", marginBottom: "14px" }}>
+          {[
+            { label: "Active teams", value: activeTeams.length, sub: `${teams.filter(t => t.status === "inactive").length} inactive` },
+            { label: "Total members", value: totalMembers, sub: "In active teams" },
+            { label: "Avg team size", value: avgSize, sub: "Members per active team" },
+          ].map(({ label, value, sub }) => (
+            <div key={label} style={{
+              background: "var(--surf)",
+              border: "1px solid var(--border-1)",
+              borderRadius: "6px",
+              padding: "10px 12px",
+            }}>
+              <div style={{ fontSize: "var(--text-overline)", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "4px" }}>
+                {label}
+              </div>
+              <div style={{ fontSize: "20px", fontWeight: 500, color: "var(--text-1)", fontFamily: "var(--font-mono)" }}>
+                {value}
+              </div>
+              <div style={{ fontSize: "var(--text-overline)", color: "var(--text-3)", marginTop: "2px" }}>
+                {sub}
+              </div>
+            </div>
+          ))}
         </div>
+
+        {/* Teams Table */}
+        <TeamsTable
+          teams={teams}
+          onEdit={(team) => setEditingTeam(team)}
+          onDelete={(team) => setDeletingTeam(team)}
+          onToggleStatus={handleToggleStatus}
+          onQuickAdd={() => setIsAddDialogOpen(true)}
+        />
       </div>
 
-      {/* Stats */}
-      <div className="grid md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Teams</CardTitle>
-            <UsersIcon className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{teams.filter(t => t.status === "active").length}</div>
-            <p className="text-sm text-muted-foreground">
-              {teams.filter(t => t.status === "inactive").length} inactive
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Members</CardTitle>
-            <UsersIcon className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {teams.filter(t => t.status === "active").reduce((sum, team) => sum + team.memberCount, 0)}
-            </div>
-            <p className="text-sm text-muted-foreground">
-              In active teams
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Team Size</CardTitle>
-            <UsersIcon className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {teams.filter(t => t.status === "active").length > 0
-                ? Math.round(teams.filter(t => t.status === "active").reduce((sum, team) => sum + team.memberCount, 0) / teams.filter(t => t.status === "active").length)
-                : 0}
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Members per active team
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Teams Table */}
-      <TeamsTable
-        teams={teams}
-        onEdit={(team) => setEditingTeam(team)}
-        onDelete={(team) => setDeletingTeam(team)}
-        onToggleStatus={handleToggleStatus}
-        onQuickAdd={() => setIsAddDialogOpen(true)}
-      />
-
-      {/* Add Team Dialog */}
       <TeamFormDialog
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
         onSave={handleAddTeam}
         availablePeople={people}
       />
-
-      {/* Edit Team Dialog */}
       <TeamFormDialog
         open={!!editingTeam}
         onOpenChange={(open) => !open && setEditingTeam(null)}
@@ -170,8 +176,6 @@ export default function TeamsPage() {
         onSave={handleEditTeam}
         availablePeople={people}
       />
-
-      {/* Delete Confirmation Dialog */}
       <DeleteConfirmDialog
         open={!!deletingTeam}
         onOpenChange={(open) => !open && setDeletingTeam(null)}
@@ -180,6 +184,6 @@ export default function TeamsPage() {
         itemType="Team"
         description="This action cannot be undone. This will permanently delete this team and remove all associated data."
       />
-    </div>
+    </>
   )
 }

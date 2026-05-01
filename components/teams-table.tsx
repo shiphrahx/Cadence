@@ -1,8 +1,6 @@
 "use client"
 
 import { DataTable, ColumnDef, FilterDef } from "@/components/ui/data-table"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { MoreHorizontal, Pencil, Trash2, UserX, UserCheck } from "lucide-react"
 import { useState, useEffect } from "react"
 import { type Team } from "@/lib/services/teams"
@@ -26,18 +24,13 @@ export function TeamsTable({
 }: TeamsTableProps) {
   const [selectedTeamMenu, setSelectedTeamMenu] = useState<string | null>(null)
 
-  // Close popup when clicking outside
   useEffect(() => {
     const handleClickOutside = () => {
-      if (selectedTeamMenu !== null) {
-        setSelectedTeamMenu(null)
-      }
+      if (selectedTeamMenu !== null) setSelectedTeamMenu(null)
     }
-
     if (selectedTeamMenu !== null) {
       document.addEventListener("click", handleClickOutside)
     }
-
     return () => {
       document.removeEventListener("click", handleClickOutside)
     }
@@ -48,14 +41,16 @@ export function TeamsTable({
       id: "name",
       header: "Team Name",
       accessorKey: "name",
-      cell: (team) => <span className="font-medium text-gray-100">{team.name}</span>,
+      cell: (team) => (
+        <span style={{ fontWeight: 500, color: "var(--text-1)", fontSize: "var(--text-meta)" }}>{team.name}</span>
+      ),
     },
     {
       id: "description",
       header: "Description",
       accessorKey: "description",
       cell: (team) => (
-        <span className="text-gray-300">{team.description}</span>
+        <span style={{ color: "var(--text-2)", fontSize: "var(--text-meta)" }}>{team.description}</span>
       ),
     },
     {
@@ -63,7 +58,7 @@ export function TeamsTable({
       header: "Members",
       accessorKey: "memberCount",
       cell: (team) => (
-        <span className="text-gray-300">{team.memberCount}</span>
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-meta)", color: "var(--text-1)" }}>{team.memberCount}</span>
       ),
     },
     {
@@ -71,7 +66,7 @@ export function TeamsTable({
       header: "Created",
       accessorKey: "createdAt",
       cell: (team) => (
-        <span className="text-gray-300">
+        <span style={{ color: "var(--text-3)", fontSize: "var(--text-overline)", fontFamily: "var(--font-mono)" }}>
           {new Date(team.createdAt).toLocaleDateString("en-GB", {
             day: "2-digit",
             month: "short",
@@ -85,16 +80,12 @@ export function TeamsTable({
       header: "Status",
       accessorKey: "status",
       cell: (team) => (
-        <Badge
-          variant={team.status === "active" ? "success" : "secondary"}
-          className={
-            team.status === "active"
-              ? "bg-green-100 text-green-700 bg-green-900/30 text-green-400"
-              : "bg-gray-100 text-gray-700 bg-gray-700 text-gray-300"
-          }
-        >
-          {team.status}
-        </Badge>
+        <span style={{
+          color: team.status === "active" ? "#00f058" : "var(--text-3)",
+          fontSize: "var(--text-caption)",
+        }}>
+          ● {team.status}
+        </span>
       ),
     },
     {
@@ -104,63 +95,67 @@ export function TeamsTable({
       className: "text-right",
       cell: (team) => (
         <div className="relative inline-block">
-          <Button
-            variant="ghost"
-            size="icon"
+          <button
             onClick={(e) => {
               e.stopPropagation()
-              setSelectedTeamMenu(
-                selectedTeamMenu === team.id ? null : team.id
-              )
+              setSelectedTeamMenu(selectedTeamMenu === team.id ? null : team.id)
             }}
+            style={{
+              background: "none",
+              border: "1px solid var(--border-2)",
+              color: "var(--text-3)",
+              borderRadius: "3px",
+              padding: "2px 6px",
+              cursor: "pointer",
+              fontSize: "var(--text-caption)",
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = "var(--text-1)")}
+            onMouseLeave={e => (e.currentTarget.style.color = "var(--text-3)")}
           >
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
+            <MoreHorizontal style={{ width: "12px", height: "12px" }} />
+          </button>
           {selectedTeamMenu === team.id && (
-            <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-[#262626] ring-gray-700 z-50">
-              <div className="py-1">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    onEdit(team)
-                    setSelectedTeamMenu(null)
-                  }}
-                  className="flex menu-item w-full items-center gap-2 px-4 py-2 text-gray-300 cursor-pointer"
-                >
-                  <Pencil className="h-4 w-4" />
-                  Edit
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    onToggleStatus(team)
-                  }}
-                  className="flex menu-item w-full items-center gap-2 px-4 py-2 text-gray-300 cursor-pointer"
-                >
-                  {team.status === "active" ? (
-                    <>
-                      <UserX className="h-4 w-4" />
-                      Set Inactive
-                    </>
-                  ) : (
-                    <>
-                      <UserCheck className="h-4 w-4" />
-                      Set Active
-                    </>
-                  )}
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    onDelete(team)
-                    setSelectedTeamMenu(null)
-                  }}
-                  className="flex hover:bg-red-50 hover:bg-red-900/20 w-full items-center gap-2 px-4 py-2 text-red-400 cursor-pointer"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  Delete
-                </button>
-              </div>
+            <div style={{
+              position: "absolute",
+              right: 0,
+              marginTop: "4px",
+              width: "148px",
+              background: "var(--surf-2)",
+              border: "1px solid var(--border-2)",
+              borderRadius: "4px",
+              boxShadow: "0 4px 16px rgba(0,0,0,0.4)",
+              zIndex: 50,
+              overflow: "hidden",
+            }}>
+              <button
+                onClick={(e) => { e.stopPropagation(); onEdit(team); setSelectedTeamMenu(null) }}
+                className="menu-item"
+                style={{ display: "flex", width: "100%", alignItems: "center", gap: "6px", padding: "7px 10px", fontSize: "var(--text-meta)", color: "var(--text-2)", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}
+                onMouseEnter={e => (e.currentTarget.style.background = "var(--surf-3)")}
+                onMouseLeave={e => (e.currentTarget.style.background = "none")}
+              >
+                <Pencil style={{ width: "11px", height: "11px" }} /> Edit
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); onToggleStatus(team) }}
+                className="menu-item"
+                style={{ display: "flex", width: "100%", alignItems: "center", gap: "6px", padding: "7px 10px", fontSize: "var(--text-meta)", color: "var(--text-2)", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}
+                onMouseEnter={e => (e.currentTarget.style.background = "var(--surf-3)")}
+                onMouseLeave={e => (e.currentTarget.style.background = "none")}
+              >
+                {team.status === "active"
+                  ? <><UserX style={{ width: "11px", height: "11px" }} /> Set Inactive</>
+                  : <><UserCheck style={{ width: "11px", height: "11px" }} /> Set Active</>
+                }
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); onDelete(team); setSelectedTeamMenu(null) }}
+                style={{ display: "flex", width: "100%", alignItems: "center", gap: "6px", padding: "7px 10px", fontSize: "var(--text-meta)", color: "#f87171", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}
+                onMouseEnter={e => (e.currentTarget.style.background = "var(--surf-3)")}
+                onMouseLeave={e => (e.currentTarget.style.background = "none")}
+              >
+                <Trash2 style={{ width: "11px", height: "11px" }} /> Delete
+              </button>
             </div>
           )}
         </div>
