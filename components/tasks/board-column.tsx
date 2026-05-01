@@ -58,11 +58,11 @@ export function BoardColumn({ status, tasks, onEdit, onDelete, onQuickAdd }: Boa
             background: dotColor,
             flexShrink: 0,
           }} />
-          <span style={{ fontSize: "11px", fontWeight: 500, color: "var(--text-1)" }}>{status}</span>
+          <span style={{ fontSize: "var(--text-meta)", fontWeight: 500, color: "var(--text-1)" }}>{status}</span>
           <span style={{
             background: "var(--surf-3)",
             color: "var(--text-3)",
-            fontSize: "9px",
+            fontSize: "var(--text-overline)",
             borderRadius: "3px",
             padding: "1px 5px",
             fontFamily: "var(--font-mono)",
@@ -112,7 +112,7 @@ export function BoardColumn({ status, tasks, onEdit, onDelete, onQuickAdd }: Boa
               alignItems: "center",
               justifyContent: "center",
             }}>
-              <span style={{ fontSize: "10px", color: "var(--text-3)" }}>No tasks yet</span>
+              <span style={{ fontSize: "var(--text-caption)", color: "var(--text-3)" }}>No tasks yet</span>
             </div>
           )}
 
@@ -127,7 +127,7 @@ export function BoardColumn({ status, tasks, onEdit, onDelete, onQuickAdd }: Boa
               alignItems: "center",
               justifyContent: "center",
             }}>
-              <span style={{ fontSize: "10px", color: "var(--text-3)" }}>Drop here</span>
+              <span style={{ fontSize: "var(--text-caption)", color: "var(--text-3)" }}>Drop here</span>
             </div>
           )}
         </div>
@@ -142,7 +142,7 @@ export function BoardColumn({ status, tasks, onEdit, onDelete, onQuickAdd }: Boa
             borderRight: "none",
             borderBottom: "none",
             color: "var(--text-3)",
-            fontSize: "10px",
+            fontSize: "var(--text-caption)",
             background: "none",
             cursor: "pointer",
             display: "flex",
