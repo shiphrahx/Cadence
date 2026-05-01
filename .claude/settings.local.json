@@ -106,7 +106,12 @@
       "Bash(tasklist:*)",
       "Bash(python:*)",
       "Bash(head:*)",
-      "Bash(gh pr create:*)"
+      "Bash(gh pr create:*)",
+      "Bash(python3 -c \"from PIL import Image; img = Image.open\\(''logo_transparent.png''\\); print\\(img.size\\)\")",
+      "Bash(git clone:*)",
+      "Bash(npm run *)",
+      "Read(//tmp/**)",
+      "Bash(grep -v \"^$\")"
     ]
   }
 }
