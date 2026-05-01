@@ -137,7 +137,7 @@ export function DataTable<T extends { id?: number | string }>({
                 border: "none",
                 outline: "none",
                 color: "var(--text-1)",
-                fontSize: "10px",
+                fontSize: "var(--text-label)",
                 fontFamily: "var(--font-sans)",
                 width: "100%",
               }}
@@ -153,7 +153,7 @@ export function DataTable<T extends { id?: number | string }>({
               color: "var(--text-2)",
               padding: "4px 8px",
               borderRadius: "4px",
-              fontSize: "10px",
+              fontSize: "var(--text-label)",
               cursor: "pointer",
               fontFamily: "var(--font-sans)",
             }}
@@ -175,7 +175,7 @@ export function DataTable<T extends { id?: number | string }>({
               color: "#0a1a0a",
               padding: "4px 10px",
               borderRadius: "4px",
-              fontSize: "10px",
+              fontSize: "var(--text-label)",
               fontWeight: 600,
               cursor: "pointer",
               fontFamily: "var(--font-sans)",
@@ -200,7 +200,7 @@ export function DataTable<T extends { id?: number | string }>({
         }}>
           {filters.map((filter) => (
             <div key={filter.id} style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-              <label style={{ fontSize: "10px", color: "var(--text-2)", fontFamily: "var(--font-sans)" }}>
+              <label style={{ fontSize: "var(--text-label)", color: "var(--text-2)", fontFamily: "var(--font-sans)" }}>
                 {filter.label}:
               </label>
               <select
@@ -211,7 +211,7 @@ export function DataTable<T extends { id?: number | string }>({
                   border: "1px solid var(--border-2)",
                   borderRadius: "3px",
                   padding: "2px 6px",
-                  fontSize: "10px",
+                  fontSize: "var(--text-label)",
                   color: "var(--text-1)",
                   cursor: "pointer",
                   fontFamily: "var(--font-sans)",
@@ -245,7 +245,7 @@ export function DataTable<T extends { id?: number | string }>({
                   style={{
                     textAlign: "left",
                     padding: "6px 10px",
-                    fontSize: "9px",
+                    fontSize: "var(--text-overline)",
                     fontWeight: 500,
                     color: "var(--text-3)",
                     letterSpacing: "0.06em",
@@ -266,7 +266,7 @@ export function DataTable<T extends { id?: number | string }>({
                         background: "none",
                         border: "none",
                         cursor: "pointer",
-                        fontSize: "9px",
+                        fontSize: "var(--text-overline)",
                         fontWeight: 500,
                         letterSpacing: "0.06em",
                         textTransform: "uppercase",
@@ -302,7 +302,7 @@ export function DataTable<T extends { id?: number | string }>({
                   {columns.map((column) => (
                     <td
                       key={column.id}
-                      style={{ padding: "6px 10px", fontSize: "11px", color: "var(--text-1)" }}
+                      style={{ padding: "6px 10px", fontSize: "var(--text-meta)", color: "var(--text-1)" }}
                       className={column.className}
                     >
                       {column.cell
@@ -319,7 +319,7 @@ export function DataTable<T extends { id?: number | string }>({
                 <td colSpan={columns.length} style={{ padding: 0 }}>
                   {emptyState || (
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "40px", textAlign: "center" }}>
-                      <p style={{ fontSize: "11px", color: "var(--text-3)" }}>No items found</p>
+                      <p style={{ fontSize: "var(--text-meta)", color: "var(--text-3)" }}>No items found</p>
                     </div>
                   )}
                 </td>
