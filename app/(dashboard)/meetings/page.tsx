@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { MarkdownTextarea } from "@/components/ui/markdown-textarea"
 import { Input } from "@/components/ui/input"
 import { Plus, ChevronRight, ChevronDown, ChevronsRight, ChevronsDown } from "lucide-react"
@@ -13,7 +12,6 @@ import {
   getMeetings,
   createMeeting,
   updateMeeting,
-  type Meeting as BackendMeeting,
   type MeetingType,
   type RecurrenceType,
 } from "@/lib/services/meetings"
@@ -389,6 +387,7 @@ export default function MeetingsPage() {
         document.body.style.userSelect = ''
       }
     }
+    return undefined
   }, [isResizing])
 
   return (

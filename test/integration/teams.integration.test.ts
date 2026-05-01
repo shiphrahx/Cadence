@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { getTeams, createTeam, updateTeam, deleteTeam, toggleTeamStatus } from '@/lib/services/teams'
 import { testSupabase, cleanupTestData, createTestTeam, testData } from './setup'
-import type { Team } from '@/lib/services/teams'
 
 /**
  * Integration Tests for Teams Domain

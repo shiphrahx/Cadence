@@ -26,7 +26,7 @@ export interface FocusDistribution {
   id: string
   timePeriod: 'short_term' | 'mid_term' | 'long_term'
   categoryId: string
-  category: string // Denormalized for easier use
+  category: string
   focusPercent: number
   why: string
   createdAt: string
@@ -39,7 +39,7 @@ export interface CareerGoal {
   goal: string
   type: 'Core' | 'Stretch'
   categoryId: string
-  category: string // Denormalized for easier use
+  category: string
   status: 'Not started' | 'In progress' | 'Completed'
   displayOrder: number
   createdAt: string
@@ -56,6 +56,13 @@ export interface Achievement {
   updatedAt: string
 }
 
+// Minimal local row types for tables not yet in types.ts
+type ProfileRow = { id: string; where_you_are: string | null; where_you_want_to_go: string | null; created_at: string; updated_at: string }
+type CategoryRow = { id: string; category: string; current_state: string | null; desired_state: string | null; display_order: number | null; created_at: string; updated_at: string }
+type DistRow = { id: string; time_period: string; category_id: string; focus_percent: number | null; why: string | null; created_at: string; updated_at: string; gap_analysis_categories: { category: string } | null }
+type GoalRow = { id: string; time_period: string; goal: string; type: string; category_id: string; status: string; display_order: number | null; created_at: string; updated_at: string; gap_analysis_categories: { category: string } | null }
+type AchievementRow = { id: string; type: string; description: string; achievement_date: string; key_takeaway: string | null; created_at: string; updated_at: string }
+
 // ============================================================================
 // CAREER GOALS PROFILE
 // ============================================================================
@@ -69,21 +76,18 @@ export async function getCareerGoalsProfile(): Promise<CareerGoalsProfile | null
     .single()
 
   if (error) {
-    // If no profile exists yet, return null
-    if (error.code === 'PGRST116') {
-      return null
-    }
+    if (error.code === 'PGRST116') return null
     throw error
   }
-
   if (!data) return null
 
+  const row = data as unknown as ProfileRow
   return {
-    id: (data as any).id,
-    whereYouAre: (data as any).where_you_are || '',
-    whereYouWantToGo: (data as any).where_you_want_to_go || '',
-    createdAt: (data as any).created_at,
-    updatedAt: (data as any).updated_at,
+    id: row.id,
+    whereYouAre: row.where_you_are ?? '',
+    whereYouWantToGo: row.where_you_want_to_go ?? '',
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   }
 }
 
@@ -91,7 +95,6 @@ export async function upsertCareerGoalsProfile(
   profile: Partial<CareerGoalsProfile>
 ): Promise<CareerGoalsProfile> {
   const supabase = createClient()
-
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
 
@@ -101,20 +104,19 @@ export async function upsertCareerGoalsProfile(
       where_you_are: profile.whereYouAre,
       where_you_want_to_go: profile.whereYouWantToGo,
       owning_user_id: user.id,
-    } as any, {
-      onConflict: 'owning_user_id',
-    })
+    }, { onConflict: 'owning_user_id' })
     .select()
     .single()
 
   if (error) throw error
 
+  const row = data as unknown as ProfileRow
   return {
-    id: (data as any).id,
-    whereYouAre: (data as any).where_you_are || '',
-    whereYouWantToGo: (data as any).where_you_want_to_go || '',
-    createdAt: (data as any).created_at,
-    updatedAt: (data as any).updated_at,
+    id: row.id,
+    whereYouAre: row.where_you_are ?? '',
+    whereYouWantToGo: row.where_you_want_to_go ?? '',
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   }
 }
 
@@ -133,22 +135,24 @@ export async function getGapAnalysisCategories(): Promise<GapAnalysisCategory[]>
 
   if (error) throw error
 
-  return (data as any).map((category: any) => ({
-    id: category.id,
-    category: category.category,
-    currentState: category.current_state || '',
-    desiredState: category.desired_state || '',
-    displayOrder: category.display_order || 0,
-    createdAt: category.created_at,
-    updatedAt: category.updated_at,
-  }))
+  return (data ?? []).map((r) => {
+    const row = r as unknown as CategoryRow
+    return {
+      id: row.id,
+      category: row.category,
+      currentState: row.current_state ?? '',
+      desiredState: row.desired_state ?? '',
+      displayOrder: row.display_order ?? 0,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    }
+  })
 }
 
 export async function createGapAnalysisCategory(
   category: Omit<GapAnalysisCategory, 'id' | 'createdAt' | 'updatedAt'>
 ): Promise<GapAnalysisCategory> {
   const supabase = createClient()
-
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
 
@@ -160,20 +164,21 @@ export async function createGapAnalysisCategory(
       desired_state: category.desiredState,
       display_order: category.displayOrder,
       owning_user_id: user.id,
-    } as any)
+    })
     .select()
     .single()
 
   if (error) throw error
 
+  const row = data as unknown as CategoryRow
   return {
-    id: (data as any).id,
-    category: (data as any).category,
-    currentState: (data as any).current_state || '',
-    desiredState: (data as any).desired_state || '',
-    displayOrder: (data as any).display_order || 0,
-    createdAt: (data as any).created_at,
-    updatedAt: (data as any).updated_at,
+    id: row.id,
+    category: row.category,
+    currentState: row.current_state ?? '',
+    desiredState: row.desired_state ?? '',
+    displayOrder: row.display_order ?? 0,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   }
 }
 
@@ -183,14 +188,14 @@ export async function updateGapAnalysisCategory(
 ): Promise<GapAnalysisCategory> {
   const supabase = createClient()
 
-  const dbUpdates: any = {}
+  const dbUpdates: Record<string, unknown> = {}
   if (updates.category !== undefined) dbUpdates.category = updates.category
   if (updates.currentState !== undefined) dbUpdates.current_state = updates.currentState
   if (updates.desiredState !== undefined) dbUpdates.desired_state = updates.desiredState
   if (updates.displayOrder !== undefined) dbUpdates.display_order = updates.displayOrder
 
-  const { data, error } = await (supabase
-    .from('gap_analysis_categories') as any)
+  const { data, error } = await supabase
+    .from('gap_analysis_categories')
     .update(dbUpdates)
     .eq('id', id)
     .select()
@@ -198,25 +203,21 @@ export async function updateGapAnalysisCategory(
 
   if (error) throw error
 
+  const row = data as unknown as CategoryRow
   return {
-    id: (data as any).id,
-    category: (data as any).category,
-    currentState: (data as any).current_state || '',
-    desiredState: (data as any).desired_state || '',
-    displayOrder: (data as any).display_order || 0,
-    createdAt: (data as any).created_at,
-    updatedAt: (data as any).updated_at,
+    id: row.id,
+    category: row.category,
+    currentState: row.current_state ?? '',
+    desiredState: row.desired_state ?? '',
+    displayOrder: row.display_order ?? 0,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   }
 }
 
 export async function deleteGapAnalysisCategory(id: string): Promise<void> {
   const supabase = createClient()
-
-  const { error } = await supabase
-    .from('gap_analysis_categories')
-    .delete()
-    .eq('id', id)
-
+  const { error } = await supabase.from('gap_analysis_categories').delete().eq('id', id)
   if (error) throw error
 }
 
@@ -231,62 +232,60 @@ export async function getFocusDistributions(
 
   const { data, error } = await supabase
     .from('focus_distributions')
-    .select(`
-      *,
-      gap_analysis_categories!inner(category)
-    `)
+    .select(`*, gap_analysis_categories!inner(category)`)
     .eq('time_period', timePeriod)
 
   if (error) throw error
 
-  return (data as any).map((dist: any) => ({
-    id: dist.id,
-    timePeriod: dist.time_period,
-    categoryId: dist.category_id,
-    category: dist.gap_analysis_categories?.category || '',
-    focusPercent: dist.focus_percent || 0,
-    why: dist.why || '',
-    createdAt: dist.created_at,
-    updatedAt: dist.updated_at,
-  }))
+  return (data ?? []).map((r) => {
+    const row = r as unknown as DistRow
+    return {
+      id: row.id,
+      timePeriod: row.time_period as FocusDistribution['timePeriod'],
+      categoryId: row.category_id,
+      category: row.gap_analysis_categories?.category ?? '',
+      focusPercent: row.focus_percent ?? 0,
+      why: row.why ?? '',
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    }
+  })
 }
 
 export async function upsertFocusDistribution(
   distribution: Omit<FocusDistribution, 'id' | 'category' | 'createdAt' | 'updatedAt'>
 ): Promise<FocusDistribution> {
   const supabase = createClient()
-
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
+
+  // Clamp focus_percent to valid range
+  const focusPercent = Math.max(0, Math.min(100, distribution.focusPercent))
 
   const { data, error } = await supabase
     .from('focus_distributions')
     .upsert({
       time_period: distribution.timePeriod,
       category_id: distribution.categoryId,
-      focus_percent: distribution.focusPercent,
+      focus_percent: focusPercent,
       why: distribution.why,
       owning_user_id: user.id,
-    } as any, {
-      onConflict: 'category_id,time_period'
-    })
-    .select(`
-      *,
-      gap_analysis_categories!inner(category)
-    `)
+    }, { onConflict: 'category_id,time_period' })
+    .select(`*, gap_analysis_categories!inner(category)`)
     .single()
 
   if (error) throw error
 
+  const row = data as unknown as DistRow
   return {
-    id: (data as any).id,
-    timePeriod: (data as any).time_period,
-    categoryId: (data as any).category_id,
-    category: (data as any).gap_analysis_categories?.category || '',
-    focusPercent: (data as any).focus_percent || 0,
-    why: (data as any).why || '',
-    createdAt: (data as any).created_at,
-    updatedAt: (data as any).updated_at,
+    id: row.id,
+    timePeriod: row.time_period as FocusDistribution['timePeriod'],
+    categoryId: row.category_id,
+    category: row.gap_analysis_categories?.category ?? '',
+    focusPercent: row.focus_percent ?? 0,
+    why: row.why ?? '',
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   }
 }
 
@@ -301,35 +300,34 @@ export async function getCareerGoals(
 
   const { data, error } = await supabase
     .from('career_goals')
-    .select(`
-      *,
-      gap_analysis_categories!inner(category)
-    `)
+    .select(`*, gap_analysis_categories!inner(category)`)
     .eq('time_period', timePeriod)
     .order('display_order', { ascending: true })
     .order('created_at', { ascending: true })
 
   if (error) throw error
 
-  return (data as any).map((goal: any) => ({
-    id: goal.id,
-    timePeriod: goal.time_period,
-    goal: goal.goal,
-    type: goal.type,
-    categoryId: goal.category_id,
-    category: goal.gap_analysis_categories?.category || '',
-    status: goal.status,
-    displayOrder: goal.display_order || 0,
-    createdAt: goal.created_at,
-    updatedAt: goal.updated_at,
-  }))
+  return (data ?? []).map((r) => {
+    const row = r as unknown as GoalRow
+    return {
+      id: row.id,
+      timePeriod: row.time_period as CareerGoal['timePeriod'],
+      goal: row.goal,
+      type: row.type as CareerGoal['type'],
+      categoryId: row.category_id,
+      category: row.gap_analysis_categories?.category ?? '',
+      status: row.status as CareerGoal['status'],
+      displayOrder: row.display_order ?? 0,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    }
+  })
 }
 
 export async function createCareerGoal(
   goal: Omit<CareerGoal, 'id' | 'category' | 'createdAt' | 'updatedAt'>
 ): Promise<CareerGoal> {
   const supabase = createClient()
-
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
 
@@ -343,26 +341,24 @@ export async function createCareerGoal(
       status: goal.status,
       display_order: goal.displayOrder,
       owning_user_id: user.id,
-    } as any)
-    .select(`
-      *,
-      gap_analysis_categories!inner(category)
-    `)
+    })
+    .select(`*, gap_analysis_categories!inner(category)`)
     .single()
 
   if (error) throw error
 
+  const row = data as unknown as GoalRow
   return {
-    id: (data as any).id,
-    timePeriod: (data as any).time_period,
-    goal: (data as any).goal,
-    type: (data as any).type,
-    categoryId: (data as any).category_id,
-    category: (data as any).gap_analysis_categories?.category || '',
-    status: (data as any).status,
-    displayOrder: (data as any).display_order || 0,
-    createdAt: (data as any).created_at,
-    updatedAt: (data as any).updated_at,
+    id: row.id,
+    timePeriod: row.time_period as CareerGoal['timePeriod'],
+    goal: row.goal,
+    type: row.type as CareerGoal['type'],
+    categoryId: row.category_id,
+    category: row.gap_analysis_categories?.category ?? '',
+    status: row.status as CareerGoal['status'],
+    displayOrder: row.display_order ?? 0,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   }
 }
 
@@ -372,47 +368,40 @@ export async function updateCareerGoal(
 ): Promise<CareerGoal> {
   const supabase = createClient()
 
-  const dbUpdates: any = {}
+  const dbUpdates: Record<string, unknown> = {}
   if (updates.goal !== undefined) dbUpdates.goal = updates.goal
   if (updates.type !== undefined) dbUpdates.type = updates.type
   if (updates.categoryId !== undefined) dbUpdates.category_id = updates.categoryId
   if (updates.status !== undefined) dbUpdates.status = updates.status
   if (updates.displayOrder !== undefined) dbUpdates.display_order = updates.displayOrder
 
-  const { data, error } = await (supabase
-    .from('career_goals') as any)
+  const { data, error } = await supabase
+    .from('career_goals')
     .update(dbUpdates)
     .eq('id', id)
-    .select(`
-      *,
-      gap_analysis_categories!inner(category)
-    `)
+    .select(`*, gap_analysis_categories!inner(category)`)
     .single()
 
   if (error) throw error
 
+  const row = data as unknown as GoalRow
   return {
-    id: (data as any).id,
-    timePeriod: (data as any).time_period,
-    goal: (data as any).goal,
-    type: (data as any).type,
-    categoryId: (data as any).category_id,
-    category: (data as any).gap_analysis_categories?.category || '',
-    status: (data as any).status,
-    displayOrder: (data as any).display_order || 0,
-    createdAt: (data as any).created_at,
-    updatedAt: (data as any).updated_at,
+    id: row.id,
+    timePeriod: row.time_period as CareerGoal['timePeriod'],
+    goal: row.goal,
+    type: row.type as CareerGoal['type'],
+    categoryId: row.category_id,
+    category: row.gap_analysis_categories?.category ?? '',
+    status: row.status as CareerGoal['status'],
+    displayOrder: row.display_order ?? 0,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   }
 }
 
 export async function deleteCareerGoal(id: string): Promise<void> {
   const supabase = createClient()
-
-  const { error } = await supabase
-    .from('career_goals')
-    .delete()
-    .eq('id', id)
-
+  const { error } = await supabase.from('career_goals').delete().eq('id', id)
   if (error) throw error
 }
 
@@ -431,22 +420,24 @@ export async function getAchievements(): Promise<Achievement[]> {
 
   if (error) throw error
 
-  return (data as any).map((achievement: any) => ({
-    id: achievement.id,
-    type: achievement.type,
-    description: achievement.description,
-    achievementDate: achievement.achievement_date,
-    keyTakeaway: achievement.key_takeaway || '',
-    createdAt: achievement.created_at,
-    updatedAt: achievement.updated_at,
-  }))
+  return (data ?? []).map((r) => {
+    const row = r as unknown as AchievementRow
+    return {
+      id: row.id,
+      type: row.type as Achievement['type'],
+      description: row.description,
+      achievementDate: row.achievement_date,
+      keyTakeaway: row.key_takeaway ?? '',
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    }
+  })
 }
 
 export async function createAchievement(
   achievement: Omit<Achievement, 'id' | 'createdAt' | 'updatedAt'>
 ): Promise<Achievement> {
   const supabase = createClient()
-
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
 
@@ -458,20 +449,21 @@ export async function createAchievement(
       achievement_date: achievement.achievementDate,
       key_takeaway: achievement.keyTakeaway,
       owning_user_id: user.id,
-    } as any)
+    })
     .select()
     .single()
 
   if (error) throw error
 
+  const row = data as unknown as AchievementRow
   return {
-    id: (data as any).id,
-    type: (data as any).type,
-    description: (data as any).description,
-    achievementDate: (data as any).achievement_date,
-    keyTakeaway: (data as any).key_takeaway || '',
-    createdAt: (data as any).created_at,
-    updatedAt: (data as any).updated_at,
+    id: row.id,
+    type: row.type as Achievement['type'],
+    description: row.description,
+    achievementDate: row.achievement_date,
+    keyTakeaway: row.key_takeaway ?? '',
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   }
 }
 
@@ -481,14 +473,14 @@ export async function updateAchievement(
 ): Promise<Achievement> {
   const supabase = createClient()
 
-  const dbUpdates: any = {}
+  const dbUpdates: Record<string, unknown> = {}
   if (updates.type !== undefined) dbUpdates.type = updates.type
   if (updates.description !== undefined) dbUpdates.description = updates.description
   if (updates.achievementDate !== undefined) dbUpdates.achievement_date = updates.achievementDate
   if (updates.keyTakeaway !== undefined) dbUpdates.key_takeaway = updates.keyTakeaway
 
-  const { data, error } = await (supabase
-    .from('achievements') as any)
+  const { data, error } = await supabase
+    .from('achievements')
     .update(dbUpdates)
     .eq('id', id)
     .select()
@@ -496,24 +488,20 @@ export async function updateAchievement(
 
   if (error) throw error
 
+  const row = data as unknown as AchievementRow
   return {
-    id: (data as any).id,
-    type: (data as any).type,
-    description: (data as any).description,
-    achievementDate: (data as any).achievement_date,
-    keyTakeaway: (data as any).key_takeaway || '',
-    createdAt: (data as any).created_at,
-    updatedAt: (data as any).updated_at,
+    id: row.id,
+    type: row.type as Achievement['type'],
+    description: row.description,
+    achievementDate: row.achievement_date,
+    keyTakeaway: row.key_takeaway ?? '',
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   }
 }
 
 export async function deleteAchievement(id: string): Promise<void> {
   const supabase = createClient()
-
-  const { error } = await supabase
-    .from('achievements')
-    .delete()
-    .eq('id', id)
-
+  const { error } = await supabase.from('achievements').delete().eq('id', id)
   if (error) throw error
 }

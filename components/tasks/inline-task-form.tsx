@@ -11,7 +11,7 @@ interface InlineTaskFormProps {
   onCancel: () => void
 }
 
-export function InlineTaskForm({ status = "Not started", list, onSave, onCancel }: InlineTaskFormProps) {
+export function InlineTaskForm({ status = "Not started", list: _list, onSave, onCancel }: InlineTaskFormProps) {
   const [title, setTitle] = useState("")
   const inputRef = useRef<HTMLInputElement>(null)
 

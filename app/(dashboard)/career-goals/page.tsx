@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -41,9 +41,6 @@ import {
   createAchievement,
   updateAchievement,
   deleteAchievement,
-  type GapAnalysisCategory,
-  type CareerGoal,
-  type Achievement,
 } from "@/lib/services/career-goals"
 
 interface GapAnalysisRow {
@@ -80,6 +77,8 @@ interface AchievementRow {
 const goalStatuses = ["Not started", "In progress", "Completed"]
 
 export default function CareerGoalsPage() {
+  const focusDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
   // Starting Point & Destination
   const [whereYouAre, setWhereYouAre] = useState("")
   const [whereYouWantToGo, setWhereYouWantToGo] = useState("")
@@ -235,6 +234,7 @@ export default function CareerGoalsPage() {
       }, 1000)
       return () => clearTimeout(timer)
     }
+    return undefined
   }, [whereYouAre, whereYouWantToGo, isLoading, handleProfileUpdate])
 
   // Sync focus distributions when gap analysis changes
@@ -312,19 +312,21 @@ export default function CareerGoalsPage() {
     }
   }
 
-  const updateFocusDistribution = async (
+  const updateFocusDistribution = (
     timePeriod: 'short_term' | 'mid_term' | 'long_term',
     setter: React.Dispatch<React.SetStateAction<FocusDistribution[]>>,
     category: string,
     field: keyof FocusDistribution,
     value: string | number
   ) => {
-    // Update local state immediately
+    // Update local state immediately for a responsive UI
     setter(prev => prev.map(item =>
       item.category === category ? { ...item, [field]: value } : item
     ))
 
-    // Debounce database update
+    // Debounce the database write — cancel any pending write for this session
+    if (focusDebounceRef.current) clearTimeout(focusDebounceRef.current)
+
     const categoryId = categoryMap.get(category)
     if (!categoryId) return
 
@@ -333,16 +335,18 @@ export default function CareerGoalsPage() {
                       .find(f => f.category === category)
 
     if (focusItem) {
-      try {
-        await upsertFocusDistribution({
-          timePeriod,
-          categoryId,
-          focusPercent: field === 'focusPercent' ? Number(value) : focusItem.focusPercent,
-          why: field === 'why' ? String(value) : focusItem.why,
-        })
-      } catch (error) {
-        console.error('Failed to update focus distribution:', error)
-      }
+      focusDebounceRef.current = setTimeout(async () => {
+        try {
+          await upsertFocusDistribution({
+            timePeriod,
+            categoryId,
+            focusPercent: field === 'focusPercent' ? Number(value) : focusItem.focusPercent,
+            why: field === 'why' ? String(value) : focusItem.why,
+          })
+        } catch (error) {
+          console.error('Failed to update focus distribution:', error)
+        }
+      }, 400)
     }
   }
 

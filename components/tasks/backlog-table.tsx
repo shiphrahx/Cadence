@@ -122,7 +122,7 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
     }
   }
 
-  const getCategoryBadgeClass = (category: TaskCategory) => {
+  const getCategoryBadgeClass = (_category: TaskCategory) => {
     return "bg-gray-100 text-gray-700";
     // switch (category) {
     //   case "Task":

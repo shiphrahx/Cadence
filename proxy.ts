@@ -20,7 +20,7 @@ export async function proxy(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+          cookiesToSet.forEach(({ name, value, options: _options }) => request.cookies.set(name, value))
           supabaseResponse = NextResponse.next({
             request,
           })
@@ -45,10 +45,13 @@ export async function proxy(request: NextRequest) {
   )
 
   if (isProtectedPath && !user) {
-    // Redirect to login page
     const url = request.nextUrl.clone()
     url.pathname = '/login'
-    url.searchParams.set('redirectedFrom', request.nextUrl.pathname)
+    // Only store the path (never a full URL) to prevent open-redirect attacks
+    const from = request.nextUrl.pathname
+    if (from.startsWith('/') && !from.startsWith('//')) {
+      url.searchParams.set('redirectedFrom', from)
+    }
     return NextResponse.redirect(url)
   }
 

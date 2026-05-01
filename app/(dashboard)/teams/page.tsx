@@ -1,10 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Plus, Users as UsersIcon } from "lucide-react"
+import { Users as UsersIcon } from "lucide-react"
 import { TeamFormDialog } from "@/components/team-form-dialog"
 import { TeamsTable } from "@/components/teams-table"
 import { DeleteConfirmDialog } from "@/components/delete-confirm-dialog"
@@ -17,7 +15,7 @@ export default function TeamsPage() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [editingTeam, setEditingTeam] = useState<Team | null>(null)
   const [deletingTeam, setDeletingTeam] = useState<Team | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [, setIsLoading] = useState(true)
 
   // Load teams and people from Supabase on mount
   useEffect(() => {
