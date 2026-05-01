@@ -16,7 +16,7 @@
 
 @layer base {
   :root {
-    /* Design system tokens */
+    /* Design system tokens — tasks page */
     --bg-base:        #0d0d10;
     --bg-surface:     #131317;
     --bg-surface-2:   #18181d;
@@ -29,6 +29,21 @@
     --brand:          #84cc16;
     --brand-bg:       #1a2e04;
     --brand-text:     #0d1a00;
+
+    /* Design system tokens — global */
+    --surf:       #1c1c1c;
+    --surf-2:     #212121;
+    --surf-3:     #272727;
+    --border-1:   #2a2a2a;
+    --border-2:   #333333;
+    --border-3:   #3d3d3d;
+    --text-1:     #f0f0f0;
+    --text-2:     #888888;
+    --text-3:     #555555;
+    --grad:       linear-gradient(90deg, #00ffe5 0%, #00f058 100%);
+    --accent:     #00f058;
+    --font-sans:  'Inter', system-ui, sans-serif;
+    --font-mono:  'JetBrains Mono', 'Fira Mono', monospace;
 
     /* shadcn/ui compatibility tokens */
     --background: 240 6% 6%;
