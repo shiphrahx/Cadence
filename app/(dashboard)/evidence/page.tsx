@@ -312,9 +312,13 @@ export default function EvidencePage() {
             {SENTIMENTS.map(s => <option key={s} value={s}>{SENTIMENT_CONFIG[s].label}</option>)}
           </select>
 
-          <Input type="date" value={filterFrom} onChange={e => setFilterFrom(e.target.value)} style={{ width: "140px" }} />
-          <span style={{ color: "var(--text-3)", fontSize: "var(--text-caption)" }}>to</span>
-          <Input type="date" value={filterTo} onChange={e => setFilterTo(e.target.value)} style={{ width: "140px" }} />
+          <div style={{ width: "140px", flexShrink: 0 }}>
+            <Input type="date" value={filterFrom} onChange={e => setFilterFrom(e.target.value)} />
+          </div>
+          <span style={{ color: "var(--text-3)", fontSize: "var(--text-caption)", flexShrink: 0 }}>to</span>
+          <div style={{ width: "140px", flexShrink: 0 }}>
+            <Input type="date" value={filterTo} onChange={e => setFilterTo(e.target.value)} />
+          </div>
 
           {activeFilters > 0 && (
             <button onClick={clearFilters} style={{ display: "inline-flex", alignItems: "center", gap: "4px", background: "none", border: "none", color: "var(--text-3)", cursor: "pointer", fontSize: "var(--text-caption)" }}>
