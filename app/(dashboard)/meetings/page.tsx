@@ -394,11 +394,9 @@ export default function MeetingsPage() {
                     alignItems: "center",
                     gap: "5px",
                     padding: "6px 12px",
-                    fontSize: "var(--text-caption)",
+                    fontSize: "var(--text-meta)",
                     fontWeight: 500,
-                    color: "var(--text-3)",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
+                    color: "var(--text-2)",
                     background: "none",
                     border: "none",
                     cursor: "pointer",
@@ -472,7 +470,7 @@ export default function MeetingsPage() {
                                 {formatDate(meeting.date)}
                               </span>
                               {meeting.title && (
-                                <span style={{ fontSize: "var(--text-overline)", color: "var(--text-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>
+                                <span style={{ fontSize: "var(--text-meta)", color: "var(--text-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>
                                   {meeting.title}
                                 </span>
                               )}
@@ -537,7 +535,7 @@ export default function MeetingsPage() {
                                 {formatDate(meeting.date)}
                               </span>
                               {meeting.title && (
-                                <span style={{ fontSize: "var(--text-overline)", color: "var(--text-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>
+                                <span style={{ fontSize: "var(--text-meta)", color: "var(--text-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>
                                   {meeting.title}
                                 </span>
                               )}
@@ -575,7 +573,7 @@ export default function MeetingsPage() {
                             {formatDate(meeting.date)}
                           </span>
                           {meeting.title && (
-                            <span style={{ fontSize: "var(--text-overline)", color: "var(--text-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>
+                            <span style={{ fontSize: "var(--text-meta)", color: "var(--text-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>
                               {meeting.title}
                             </span>
                           )}
