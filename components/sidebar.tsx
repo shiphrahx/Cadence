@@ -11,6 +11,7 @@ import {
   UserCircle,
   FolderKanban,
   Calendar,
+  BookOpen,
   ChevronLeft,
   ChevronRight
 } from "lucide-react"
@@ -23,6 +24,7 @@ const navigation = [
   { name: "People", href: "/people", icon: UserCircle },
   { name: "Projects", href: "/projects", icon: FolderKanban },
   { name: "Meetings", href: "/meetings", icon: Calendar },
+  { name: "Evidence", href: "/evidence", icon: BookOpen },
   // { name: "Career Goals", href: "/career-goals", icon: Target },
 ]
 
