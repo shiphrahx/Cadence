@@ -59,6 +59,20 @@
     --weight-body:       400;
     --weight-label:      500;
 
+    /* ── Tree hierarchy ── */
+    /* L1: type/group header — matches panel title ("All meetings") */
+    --tree-l1-size:      var(--text-meta);
+    --tree-l1-weight:    500;
+    --tree-l1-color:     var(--text-1);
+    /* L2: first inner grouping (person/team name) */
+    --tree-l2-size:      var(--text-label);
+    --tree-l2-weight:    400;
+    --tree-l2-color:     var(--text-2);
+    /* L3: leaf node (date, title) */
+    --tree-l3-size:      var(--text-caption);
+    --tree-l3-weight:    400;
+    --tree-l3-color:     var(--text-3);
+
     /* shadcn/ui compatibility tokens */
     --background: 240 6% 6%;
     --foreground: 240 20% 92%;
