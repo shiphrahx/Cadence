@@ -30,11 +30,11 @@ interface TaskModalProps {
   onDelete?: (taskId: string) => void
 }
 
-const PRIORITY_STYLES: Record<string, { bg: string; color: string; border: string }> = {
-  "Low":       { bg: "#0f1a0a", color: "#4ade80", border: "#4ade8040" },
-  "Medium":    { bg: "#1a1200", color: "#c9a227", border: "#c9a22740" },
-  "High":      { bg: "#1a0a0a", color: "#f87171", border: "#f8717140" },
-  "Very High": { bg: "#1e0505", color: "#ef4444", border: "#ef444440" },
+const PRIORITY_STYLES: Record<string, { bg: string; color: string }> = {
+  "Low":       { bg: "#0f1526", color: "#818cf8" },
+  "Medium":    { bg: "#1e1a00", color: "#facc15" },
+  "High":      { bg: "#2a1400", color: "#fb923c" },
+  "Very High": { bg: "#2a0a0a", color: "#f87171" },
 }
 
 export function TaskModal({ task, isOpen, onClose, onSave, onDelete }: TaskModalProps) {
@@ -136,14 +136,14 @@ export function TaskModal({ task, isOpen, onClose, onSave, onDelete }: TaskModal
                       onClick={() => setFormData({ ...formData, priority })}
                       style={{
                         flex: 1,
-                        padding: "6px 4px",
+                        padding: "4px 4px",
                         borderRadius: "4px",
-                        fontSize: "var(--text-label)",
+                        fontSize: "var(--text-overline)",
                         fontWeight: 500,
-                        fontFamily: "var(--font-sans)",
+                        fontFamily: "var(--font-mono)",
                         background: isSelected ? s.bg : "var(--surf-2)",
                         color: isSelected ? s.color : "var(--text-3)",
-                        border: `1px solid ${isSelected ? s.border : "var(--border-2)"}`,
+                        border: `1px solid ${isSelected ? s.color + "33" : "var(--border-2)"}`,
                         cursor: "pointer",
                         whiteSpace: "nowrap",
                         transition: "all 120ms",
