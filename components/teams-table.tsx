@@ -1,8 +1,7 @@
 "use client"
 
 import { DataTable, ColumnDef, FilterDef } from "@/components/ui/data-table"
-import { MoreHorizontal, Pencil, Trash2, UserX, UserCheck } from "lucide-react"
-import { useState, useEffect } from "react"
+import { Pencil, Trash2, UserX, UserCheck } from "lucide-react"
 import { type Team } from "@/lib/services/teams"
 
 export type { Team }
@@ -22,20 +21,6 @@ export function TeamsTable({
   onToggleStatus,
   onQuickAdd,
 }: TeamsTableProps) {
-  const [selectedTeamMenu, setSelectedTeamMenu] = useState<string | null>(null)
-
-  useEffect(() => {
-    const handleClickOutside = () => {
-      if (selectedTeamMenu !== null) setSelectedTeamMenu(null)
-    }
-    if (selectedTeamMenu !== null) {
-      document.addEventListener("click", handleClickOutside)
-    }
-    return () => {
-      document.removeEventListener("click", handleClickOutside)
-    }
-  }, [selectedTeamMenu])
-
   const columns: ColumnDef<Team>[] = [
     {
       id: "name",
@@ -90,74 +75,71 @@ export function TeamsTable({
     },
     {
       id: "actions",
-      header: "Actions",
+      header: "",
       sortable: false,
       className: "text-right",
       cell: (team) => (
-        <div className="relative inline-block">
+        <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 justify-end">
           <button
-            onClick={(e) => {
-              e.stopPropagation()
-              setSelectedTeamMenu(selectedTeamMenu === team.id ? null : team.id)
-            }}
+            onClick={(e) => { e.stopPropagation(); onEdit(team) }}
             style={{
-              background: "none",
               border: "1px solid var(--border-2)",
               color: "var(--text-3)",
-              borderRadius: "3px",
-              padding: "2px 6px",
+              borderRadius: "4px",
+              padding: "2px 7px",
+              fontSize: "var(--text-meta)",
+              background: "none",
               cursor: "pointer",
-              fontSize: "var(--text-caption)",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "4px",
             }}
             onMouseEnter={e => (e.currentTarget.style.color = "var(--text-1)")}
             onMouseLeave={e => (e.currentTarget.style.color = "var(--text-3)")}
           >
-            <MoreHorizontal style={{ width: "12px", height: "12px" }} />
+            <Pencil style={{ width: "11px", height: "11px" }} /> Edit
           </button>
-          {selectedTeamMenu === team.id && (
-            <div style={{
-              position: "absolute",
-              right: 0,
-              marginTop: "4px",
-              width: "148px",
-              background: "var(--surf-2)",
+          <button
+            onClick={(e) => { e.stopPropagation(); onToggleStatus(team) }}
+            style={{
               border: "1px solid var(--border-2)",
+              color: "var(--text-3)",
               borderRadius: "4px",
-              boxShadow: "0 4px 16px rgba(0,0,0,0.4)",
-              zIndex: 50,
-              overflow: "hidden",
-            }}>
-              <button
-                onClick={(e) => { e.stopPropagation(); onEdit(team); setSelectedTeamMenu(null) }}
-                className="menu-item"
-                style={{ display: "flex", width: "100%", alignItems: "center", gap: "6px", padding: "7px 10px", fontSize: "var(--text-meta)", color: "var(--text-2)", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}
-                onMouseEnter={e => (e.currentTarget.style.background = "var(--surf-3)")}
-                onMouseLeave={e => (e.currentTarget.style.background = "none")}
-              >
-                <Pencil style={{ width: "11px", height: "11px" }} /> Edit
-              </button>
-              <button
-                onClick={(e) => { e.stopPropagation(); onToggleStatus(team) }}
-                className="menu-item"
-                style={{ display: "flex", width: "100%", alignItems: "center", gap: "6px", padding: "7px 10px", fontSize: "var(--text-meta)", color: "var(--text-2)", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}
-                onMouseEnter={e => (e.currentTarget.style.background = "var(--surf-3)")}
-                onMouseLeave={e => (e.currentTarget.style.background = "none")}
-              >
-                {team.status === "active"
-                  ? <><UserX style={{ width: "11px", height: "11px" }} /> Set Inactive</>
-                  : <><UserCheck style={{ width: "11px", height: "11px" }} /> Set Active</>
-                }
-              </button>
-              <button
-                onClick={(e) => { e.stopPropagation(); onDelete(team); setSelectedTeamMenu(null) }}
-                style={{ display: "flex", width: "100%", alignItems: "center", gap: "6px", padding: "7px 10px", fontSize: "var(--text-meta)", color: "#f87171", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}
-                onMouseEnter={e => (e.currentTarget.style.background = "var(--surf-3)")}
-                onMouseLeave={e => (e.currentTarget.style.background = "none")}
-              >
-                <Trash2 style={{ width: "11px", height: "11px" }} /> Delete
-              </button>
-            </div>
-          )}
+              padding: "2px 7px",
+              fontSize: "var(--text-meta)",
+              background: "none",
+              cursor: "pointer",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "4px",
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = "var(--text-1)")}
+            onMouseLeave={e => (e.currentTarget.style.color = "var(--text-3)")}
+          >
+            {team.status === "active"
+              ? <><UserX style={{ width: "11px", height: "11px" }} /> Deactivate</>
+              : <><UserCheck style={{ width: "11px", height: "11px" }} /> Activate</>
+            }
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); onDelete(team) }}
+            style={{
+              border: "1px solid var(--border-2)",
+              color: "var(--text-3)",
+              borderRadius: "4px",
+              padding: "2px 7px",
+              fontSize: "var(--text-meta)",
+              background: "none",
+              cursor: "pointer",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "4px",
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = "#f87171")}
+            onMouseLeave={e => (e.currentTarget.style.color = "var(--text-3)")}
+          >
+            <Trash2 style={{ width: "11px", height: "11px" }} /> Delete
+          </button>
         </div>
       ),
     },

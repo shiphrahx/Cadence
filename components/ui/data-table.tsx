@@ -299,6 +299,7 @@ export function DataTable<T extends { id?: number | string }>({
                 <tr
                   key={item.id}
                   onClick={() => onRowClick?.(item)}
+                  className="group transition-colors"
                   style={{
                     borderBottom: idx < filteredAndSortedData.length - 1 ? "1px solid var(--border-1)" : "none",
                     cursor: onRowClick ? "pointer" : "default",
