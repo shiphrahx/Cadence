@@ -18,7 +18,6 @@ import {
   type EvidenceEntry,
   type EvidenceCategory,
   type ReviewCycle,
-  type ReviewSummary,
 } from "@/lib/services/evidence"
 
 const CATEGORY_LABELS: Record<EvidenceCategory, string> = {
@@ -71,7 +70,6 @@ export default function ReviewPrepPage({ params }: { params: Promise<{ id: strin
   const [selectedCycleId, setSelectedCycleId] = useState<string>("custom")
   const [periodStart, setPeriodStart] = useState(sixMonthsAgo())
   const [periodEnd, setPeriodEnd] = useState(today())
-  const [summary, setSummary] = useState<ReviewSummary | null>(null)
   const [summaryText, setSummaryText] = useState("")
   const [managerNotes, setManagerNotes] = useState("")
   const [savingNotes, setSavingNotes] = useState(false)
@@ -105,7 +103,6 @@ export default function ReviewPrepPage({ params }: { params: Promise<{ id: strin
   useEffect(() => {
     if (!personId) return
     getReviewSummary(personId, periodStart, periodEnd).then(s => {
-      setSummary(s)
       setSummaryText(s?.summaryText ?? "")
       setManagerNotes(s?.managerNotes ?? "")
     }).catch(console.error)
@@ -145,7 +142,7 @@ export default function ReviewPrepPage({ params }: { params: Promise<{ id: strin
     if (!personId) return
     setSavingNotes(true)
     try {
-      const saved = await upsertReviewSummary({
+      await upsertReviewSummary({
         personId,
         reviewCycleId: selectedCycleId !== "custom" ? selectedCycleId : null,
         periodStart,
@@ -153,7 +150,6 @@ export default function ReviewPrepPage({ params }: { params: Promise<{ id: strin
         summaryText: summaryText || null,
         managerNotes: managerNotes || null,
       })
-      setSummary(saved)
     } catch (err) {
       console.error(err)
     } finally {
@@ -496,10 +492,10 @@ export default function ReviewPrepPage({ params }: { params: Promise<{ id: strin
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 function ReviewSection({
-  title, sectionKey, collapsed, onToggle, count, emptyMessage, children,
+  title, collapsed, onToggle, count, emptyMessage, children,
 }: {
   title: string
-  sectionKey: SectionKey
+  sectionKey?: SectionKey
   collapsed: boolean
   onToggle: () => void
   count: number
