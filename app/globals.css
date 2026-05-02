@@ -50,9 +50,9 @@
     --text-section:      14px;   /* h2: widget/section titles */
     --text-body:         14px;   /* default body text */
     --text-label:        12px;   /* secondary labels, captions */
-    --text-meta:         11px;   /* table cells, metadata */
+    --text-meta:         12px;   /* table cells, metadata */
     --text-caption:      10px;   /* tags, badges, tiny labels */
-    --text-overline:      9px;   /* uppercase column/stat headers */
+    --text-overline:     11px;   /* uppercase column/stat headers */
 
     --weight-title:      700;
     --weight-section:    600;
@@ -101,8 +101,8 @@
 
 /* Dual-list selector hover */
 .dual-list-item:hover {
-  background: linear-gradient(90deg, rgb(0, 255, 229) 0%, rgb(0, 240, 88) 100%);
-  color: #111;
+  background: #292929;
+  color: var(--text-1);
 }
 
 /* Dark theme for native date picker */
