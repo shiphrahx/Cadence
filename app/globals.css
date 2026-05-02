@@ -132,6 +132,16 @@
   display: block;
 }
 
+/* Table column header — matches .form-label typography */
+.col-header {
+  font-size: var(--text-overline);
+  font-weight: 500;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-align: left;
+}
+
 /* Dropdown menu item hover */
 .menu-item:hover {
   background-color: #2a2a2a;

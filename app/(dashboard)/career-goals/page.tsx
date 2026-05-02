@@ -1,6 +1,7 @@
-"use client"
+﻿"use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
+import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { MarkdownTextarea } from "@/components/ui/markdown-textarea"
@@ -684,10 +685,10 @@ export default function CareerGoalsPage() {
               <table className="w-full border-collapse table-fixed" style={{ borderRadius: "6px", overflow: "hidden", border: "1px solid var(--border-1)" }}>
                 <thead>
                   <tr style={{ borderBottom: "1px solid var(--border-1)", background: "var(--surf-2)" }}>
-                    <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "20%" }}>Category</th>
-                    <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "35%" }}>Current State</th>
-                    <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "35%" }}>Desired State</th>
-                    <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "10%" }}>Actions</th>
+                    <th className="col-header" style={{ padding: "8px 12px", width: "20%" }}>Category</th>
+                    <th className="col-header" style={{ padding: "8px 12px", width: "35%" }}>Current State</th>
+                    <th className="col-header" style={{ padding: "8px 12px", width: "35%" }}>Desired State</th>
+                    <th className="col-header" style={{ padding: "8px 12px", width: "10%" }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -744,14 +745,14 @@ export default function CareerGoalsPage() {
             {/* Desired Focus Distribution */}
             {categories.length > 0 && (
               <div>
-                <div style={{ fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>Desired Focus Distribution</div>
+                <div className="form-section-header">Desired Focus Distribution</div>
                 <div style={{ overflowX: "auto", border: "1px solid var(--border-1)", borderRadius: "6px" }}>
                   <table className="w-full border-collapse table-fixed">
                     <thead>
                       <tr style={{ borderBottom: "1px solid var(--border-1)", background: "var(--surf-2)" }}>
-                        <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "30%" }}>Category</th>
-                        <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "10%" }}>Focus %</th>
-                        <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "60%" }}>Why</th>
+                        <th className="col-header" style={{ padding: "8px 12px", width: "30%" }}>Category</th>
+                        <th className="col-header" style={{ padding: "8px 12px", width: "10%" }}>Focus %</th>
+                        <th className="col-header" style={{ padding: "8px 12px", width: "60%" }}>Why</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -807,7 +808,7 @@ export default function CareerGoalsPage() {
             <div className="grid grid-cols-[60%_40%] gap-6">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span style={{ fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Goals</span>
+                  <span className="form-section-header">Goals</span>
                   <button onClick={() => addGoal('short_term', setShortTermGoals, shortTermGoals)} style={{ display: "inline-flex", alignItems: "center", gap: "4px", background: "transparent", border: "1px solid var(--border-2)", color: "var(--text-2)", padding: "3px 8px", borderRadius: "4px", fontSize: "var(--text-caption)", cursor: "pointer" }}
                     onMouseEnter={e => (e.currentTarget.style.color = "var(--text-1)")}
                     onMouseLeave={e => (e.currentTarget.style.color = "var(--text-2)")}
@@ -817,10 +818,10 @@ export default function CareerGoalsPage() {
                   <table className="w-full border-collapse">
                     <thead>
                       <tr style={{ borderBottom: "1px solid var(--border-1)", background: "var(--surf-2)" }}>
-                        <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "45%" }}>Goal</th>
-                        <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "12%" }}>Type</th>
-                        <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "18%" }}>Category</th>
-                        <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "15%" }}>Status</th>
+                        <th className="col-header" style={{ padding: "8px 12px", width: "45%" }}>Goal</th>
+                        <th className="col-header" style={{ padding: "8px 12px", width: "12%" }}>Type</th>
+                        <th className="col-header" style={{ padding: "8px 12px", width: "18%" }}>Category</th>
+                        <th className="col-header" style={{ padding: "8px 12px", width: "15%" }}>Status</th>
                         <th style={{ padding: "8px 12px", width: "40px" }}></th>
                       </tr>
                     </thead>
@@ -900,7 +901,7 @@ export default function CareerGoalsPage() {
               </div>
 
               <div>
-                <div style={{ fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>Current Focus Distribution</div>
+                <div className="form-section-header">Current Focus Distribution</div>
                 {renderPieChart(shortTermGoals)}
                 {(() => {
                   const currentDist = calculateGoalDistribution(shortTermGoals)
@@ -951,14 +952,14 @@ export default function CareerGoalsPage() {
             {/* Desired Focus Distribution */}
             {categories.length > 0 && (
               <div>
-                <div style={{ fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>Desired Focus Distribution</div>
+                <div className="form-section-header">Desired Focus Distribution</div>
                 <div style={{ overflowX: "auto", border: "1px solid var(--border-1)", borderRadius: "6px" }}>
                   <table className="w-full border-collapse table-fixed">
                     <thead>
                       <tr style={{ borderBottom: "1px solid var(--border-1)", background: "var(--surf-2)" }}>
-                        <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "30%" }}>Category</th>
-                        <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "10%" }}>Focus %</th>
-                        <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "60%" }}>Why</th>
+                        <th className="col-header" style={{ padding: "8px 12px", width: "30%" }}>Category</th>
+                        <th className="col-header" style={{ padding: "8px 12px", width: "10%" }}>Focus %</th>
+                        <th className="col-header" style={{ padding: "8px 12px", width: "60%" }}>Why</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1014,7 +1015,7 @@ export default function CareerGoalsPage() {
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span style={{ fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Goals</span>
+                  <span className="form-section-header">Goals</span>
                   <button onClick={() => addGoal('mid_term', setMidTermGoals, midTermGoals)} style={{ display: "inline-flex", alignItems: "center", gap: "4px", background: "transparent", border: "1px solid var(--border-2)", color: "var(--text-2)", padding: "3px 8px", borderRadius: "4px", fontSize: "var(--text-caption)", cursor: "pointer" }}
                     onMouseEnter={e => (e.currentTarget.style.color = "var(--text-1)")}
                     onMouseLeave={e => (e.currentTarget.style.color = "var(--text-2)")}
@@ -1024,10 +1025,10 @@ export default function CareerGoalsPage() {
                   <table className="w-full border-collapse">
                     <thead>
                       <tr style={{ borderBottom: "1px solid var(--border-1)", background: "var(--surf-2)" }}>
-                        <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "45%" }}>Goal</th>
-                        <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "12%" }}>Type</th>
-                        <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "18%" }}>Category</th>
-                        <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "15%" }}>Status</th>
+                        <th className="col-header" style={{ padding: "8px 12px", width: "45%" }}>Goal</th>
+                        <th className="col-header" style={{ padding: "8px 12px", width: "12%" }}>Type</th>
+                        <th className="col-header" style={{ padding: "8px 12px", width: "18%" }}>Category</th>
+                        <th className="col-header" style={{ padding: "8px 12px", width: "15%" }}>Status</th>
                         <th style={{ padding: "8px 12px", width: "40px" }}></th>
                       </tr>
                     </thead>
@@ -1107,7 +1108,7 @@ export default function CareerGoalsPage() {
               </div>
 
               <div>
-                <div style={{ fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>Current Focus Distribution</div>
+                <div className="form-section-header">Current Focus Distribution</div>
                 {renderPieChart(midTermGoals)}
                 {(() => {
                   const currentDist = calculateGoalDistribution(midTermGoals)
@@ -1158,14 +1159,14 @@ export default function CareerGoalsPage() {
             {/* Desired Focus Distribution */}
             {categories.length > 0 && (
               <div>
-                <div style={{ fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>Desired Focus Distribution</div>
+                <div className="form-section-header">Desired Focus Distribution</div>
                 <div style={{ overflowX: "auto", border: "1px solid var(--border-1)", borderRadius: "6px" }}>
                   <table className="w-full border-collapse table-fixed">
                     <thead>
                       <tr style={{ borderBottom: "1px solid var(--border-1)", background: "var(--surf-2)" }}>
-                        <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "30%" }}>Category</th>
-                        <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "10%" }}>Focus %</th>
-                        <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "60%" }}>Why</th>
+                        <th className="col-header" style={{ padding: "8px 12px", width: "30%" }}>Category</th>
+                        <th className="col-header" style={{ padding: "8px 12px", width: "10%" }}>Focus %</th>
+                        <th className="col-header" style={{ padding: "8px 12px", width: "60%" }}>Why</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1221,7 +1222,7 @@ export default function CareerGoalsPage() {
             <div className="grid grid-cols-[60%_40%] gap-6">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span style={{ fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Goals</span>
+                  <span className="form-section-header">Goals</span>
                   <button onClick={() => addGoal('long_term', setLongTermGoals, longTermGoals)} style={{ display: "inline-flex", alignItems: "center", gap: "4px", background: "transparent", border: "1px solid var(--border-2)", color: "var(--text-2)", padding: "3px 8px", borderRadius: "4px", fontSize: "var(--text-caption)", cursor: "pointer" }}
                     onMouseEnter={e => (e.currentTarget.style.color = "var(--text-1)")}
                     onMouseLeave={e => (e.currentTarget.style.color = "var(--text-2)")}
@@ -1231,10 +1232,10 @@ export default function CareerGoalsPage() {
                   <table className="w-full border-collapse">
                     <thead>
                       <tr style={{ borderBottom: "1px solid var(--border-1)", background: "var(--surf-2)" }}>
-                        <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "45%" }}>Goal</th>
-                        <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "12%" }}>Type</th>
-                        <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "18%" }}>Category</th>
-                        <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", width: "15%" }}>Status</th>
+                        <th className="col-header" style={{ padding: "8px 12px", width: "45%" }}>Goal</th>
+                        <th className="col-header" style={{ padding: "8px 12px", width: "12%" }}>Type</th>
+                        <th className="col-header" style={{ padding: "8px 12px", width: "18%" }}>Category</th>
+                        <th className="col-header" style={{ padding: "8px 12px", width: "15%" }}>Status</th>
                         <th style={{ padding: "8px 12px", width: "40px" }}></th>
                       </tr>
                     </thead>
@@ -1314,7 +1315,7 @@ export default function CareerGoalsPage() {
               </div>
 
               <div>
-                <div style={{ fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>Current Focus Distribution</div>
+                <div className="form-section-header">Current Focus Distribution</div>
                 {renderPieChart(longTermGoals)}
                 {(() => {
                   const currentDist = calculateGoalDistribution(longTermGoals)
@@ -1373,10 +1374,10 @@ export default function CareerGoalsPage() {
               <table className="w-full border-collapse">
                 <thead>
                   <tr style={{ borderBottom: "1px solid var(--border-1)", background: "var(--surf-2)" }}>
-                    <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Type</th>
-                    <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Description</th>
-                    <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Date</th>
-                    <th style={{ textAlign: "left", padding: "8px 12px", fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Key Takeaway</th>
+                    <th className="col-header" style={{ padding: "8px 12px" }}>Type</th>
+                    <th className="col-header" style={{ padding: "8px 12px" }}>Description</th>
+                    <th className="col-header" style={{ padding: "8px 12px" }}>Date</th>
+                    <th className="col-header" style={{ padding: "8px 12px" }}>Key Takeaway</th>
                     <th style={{ padding: "8px 12px", width: "40px" }}></th>
                   </tr>
                 </thead>
@@ -1497,12 +1498,12 @@ export default function CareerGoalsPage() {
             </div>
           </div>
           <DialogFooter>
-            <button onClick={() => setIsGapDialogOpen(false)} style={{ background: "transparent", border: "1px solid var(--border-2)", color: "var(--text-2)", padding: "6px 12px", borderRadius: "4px", fontSize: "var(--text-meta)", cursor: "pointer" }}>
+            <Button variant="outline" onClick={() => setIsGapDialogOpen(false)}>
               Cancel
-            </button>
-            <button onClick={handleSaveGap} disabled={!gapFormData.category.trim()} style={{ background: "linear-gradient(90deg, #00ffe5 0%, #00f058 100%)", border: "none", color: "#0a1a0a", padding: "6px 12px", borderRadius: "4px", fontSize: "var(--text-meta)", fontWeight: 600, cursor: "pointer" }}>
+            </Button>
+            <Button onClick={handleSaveGap} disabled={!gapFormData.category.trim()}>
               {editingGap ? "Save Changes" : "Add Category"}
-            </button>
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -1510,3 +1511,4 @@ export default function CareerGoalsPage() {
     </>
   )
 }
+
