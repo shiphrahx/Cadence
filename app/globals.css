@@ -50,14 +50,28 @@
     --text-section:      14px;   /* h2: widget/section titles */
     --text-body:         14px;   /* default body text */
     --text-label:        12px;   /* secondary labels, captions */
-    --text-meta:         11px;   /* table cells, metadata */
+    --text-meta:         12px;   /* table cells, metadata */
     --text-caption:      10px;   /* tags, badges, tiny labels */
-    --text-overline:      9px;   /* uppercase column/stat headers */
+    --text-overline:     11px;   /* uppercase column/stat headers */
 
     --weight-title:      700;
     --weight-section:    600;
     --weight-body:       400;
     --weight-label:      500;
+
+    /* ── Tree hierarchy ── */
+    /* L1: type/group header — matches panel title ("All meetings") */
+    --tree-l1-size:      var(--text-meta);
+    --tree-l1-weight:    500;
+    --tree-l1-color:     var(--text-1);
+    /* L2: first inner grouping (person/team name) */
+    --tree-l2-size:      var(--text-label);
+    --tree-l2-weight:    400;
+    --tree-l2-color:     var(--text-2);
+    /* L3: leaf node (date, title) */
+    --tree-l3-size:      var(--text-caption);
+    --tree-l3-weight:    400;
+    --tree-l3-color:     var(--text-3);
 
     /* shadcn/ui compatibility tokens */
     --background: 240 6% 6%;
@@ -94,6 +108,40 @@
   border-color: hsl(var(--border));
 }
 
+/* ── Form elements ── */
+
+/* Label above an input/select inside a form or detail panel */
+.form-label {
+  font-size: var(--text-overline);
+  font-weight: 500;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* Section/block header inside a form or detail panel (e.g. "Action items") */
+.form-section-header {
+  font-size: var(--text-overline);
+  font-weight: 500;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* Table column header — matches .form-label typography */
+.col-header {
+  font-size: var(--text-overline);
+  font-weight: 500;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-align: left;
+}
+
 /* Dropdown menu item hover */
 .menu-item:hover {
   background-color: #2a2a2a;
@@ -101,8 +149,8 @@
 
 /* Dual-list selector hover */
 .dual-list-item:hover {
-  background: linear-gradient(90deg, rgb(0, 255, 229) 0%, rgb(0, 240, 88) 100%);
-  color: #111;
+  background: #292929;
+  color: var(--text-1);
 }
 
 /* Dark theme for native date picker */

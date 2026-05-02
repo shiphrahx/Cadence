@@ -11,7 +11,6 @@ import {
   UserCircle,
   FolderKanban,
   Calendar,
-  Target,
   ChevronLeft,
   ChevronRight
 } from "lucide-react"
@@ -24,7 +23,7 @@ const navigation = [
   { name: "People", href: "/people", icon: UserCircle },
   { name: "Projects", href: "/projects", icon: FolderKanban },
   { name: "Meetings", href: "/meetings", icon: Calendar },
-  { name: "Career Goals", href: "/career-goals", icon: Target },
+  // { name: "Career Goals", href: "/career-goals", icon: Target },
 ]
 
 interface SidebarProps {

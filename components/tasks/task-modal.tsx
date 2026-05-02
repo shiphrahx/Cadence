@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Task, TaskStatus, TaskCategory, TASK_STATUSES, TASK_PRIORITIES, TASK_CATEGORIES } from "@/lib/types/task"
+import { PRIORITY_BADGE } from "@/lib/badge-styles"
 import {
   Dialog,
   DialogContent,
@@ -29,6 +30,7 @@ interface TaskModalProps {
   onSave: (task: Task) => void
   onDelete?: (taskId: string) => void
 }
+
 
 export function TaskModal({ task, isOpen, onClose, onSave, onDelete }: TaskModalProps) {
   const [formData, setFormData] = useState<Task>({
@@ -117,33 +119,35 @@ export function TaskModal({ task, isOpen, onClose, onSave, onDelete }: TaskModal
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="priority">Priority</Label>
-              <div className="flex gap-1.5 h-10">
-                {TASK_PRIORITIES.map((priority) => (
-                  <button
-                    key={priority}
-                    type="button"
-                    onClick={() => setFormData({ ...formData, priority })}
-                    className={`flex-1 px-2 py-1.5 text-xs font-medium rounded border-2 transition-colors whitespace-nowrap ${
-                      formData.priority === priority
-                        ? priority === "Very High"
-                          ? "text-white border-[rgb(139,30,30)]"
-                          : priority === "High"
-                          ? "bg-red-100 text-red-700 border-red-300"
-                          : priority === "Medium"
-                          ? "bg-yellow-100 text-yellow-700 border-yellow-300"
-                          : "bg-green-100 text-green-700 border-green-300"
-                        : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
-                    }`}
-                    style={
-                      formData.priority === priority && priority === "Very High"
-                        ? { backgroundColor: "lab(34 43.72 6.02)" }
-                        : undefined
-                    }
-                  >
-                    {priority}
-                  </button>
-                ))}
+              <Label>Priority</Label>
+              <div style={{ display: "flex", gap: "6px" }}>
+                {TASK_PRIORITIES.map((priority) => {
+                  const isSelected = formData.priority === priority
+                  const s = PRIORITY_BADGE[priority]
+                  return (
+                    <button
+                      key={priority}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, priority })}
+                      style={{
+                        flex: 1,
+                        padding: "4px 4px",
+                        borderRadius: "4px",
+                        fontSize: "var(--text-overline)",
+                        fontWeight: 500,
+                        fontFamily: "var(--font-mono)",
+                        background: isSelected ? s.bg : "var(--surf-2)",
+                        color: isSelected ? s.color : "var(--text-3)",
+                        border: `1px solid ${isSelected ? s.color + "33" : "var(--border-2)"}`,
+                        cursor: "pointer",
+                        whiteSpace: "nowrap",
+                        transition: "all 120ms",
+                      }}
+                    >
+                      {priority}
+                    </button>
+                  )
+                })}
               </div>
             </div>
           </div>
@@ -191,7 +195,7 @@ export function TaskModal({ task, isOpen, onClose, onSave, onDelete }: TaskModal
           </div>
         </div>
 
-        <DialogFooter className="flex justify-between">
+        <DialogFooter className="sm:flex-row sm:justify-between">
           <div>
             {task && onDelete && (
               <Button variant="destructive" onClick={handleDelete}>
@@ -199,7 +203,10 @@ export function TaskModal({ task, isOpen, onClose, onSave, onDelete }: TaskModal
               </Button>
             )}
           </div>
-          <div>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
             <Button onClick={handleSave} disabled={!formData.title.trim()}>
               {task ? "Save Changes" : "Create Task"}
             </Button>

@@ -394,11 +394,9 @@ export default function MeetingsPage() {
                     alignItems: "center",
                     gap: "5px",
                     padding: "6px 12px",
-                    fontSize: "var(--text-caption)",
-                    fontWeight: 500,
-                    color: "var(--text-3)",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
+                    fontSize: "var(--tree-l1-size)",
+                    fontWeight: "var(--tree-l1-weight)" as React.CSSProperties["fontWeight"],
+                    color: "var(--tree-l1-color)",
                     background: "none",
                     border: "none",
                     cursor: "pointer",
@@ -424,9 +422,9 @@ export default function MeetingsPage() {
                           onClick={() => togglePerson(personName)}
                           style={{
                             padding: "4px 12px 2px 24px",
-                            fontSize: "var(--text-caption)",
-                            color: "var(--text-3)",
-                            fontWeight: 500,
+                            fontSize: "var(--tree-l2-size)",
+                            color: "var(--tree-l2-color)",
+                            fontWeight: "var(--tree-l2-weight)" as React.CSSProperties["fontWeight"],
                             background: "none",
                             border: "none",
                             cursor: "pointer",
@@ -452,7 +450,7 @@ export default function MeetingsPage() {
                               key={meeting.id}
                               onClick={() => setSelectedMeeting(meeting)}
                               style={{
-                                padding: "5px 12px 5px 24px",
+                                padding: "5px 12px 5px 32px",
                                 cursor: "pointer",
                                 display: "flex",
                                 flexDirection: "column",
@@ -468,11 +466,11 @@ export default function MeetingsPage() {
                               onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "var(--surf-2)" }}
                               onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "none" }}
                             >
-                              <span style={{ fontSize: "var(--text-meta)", color: isActive ? "#00f058" : "var(--text-2)" }}>
+                              <span style={{ fontSize: "var(--tree-l3-size)", fontWeight: 500, color: isActive ? "#00f058" : "var(--tree-l2-color)" }}>
                                 {formatDate(meeting.date)}
                               </span>
                               {meeting.title && (
-                                <span style={{ fontSize: "var(--text-overline)", color: "var(--text-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>
+                                <span style={{ fontSize: "var(--tree-l3-size)", color: "var(--tree-l3-color)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>
                                   {meeting.title}
                                 </span>
                               )}
@@ -489,9 +487,9 @@ export default function MeetingsPage() {
                           onClick={() => toggleTeam(teamName)}
                           style={{
                             padding: "4px 12px 2px 24px",
-                            fontSize: "var(--text-caption)",
-                            color: "var(--text-3)",
-                            fontWeight: 500,
+                            fontSize: "var(--tree-l2-size)",
+                            color: "var(--tree-l2-color)",
+                            fontWeight: "var(--tree-l2-weight)" as React.CSSProperties["fontWeight"],
                             background: "none",
                             border: "none",
                             cursor: "pointer",
@@ -517,7 +515,7 @@ export default function MeetingsPage() {
                               key={meeting.id}
                               onClick={() => setSelectedMeeting(meeting)}
                               style={{
-                                padding: "5px 12px 5px 24px",
+                                padding: "5px 12px 5px 32px",
                                 cursor: "pointer",
                                 display: "flex",
                                 flexDirection: "column",
@@ -533,11 +531,11 @@ export default function MeetingsPage() {
                               onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "var(--surf-2)" }}
                               onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "none" }}
                             >
-                              <span style={{ fontSize: "var(--text-meta)", color: isActive ? "#00f058" : "var(--text-2)" }}>
+                              <span style={{ fontSize: "var(--tree-l3-size)", fontWeight: 500, color: isActive ? "#00f058" : "var(--tree-l2-color)" }}>
                                 {formatDate(meeting.date)}
                               </span>
                               {meeting.title && (
-                                <span style={{ fontSize: "var(--text-overline)", color: "var(--text-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>
+                                <span style={{ fontSize: "var(--tree-l3-size)", color: "var(--tree-l3-color)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>
                                   {meeting.title}
                                 </span>
                               )}
@@ -575,7 +573,7 @@ export default function MeetingsPage() {
                             {formatDate(meeting.date)}
                           </span>
                           {meeting.title && (
-                            <span style={{ fontSize: "var(--text-overline)", color: "var(--text-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>
+                            <span style={{ fontSize: "var(--text-meta)", color: "var(--text-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>
                               {meeting.title}
                             </span>
                           )}
@@ -621,7 +619,7 @@ export default function MeetingsPage() {
               {/* Meta fields grid */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "16px" }}>
                 <div>
-                  <div style={{ fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "3px" }}>Date</div>
+                  <div className="form-label">Date</div>
                   <div style={{ background: "var(--surf-2)", border: "1px solid var(--border-1)", borderRadius: "5px", overflow: "hidden" }}>
                     <Input
                       type="date"
@@ -633,7 +631,7 @@ export default function MeetingsPage() {
                 </div>
                 {selectedMeeting.type === "1:1" && selectedMeeting.recurrence && selectedMeeting.recurrence !== "none" && selectedMeeting.nextMeetingDate && (
                   <div>
-                    <div style={{ fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "3px" }}>Next Meeting</div>
+                    <div className="form-label">Next Meeting</div>
                     <div style={{ background: "var(--surf-2)", border: "1px solid var(--border-1)", borderRadius: "5px", overflow: "hidden" }}>
                       <Input
                         type="date"
@@ -645,7 +643,7 @@ export default function MeetingsPage() {
                   </div>
                 )}
                 <div>
-                  <div style={{ fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "3px" }}>Title</div>
+                  <div className="form-label">Title</div>
                   <div style={{ background: "var(--surf-2)", border: "1px solid var(--border-1)", borderRadius: "5px", overflow: "hidden" }}>
                     <Input
                       value={selectedMeeting.title}
@@ -656,7 +654,7 @@ export default function MeetingsPage() {
                   </div>
                 </div>
                 <div>
-                  <div style={{ fontSize: "var(--text-overline)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "3px" }}>Attendees</div>
+                  <div className="form-label">Attendees</div>
                   <div style={{ background: "var(--surf-2)", border: "1px solid var(--border-1)", borderRadius: "5px", overflow: "hidden" }}>
                     <Input
                       value={selectedMeeting.attendees.join(", ")}
@@ -673,9 +671,7 @@ export default function MeetingsPage() {
 
               {/* Action items */}
               <div style={{ marginBottom: "16px" }}>
-                <div style={{ fontSize: "var(--text-caption)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "7px" }}>
-                  Action items
-                </div>
+                <div className="form-section-header">Action items</div>
                 <div style={{
                   background: "var(--surf-2)",
                   border: "1px solid var(--border-1)",
@@ -711,9 +707,7 @@ export default function MeetingsPage() {
 
               {/* Meeting notes */}
               <div>
-                <div style={{ fontSize: "var(--text-caption)", fontWeight: 500, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "7px" }}>
-                  Meeting notes
-                </div>
+                <div className="form-section-header">Meeting notes</div>
                 <div style={{
                   background: "var(--surf-2)",
                   border: "1px solid var(--border-1)",

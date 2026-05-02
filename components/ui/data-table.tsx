@@ -114,68 +114,76 @@ export function DataTable<T extends { id?: number | string }>({
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
       {/* Search + controls row */}
-      <div style={{ display: "flex", gap: "5px", marginBottom: "10px", alignItems: "center" }}>
-        {searchKeys.length > 0 && (
-          <div style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "5px",
-            background: "var(--surf)",
-            border: "1px solid var(--border-1)",
-            borderRadius: "4px",
-            padding: "4px 8px",
-            flex: 1,
-          }}>
-            <Search style={{ width: "9px", height: "9px", color: "var(--text-3)", flexShrink: 0 }} />
-            <input
-              type="text"
-              placeholder={searchPlaceholder}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px", marginBottom: "12px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          {searchKeys.length > 0 && (
+            <div style={{ position: "relative" }}>
+              <Search
+                style={{
+                  position: "absolute",
+                  width: "14px",
+                  height: "14px",
+                  left: "10px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  color: "var(--text-3)",
+                  pointerEvents: "none",
+                }}
+              />
+              <input
+                type="text"
+                placeholder={searchPlaceholder}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{
+                  background: "var(--surf)",
+                  border: "1px solid var(--border-1)",
+                  borderRadius: "6px",
+                  padding: "5px 10px 5px 30px",
+                  fontSize: "var(--text-label)",
+                  color: "var(--text-1)",
+                  width: "180px",
+                  outline: "none",
+                  fontFamily: "var(--font-sans)",
+                }}
+                onFocus={e => (e.currentTarget.style.borderColor = "var(--border-2)")}
+                onBlur={e => (e.currentTarget.style.borderColor = "var(--border-1)")}
+              />
+            </div>
+          )}
+          {filters.length > 0 && (
+            <button
+              onClick={() => setShowFilters(!showFilters)}
               style={{
-                background: "transparent",
-                border: "none",
-                outline: "none",
-                color: "var(--text-1)",
+                background: showFilters ? "var(--surf-3)" : "transparent",
+                border: "1px solid var(--border-2)",
+                color: "var(--text-2)",
                 fontSize: "var(--text-label)",
+                padding: "5px 10px",
+                borderRadius: "6px",
+                cursor: "pointer",
                 fontFamily: "var(--font-sans)",
-                width: "100%",
               }}
-            />
-          </div>
-        )}
-        {filters.length > 0 && (
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            style={{
-              background: showFilters ? "var(--surf-3)" : "transparent",
-              border: "1px solid var(--border-2)",
-              color: "var(--text-2)",
-              padding: "4px 8px",
-              borderRadius: "4px",
-              fontSize: "var(--text-label)",
-              cursor: "pointer",
-              fontFamily: "var(--font-sans)",
-            }}
-            onMouseEnter={e => (e.currentTarget.style.color = "var(--text-1)")}
-            onMouseLeave={e => (e.currentTarget.style.color = "var(--text-2)")}
-          >
-            Filters
-          </button>
-        )}
+              onMouseEnter={e => (e.currentTarget.style.color = "var(--text-1)")}
+              onMouseLeave={e => (e.currentTarget.style.color = "var(--text-2)")}
+            >
+              Filters
+            </button>
+          )}
+        </div>
         {onQuickAdd && (
           <button
             onClick={onQuickAdd}
             style={{
               display: "inline-flex",
               alignItems: "center",
-              gap: "4px",
+              gap: "5px",
               background: "linear-gradient(90deg, #00ffe5 0%, #00f058 100%)",
               border: "none",
               color: "#0a1a0a",
               padding: "4px 10px",
               borderRadius: "4px",
-              fontSize: "var(--text-label)",
+              fontSize: "var(--text-caption)",
               fontWeight: 600,
               cursor: "pointer",
               fontFamily: "var(--font-sans)",
@@ -191,16 +199,16 @@ export function DataTable<T extends { id?: number | string }>({
         <div style={{
           display: "flex",
           alignItems: "center",
-          gap: "12px",
-          padding: "8px 12px",
+          gap: "16px",
+          padding: "12px 16px",
           background: "var(--surf)",
           border: "1px solid var(--border-1)",
-          borderRadius: "4px",
-          marginBottom: "10px",
+          borderRadius: "8px",
+          marginBottom: "12px",
         }}>
           {filters.map((filter) => (
-            <div key={filter.id} style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-              <label style={{ fontSize: "var(--text-label)", color: "var(--text-2)", fontFamily: "var(--font-sans)" }}>
+            <div key={filter.id} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <label style={{ fontSize: "var(--text-label)", color: "var(--text-2)", fontWeight: 500, fontFamily: "var(--font-sans)" }}>
                 {filter.label}:
               </label>
               <select
@@ -209,8 +217,8 @@ export function DataTable<T extends { id?: number | string }>({
                 style={{
                   background: "var(--surf-2)",
                   border: "1px solid var(--border-2)",
-                  borderRadius: "3px",
-                  padding: "2px 6px",
+                  borderRadius: "4px",
+                  padding: "3px 6px",
                   fontSize: "var(--text-label)",
                   color: "var(--text-1)",
                   cursor: "pointer",
@@ -233,43 +241,29 @@ export function DataTable<T extends { id?: number | string }>({
       <div style={{
         background: "var(--surf)",
         border: "1px solid var(--border-1)",
-        borderRadius: "6px",
+        borderRadius: "8px",
         overflow: "hidden",
       }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
-            <tr>
+            <tr style={{ borderBottom: "1px solid var(--border-1)" }}>
               {columns.map((column) => (
                 <th
                   key={column.id}
-                  style={{
-                    textAlign: "left",
-                    padding: "6px 10px",
-                    fontSize: "var(--text-overline)",
-                    fontWeight: 500,
-                    color: "var(--text-3)",
-                    letterSpacing: "0.06em",
-                    textTransform: "uppercase",
-                    borderBottom: "1px solid var(--border-1)",
-                    background: "var(--surf)",
-                  }}
-                  className={column.className}
+                  className={`col-header ${column.className ?? ""}`}
+                  style={{ padding: "8px 12px", background: "var(--surf)" }}
                 >
                   {column.sortable !== false ? (
                     <button
                       onClick={() => handleSort(column.id)}
+                      className="col-header"
                       style={{
                         display: "flex",
                         alignItems: "center",
-                        gap: "3px",
-                        color: "var(--text-3)",
+                        gap: "4px",
                         background: "none",
                         border: "none",
                         cursor: "pointer",
-                        fontSize: "var(--text-overline)",
-                        fontWeight: 500,
-                        letterSpacing: "0.06em",
-                        textTransform: "uppercase",
                         padding: 0,
                         fontFamily: "var(--font-sans)",
                       }}
@@ -277,7 +271,7 @@ export function DataTable<T extends { id?: number | string }>({
                       onMouseLeave={e => (e.currentTarget.style.color = "var(--text-3)")}
                     >
                       {column.header}
-                      <ArrowUpDown style={{ width: "9px", height: "9px" }} />
+                      <ArrowUpDown style={{ width: "11px", height: "11px", flexShrink: 0 }} />
                     </button>
                   ) : (
                     column.header
@@ -292,6 +286,7 @@ export function DataTable<T extends { id?: number | string }>({
                 <tr
                   key={item.id}
                   onClick={() => onRowClick?.(item)}
+                  className="group transition-colors"
                   style={{
                     borderBottom: idx < filteredAndSortedData.length - 1 ? "1px solid var(--border-1)" : "none",
                     cursor: onRowClick ? "pointer" : "default",
@@ -302,7 +297,7 @@ export function DataTable<T extends { id?: number | string }>({
                   {columns.map((column) => (
                     <td
                       key={column.id}
-                      style={{ padding: "6px 10px", fontSize: "var(--text-meta)", color: "var(--text-1)" }}
+                      style={{ padding: "9px 12px", fontSize: "var(--text-meta)", color: "var(--text-1)" }}
                       className={column.className}
                     >
                       {column.cell
