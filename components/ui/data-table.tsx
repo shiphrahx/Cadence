@@ -250,33 +250,20 @@ export function DataTable<T extends { id?: number | string }>({
               {columns.map((column) => (
                 <th
                   key={column.id}
-                  style={{
-                    textAlign: "left",
-                    padding: "8px 12px",
-                    fontSize: "var(--text-overline)",
-                    fontWeight: 500,
-                    color: "var(--text-3)",
-                    letterSpacing: "0.06em",
-                    textTransform: "uppercase",
-                    background: "var(--surf)",
-                  }}
-                  className={column.className}
+                  className={`col-header ${column.className ?? ""}`}
+                  style={{ padding: "8px 12px", background: "var(--surf)" }}
                 >
                   {column.sortable !== false ? (
                     <button
                       onClick={() => handleSort(column.id)}
+                      className="col-header"
                       style={{
                         display: "flex",
                         alignItems: "center",
                         gap: "4px",
-                        color: "var(--text-3)",
                         background: "none",
                         border: "none",
                         cursor: "pointer",
-                        fontSize: "var(--text-overline)",
-                        fontWeight: 500,
-                        letterSpacing: "0.06em",
-                        textTransform: "uppercase",
                         padding: 0,
                         fontFamily: "var(--font-sans)",
                       }}

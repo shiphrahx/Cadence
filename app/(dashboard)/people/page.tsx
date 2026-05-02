@@ -153,9 +153,7 @@ export default function PeoplePage() {
               borderRadius: "6px",
               padding: "10px 12px",
             }}>
-              <div style={{ fontSize: "var(--text-overline)", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "4px" }}>
-                {label}
-              </div>
+              <div className="form-label">{label}</div>
               <div style={{ fontSize: "20px", fontWeight: 500, color: "var(--text-1)", fontFamily: "var(--font-mono)" }}>
                 {value}
               </div>

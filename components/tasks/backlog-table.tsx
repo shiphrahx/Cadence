@@ -250,31 +250,19 @@ export function BacklogTable({ tasks, onUpdateTask, onQuickAdd, onEdit, onDelete
                 return (
                   <th
                     key={field}
-                    style={{
-                      textAlign: "left",
-                      padding: "8px 12px",
-                      background: "var(--surf)",
-                      fontWeight: 500,
-                      fontSize: "var(--text-overline)",
-                      color: "var(--text-3)",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.06em",
-                    }}
+                    className="col-header"
+                    style={{ padding: "8px 12px", background: "var(--surf)" }}
                   >
                     <button
                       onClick={() => handleSort(field)}
+                      className="col-header"
                       style={{
                         display: "flex",
                         alignItems: "center",
                         gap: "4px",
-                        color: "var(--text-3)",
                         background: "none",
                         border: "none",
                         cursor: "pointer",
-                        fontSize: "var(--text-overline)",
-                        fontWeight: 500,
-                        textTransform: "uppercase",
-                        letterSpacing: "0.06em",
                         padding: 0,
                       }}
                       onMouseEnter={e => (e.currentTarget.style.color = "var(--text-2)")}
