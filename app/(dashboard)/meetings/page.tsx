@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
-import { ChevronRight, ChevronDown, ChevronsRight, ChevronsDown } from "lucide-react"
+import { ChevronRight, ChevronDown, ChevronsRight, ChevronsDown, BookOpen } from "lucide-react"
+import { LogEvidenceModal } from "@/components/evidence/log-evidence-modal"
 import { MeetingFormDialog } from "@/components/meeting-form-dialog"
 import {
   getMeetings,
@@ -57,6 +58,7 @@ export default function MeetingsPage() {
   const [expandedTeams, setExpandedTeams] = useState<Set<string>>(new Set())
   const [leftPanelWidth, setLeftPanelWidth] = useState(220)
   const [isResizing, setIsResizing] = useState(false)
+  const [logEvidenceOpen, setLogEvidenceOpen] = useState(false)
 
   useEffect(() => {
     const loadData = async () => {
@@ -610,11 +612,23 @@ export default function MeetingsPage() {
                 {selectedMeeting.title}
               </h1>
               {/* Meta line */}
-              <p style={{ marginBottom: "16px" }}>
-                {formatDate(selectedMeeting.date)}
-                {selectedMeeting.nextMeetingDate && ` · next ${formatDate(selectedMeeting.nextMeetingDate)}`}
-                {selectedMeeting.attendees.length > 0 && ` · ${selectedMeeting.attendees.join(", ")}`}
-              </p>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", marginBottom: "16px" }}>
+                <p>
+                  {formatDate(selectedMeeting.date)}
+                  {selectedMeeting.nextMeetingDate && ` · next ${formatDate(selectedMeeting.nextMeetingDate)}`}
+                  {selectedMeeting.attendees.length > 0 && ` · ${selectedMeeting.attendees.join(", ")}`}
+                </p>
+                {selectedMeeting.personId && (
+                  <button
+                    onClick={() => setLogEvidenceOpen(true)}
+                    style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "4px 10px", borderRadius: "4px", fontSize: "var(--text-caption)", fontWeight: 600, color: "var(--text-2)", border: "1px solid var(--border-2)", background: "var(--surf-2)", cursor: "pointer", flexShrink: 0, fontFamily: "var(--font-sans)" }}
+                    onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = "var(--text-1)")}
+                    onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = "var(--text-2)")}
+                  >
+                    <BookOpen style={{ width: "11px", height: "11px" }} /> Log as Evidence
+                  </button>
+                )}
+              </div>
 
               {/* Meta fields grid */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "16px" }}>
@@ -762,6 +776,19 @@ export default function MeetingsPage() {
         peopleWithIds={peopleWithIds}
         teamsWithIds={teamsWithIds}
       />
+
+      {selectedMeeting?.personId && (
+        <LogEvidenceModal
+          open={logEvidenceOpen}
+          onOpenChange={setLogEvidenceOpen}
+          meetingId={selectedMeeting.id}
+          meetingTitle={selectedMeeting.title}
+          meetingDate={selectedMeeting.date}
+          personId={selectedMeeting.personId}
+          personName={selectedMeeting.personName}
+          availablePeople={peopleWithIds}
+        />
+      )}
     </div>
   )
 }
