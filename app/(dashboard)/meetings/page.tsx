@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
-import { ChevronRight, ChevronDown, ChevronsRight, ChevronsDown, BookOpen } from "lucide-react"
+import { ChevronRight, ChevronDown, ChevronsRight, ChevronsDown, BookOpen, ListChecks } from "lucide-react"
 import { LogEvidenceModal } from "@/components/evidence/log-evidence-modal"
+import { FollowUpForm } from "@/components/follow-ups/follow-up-form"
 import { MeetingFormDialog } from "@/components/meeting-form-dialog"
 import {
   getMeetings,
@@ -59,6 +60,7 @@ export default function MeetingsPage() {
   const [leftPanelWidth, setLeftPanelWidth] = useState(220)
   const [isResizing, setIsResizing] = useState(false)
   const [logEvidenceOpen, setLogEvidenceOpen] = useState(false)
+  const [trackFollowUpOpen, setTrackFollowUpOpen] = useState(false)
 
   useEffect(() => {
     const loadData = async () => {
@@ -619,14 +621,24 @@ export default function MeetingsPage() {
                   {selectedMeeting.attendees.length > 0 && ` · ${selectedMeeting.attendees.join(", ")}`}
                 </p>
                 {selectedMeeting.personId && (
-                  <button
-                    onClick={() => setLogEvidenceOpen(true)}
-                    style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "4px 10px", borderRadius: "4px", fontSize: "var(--text-caption)", fontWeight: 600, color: "var(--text-2)", border: "1px solid var(--border-2)", background: "var(--surf-2)", cursor: "pointer", flexShrink: 0, fontFamily: "var(--font-sans)" }}
-                    onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = "var(--text-1)")}
-                    onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = "var(--text-2)")}
-                  >
-                    <BookOpen style={{ width: "11px", height: "11px" }} /> Log as Evidence
-                  </button>
+                  <div style={{ display: "flex", gap: "6px", flexShrink: 0 }}>
+                    <button
+                      onClick={() => setLogEvidenceOpen(true)}
+                      style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "4px 10px", borderRadius: "4px", fontSize: "var(--text-caption)", fontWeight: 600, color: "var(--text-2)", border: "1px solid var(--border-2)", background: "var(--surf-2)", cursor: "pointer", fontFamily: "var(--font-sans)" }}
+                      onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = "var(--text-1)")}
+                      onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = "var(--text-2)")}
+                    >
+                      <BookOpen style={{ width: "11px", height: "11px" }} /> Log as Evidence
+                    </button>
+                    <button
+                      onClick={() => setTrackFollowUpOpen(true)}
+                      style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "4px 10px", borderRadius: "4px", fontSize: "var(--text-caption)", fontWeight: 600, color: "var(--text-2)", border: "1px solid var(--border-2)", background: "var(--surf-2)", cursor: "pointer", fontFamily: "var(--font-sans)" }}
+                      onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = "var(--text-1)")}
+                      onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = "var(--text-2)")}
+                    >
+                      <ListChecks style={{ width: "11px", height: "11px" }} /> Track as Follow-up
+                    </button>
+                  </div>
                 )}
               </div>
 
@@ -787,6 +799,16 @@ export default function MeetingsPage() {
           personId={selectedMeeting.personId}
           personName={selectedMeeting.personName}
           availablePeople={peopleWithIds}
+        />
+      )}
+      {trackFollowUpOpen && selectedMeeting?.personId && (
+        <FollowUpForm
+          personId={selectedMeeting.personId}
+          personName={selectedMeeting.personName ?? 'this person'}
+          sourceType="meeting"
+          sourceId={selectedMeeting.id}
+          onSaved={() => setTrackFollowUpOpen(false)}
+          onCancel={() => setTrackFollowUpOpen(false)}
         />
       )}
     </div>

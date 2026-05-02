@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS public.tasks (
 CREATE TABLE IF NOT EXISTS public.task_relations (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   task_id UUID NOT NULL REFERENCES public.tasks(id) ON DELETE CASCADE,
-  entity_type TEXT NOT NULL CHECK (entity_type IN ('person', 'team')),
+  entity_type TEXT NOT NULL CHECK (entity_type IN ('person', 'team', 'meeting')),
   entity_id UUID NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   -- Prevent duplicate relations
@@ -672,6 +672,106 @@ CREATE POLICY "Users can update own review summaries" ON public.review_summaries
 
 CREATE POLICY "Users can delete own review summaries" ON public.review_summaries
   FOR DELETE USING (auth.uid() = owning_user_id);
+
+-- ============================================================================
+-- FOLLOW UPS TABLE
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS public.follow_ups (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  person_id UUID NOT NULL REFERENCES public.people(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  description TEXT,
+  source_type TEXT CHECK (source_type IN ('meeting', 'manual', 'task')),
+  source_id UUID,
+  status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'completed', 'cancelled')),
+  due_date DATE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  completed_at TIMESTAMPTZ,
+  cancelled_at TIMESTAMPTZ,
+  last_surfaced_at TIMESTAMPTZ,
+  times_surfaced INTEGER NOT NULL DEFAULT 0,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_follow_ups_person ON public.follow_ups(person_id, status);
+CREATE INDEX idx_follow_ups_user ON public.follow_ups(user_id, status);
+CREATE INDEX idx_follow_ups_due ON public.follow_ups(user_id, due_date) WHERE status = 'open';
+
+CREATE TRIGGER update_follow_ups_updated_at
+  BEFORE UPDATE ON public.follow_ups
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+ALTER TABLE public.follow_ups ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage their own follow ups"
+  ON public.follow_ups
+  FOR ALL
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+-- ============================================================================
+-- WEEKLY REVIEWS TABLE
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS public.weekly_reviews (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  week_start DATE NOT NULL,
+  status TEXT NOT NULL DEFAULT 'in_progress' CHECK (status IN ('in_progress', 'completed')),
+  completed_at TIMESTAMPTZ,
+  notes TEXT,
+  snapshot JSONB,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE(user_id, week_start)
+);
+
+CREATE INDEX idx_weekly_reviews_user_week ON public.weekly_reviews(user_id, week_start DESC);
+
+CREATE TRIGGER update_weekly_reviews_updated_at
+  BEFORE UPDATE ON public.weekly_reviews
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+ALTER TABLE public.weekly_reviews ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage their own weekly reviews"
+  ON public.weekly_reviews
+  FOR ALL
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+-- ============================================================================
+-- REVIEW DISMISSED ITEMS TABLE
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS public.review_dismissed_items (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  weekly_review_id UUID NOT NULL REFERENCES public.weekly_reviews(id) ON DELETE CASCADE,
+  item_type TEXT NOT NULL CHECK (item_type IN (
+    'overdue_task',
+    'no_recent_1on1',
+    'unresolved_action',
+    'no_evidence',
+    'upcoming_deadline',
+    'stale_goal',
+    'missing_notes'
+  )),
+  reference_id UUID,
+  reference_type TEXT,
+  dismissed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  note TEXT
+);
+
+CREATE INDEX idx_review_dismissed_review ON public.review_dismissed_items(weekly_review_id);
+CREATE INDEX idx_review_dismissed_user ON public.review_dismissed_items(user_id);
+
+ALTER TABLE public.review_dismissed_items ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage their own dismissed items"
+  ON public.review_dismissed_items
+  FOR ALL
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
 
 -- ============================================================================
 -- SEED DATA (Optional - for development)
