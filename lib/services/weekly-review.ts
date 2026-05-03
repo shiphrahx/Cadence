@@ -109,11 +109,19 @@ function rowToDismissed(row: DismissedItemRow): DismissedItem {
   }
 }
 
+/** Format a local Date as YYYY-MM-DD (no UTC shift) */
+function localDateStr(d: Date): string {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
 /** Adds n days to an ISO date string, returns ISO date string */
 export function addDays(dateStr: string, n: number): string {
   const d = new Date(dateStr + 'T00:00:00')
   d.setDate(d.getDate() + n)
-  return d.toISOString().split('T')[0]
+  return localDateStr(d)
 }
 
 /** Returns the Monday (ISO date string) of the week containing the given date */
@@ -122,15 +130,14 @@ export function getMondayOfWeek(date: Date = new Date()): string {
   const day = d.getDay()
   const diff = day === 0 ? -6 : 1 - day
   d.setDate(d.getDate() + diff)
-  return d.toISOString().split('T')[0]
+  return localDateStr(d)
 }
 
 /** Returns the Sunday (ISO date string) of the week containing the given date */
 export function getSundayOfWeek(date: Date = new Date()): string {
-  const monday = new Date(getMondayOfWeek(date))
-  const sunday = new Date(monday)
-  sunday.setDate(monday.getDate() + 6)
-  return sunday.toISOString().split('T')[0]
+  const monday = new Date(getMondayOfWeek(date) + 'T00:00:00')
+  monday.setDate(monday.getDate() + 6)
+  return localDateStr(monday)
 }
 
 /** Formats a week range as "28 Apr – 2 May 2026" */
