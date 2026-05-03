@@ -116,6 +116,7 @@ export default function SummaryPage() {
   const [rewriting, setRewriting] = useState(false)
   const [showRewriteMenu, setShowRewriteMenu] = useState(false)
   const saveDebounce = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const pendingRegenerate = useRef(false)
   const aiConfig = useAIConfig()
 
   const { data, loading, error, refetch } = useWeeklySummaryData(weekStart)
@@ -138,9 +139,11 @@ export default function SummaryPage() {
     })
   }, [weekStart])
 
-  // Auto-generate once data loads if no saved summary
+  // Auto-generate when data loads (initial) or after a forced regenerate
   useEffect(() => {
-    if (!data || loading || content) return
+    if (!data || loading) return
+    if (!pendingRegenerate.current && content) return
+    pendingRegenerate.current = false
     const md = generateSummaryMarkdown(data)
     setContent(md)
     setIsEdited(false)
@@ -162,15 +165,10 @@ export default function SummaryPage() {
     if (isEdited) {
       if (!confirm('This will overwrite your edits with fresh data. Continue?')) return
     }
-    if (!data) return
     setRegenerating(true)
+    pendingRegenerate.current = true
     try {
-      refetch()
-      const md = generateSummaryMarkdown(data)
-      setContent(md)
-      setIsEdited(false)
-      const r = await saveSummaryMarkdown(weekStart, md)
-      setGeneratedAt(r.summaryGeneratedAt)
+      await refetch()
     } finally {
       setRegenerating(false)
     }
