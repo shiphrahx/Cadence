@@ -23,12 +23,12 @@ describe('ReviewSection', () => {
 
   it('shows Reviewed badge when isReviewed is true', () => {
     render(<ReviewSection {...defaultProps} isReviewed={true} />)
-    expect(screen.getByText('Reviewed')).toBeTruthy()
+    expect(screen.getByText('✓ Reviewed')).toBeTruthy()
   })
 
   it('does not show Reviewed badge when not reviewed', () => {
     render(<ReviewSection {...defaultProps} isReviewed={false} />)
-    expect(screen.queryByText('Reviewed')).toBeNull()
+    expect(screen.queryByText('✓ Reviewed')).toBeNull()
   })
 
   it('shows critical badge when criticalCount > 0', () => {
