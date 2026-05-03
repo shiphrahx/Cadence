@@ -149,26 +149,6 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
         </button>
       </div>
 
-      {/* Search bar */}
-      {isOpen && (
-        <div style={{ padding: "4px 10px 2px" }}>
-          <div style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "6px",
-            background: "var(--surf-2)",
-            border: "1px solid var(--border-1)",
-            borderRadius: "5px",
-            padding: "5px 8px",
-            cursor: "pointer",
-          }}>
-            <Search style={{ width: "11px", height: "11px", color: "var(--text-3)", flexShrink: 0 }} />
-            <span style={{ fontSize: "var(--text-meta)", color: "var(--text-3)", flex: 1 }}>Search or jump...</span>
-            <span style={{ fontSize: "9px", color: "var(--text-3)", fontFamily: "var(--font-mono)" }}>⌘K</span>
-          </div>
-        </div>
-      )}
-
       {/* Nav */}
       <nav style={{ flex: 1, padding: "4px 10px", display: "flex", flexDirection: "column" }}>
         {navigation.map((item, idx) => {

@@ -45,6 +45,29 @@
     --font-sans:  'Inter', system-ui, sans-serif;
     --font-mono:  'JetBrains Mono', 'Fira Mono', monospace;
 
+    /* ── Semantic color tokens ── */
+    --green:      #00f058;
+    --teal:       #00ffe5;
+    --blue:       #60a5fa;
+    --indigo:     #818cf8;
+    --purple:     #c084fc;
+    --orange:     #f97316;
+    --red:        #f87171;
+    --yellow:     #facc15;
+    --bg:         #171717;
+
+    /* ── Shorthand aliases ── */
+    --b1: var(--border-1);
+    --b2: var(--border-2);
+    --b3: var(--border-3);
+    --t1: var(--text-1);
+    --t2: var(--text-2);
+    --t3: var(--text-3);
+    --surf2: var(--surf-2);
+    --surf3: var(--surf-3);
+    --font: var(--font-sans);
+    --mono: var(--font-mono);
+
     /* ── Type scale ── */
     --text-page-title:   24px;   /* h1: page headings */
     --text-section:      14px;   /* h2: widget/section titles */
