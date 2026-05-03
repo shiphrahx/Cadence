@@ -19,7 +19,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Award,
-  Search,
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { fetchSignalCounts } from "@/lib/hooks/use-weekly-review-signals"
