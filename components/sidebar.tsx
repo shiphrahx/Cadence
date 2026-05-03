@@ -1,5 +1,6 @@
 "use client"
 
+import React from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
@@ -23,19 +24,24 @@ import { createClient } from "@/lib/supabase/client"
 import { fetchSignalCounts } from "@/lib/hooks/use-weekly-review-signals"
 import { getMondayOfWeek, getWeeklyReview } from "@/lib/services/weekly-review"
 
-const navigation = [
+type NavItem =
+  | { name: string; href: string; icon: React.ComponentType<{ style?: React.CSSProperties }> }
+  | { label: string }
+
+const navigation: NavItem[] = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
   { name: "Weekly Review", href: "/review", icon: ClipboardCheck },
-  { name: "Weekly Summary", href: "/summary", icon: FileText },
+  { name: "People Radar", href: "/radar", icon: ScanSearch },
+  { label: "Manage" },
   { name: "Tasks", href: "/tasks", icon: CheckSquare },
-  { name: "Follow-ups", href: "/follow-ups", icon: ListChecks },
   { name: "Teams", href: "/teams", icon: Users },
   { name: "People", href: "/people", icon: UserCircle },
-  { name: "People Radar", href: "/radar", icon: ScanSearch },
-  // { name: "Projects", href: "/projects", icon: FolderKanban },
   { name: "Meetings", href: "/meetings", icon: Calendar },
   { name: "Evidence", href: "/evidence", icon: BookOpen },
+  { name: "Follow-ups", href: "/follow-ups", icon: ListChecks },
   { name: "Career Framework", href: "/framework", icon: Award },
+  { label: "Output" },
+  { name: "Weekly Summary", href: "/summary", icon: FileText },
 ]
 
 interface SidebarProps {
@@ -87,8 +93,6 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
         else setReviewIndicator(null)
 
         setOverdueFollowUps(followUpRes.count ?? 0)
-
-        // radar critical: reuse the signal counts from fetchSignalCounts
         setRadarCritical(counts.critical)
       } catch {
         // non-critical — sidebar indicators are best-effort
@@ -146,7 +150,32 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
       {/* Nav */}
       <nav style={{ flex: 1, padding: "4px 10px", display: "flex", flexDirection: "column" }}>
-        {navigation.map((item) => {
+        {navigation.map((item, idx) => {
+          if ('label' in item) {
+            if (!isOpen) {
+              return (
+                <div key={`label-${idx}`} style={{
+                  height: "1px",
+                  background: "var(--border-1)",
+                  margin: "4px 0",
+                }} />
+              )
+            }
+            return (
+              <div key={`label-${idx}`} style={{
+                fontSize: "9px",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                color: "var(--text-3)",
+                padding: "10px 4px 4px",
+                fontWeight: 500,
+                userSelect: "none",
+              }}>
+                {item.label}
+              </div>
+            )
+          }
+
           const isActive = pathname === item.href
           const isReview = item.href === "/review"
           const isFollowUps = item.href === "/follow-ups"
@@ -164,6 +193,9 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
             : isRadar && radarCritical > 0
             ? radarCritical
             : null
+
+          const badgeBg = isFollowUps ? "#1e0d00" : "#1a0a0a"
+          const badgeColor = isFollowUps ? "#ffa94d" : "#ff6b6b"
 
           return (
             <Link
@@ -192,8 +224,8 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
               )}
               {badge !== null && (
                 <span style={{
-                  background: "#ff6b6b",
-                  color: "#fff",
+                  background: badgeBg,
+                  color: badgeColor,
                   borderRadius: "10px",
                   padding: "0 5px",
                   fontSize: "var(--text-overline)",

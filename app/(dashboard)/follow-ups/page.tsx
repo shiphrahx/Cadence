@@ -82,33 +82,14 @@ export default function FollowUpsPage() {
 
 
   return (
-    <div style={{ padding: '24px 32px', maxWidth: '900px', margin: '0 auto' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-        <div>
-          <h1>Follow-ups</h1>
-          <p style={{ marginTop: '4px' }}>Commitments you've made to your team</p>
-        </div>
-        <button
-          onClick={() => setShowPersonPicker(true)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            background: 'var(--surf-3)',
-            border: '1px solid var(--border-2)',
-            borderRadius: '5px',
-            color: 'var(--text-1)',
-            fontSize: 'var(--text-meta)',
-            fontWeight: 500,
-            padding: '7px 14px',
-            cursor: 'pointer',
-            fontFamily: 'var(--font-sans)',
-          }}
-        >
+    <>
+      <div className="page-topbar">
+        <span className="page-topbar-title">Follow-ups</span>
+        <button className="btn-primary" onClick={() => setShowPersonPicker(true)}>
           <Plus style={{ width: '13px', height: '13px' }} /> Add follow-up
         </button>
       </div>
+      <div className="page-content">
 
       {/* Stats bar */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '20px' }}>
@@ -256,9 +237,16 @@ export default function FollowUpsPage() {
             style={{ background: 'var(--surf-2)', border: '1px solid var(--border-2)', borderRadius: '8px', padding: '20px', width: '320px', display: 'flex', flexDirection: 'column', gap: '12px' }}
             onClick={e => e.stopPropagation()}
           >
-            <span style={{ fontSize: 'var(--text-body)', fontWeight: 600, color: 'var(--text-1)' }}>Who is this follow-up for?</span>
+            <div>
+              <span style={{ fontSize: 'var(--text-body)', fontWeight: 600, color: 'var(--text-1)' }}>Who is this follow-up for?</span>
+              <p style={{ fontSize: 'var(--text-meta)', color: 'var(--text-3)', marginTop: '4px' }}>Select a person to continue</p>
+            </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', maxHeight: '300px', overflowY: 'auto' }}>
-              {people.map(p => (
+              {loading ? (
+                <p style={{ fontSize: 'var(--text-meta)', color: 'var(--text-3)', padding: '8px 0' }}>Loading...</p>
+              ) : people.length === 0 ? (
+                <p style={{ fontSize: 'var(--text-meta)', color: 'var(--text-3)', padding: '8px 0' }}>No active people found.</p>
+              ) : people.map(p => (
                 <button
                   key={p.id}
                   onClick={() => { setAddingFor(p); setShowPersonPicker(false) }}
@@ -282,5 +270,6 @@ export default function FollowUpsPage() {
         />
       )}
     </div>
+    </>
   )
 }

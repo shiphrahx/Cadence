@@ -75,7 +75,7 @@ export function useWeeklySummaryData(weekStart: string): {
   data: WeeklySummaryData | null
   loading: boolean
   error: string | null
-  refetch: () => void
+  refetch: () => Promise<void>
 } {
   const [data, setData] = useState<WeeklySummaryData | null>(null)
   const [loading, setLoading] = useState(true)

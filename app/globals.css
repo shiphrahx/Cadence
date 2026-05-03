@@ -45,13 +45,36 @@
     --font-sans:  'Inter', system-ui, sans-serif;
     --font-mono:  'JetBrains Mono', 'Fira Mono', monospace;
 
+    /* ── Semantic color tokens ── */
+    --green:      #00f058;
+    --teal:       #00ffe5;
+    --blue:       #60a5fa;
+    --indigo:     #818cf8;
+    --purple:     #c084fc;
+    --orange:     #f97316;
+    --red:        #f87171;
+    --yellow:     #facc15;
+    --bg:         #171717;
+
+    /* ── Shorthand aliases ── */
+    --b1: var(--border-1);
+    --b2: var(--border-2);
+    --b3: var(--border-3);
+    --t1: var(--text-1);
+    --t2: var(--text-2);
+    --t3: var(--text-3);
+    --surf2: var(--surf-2);
+    --surf3: var(--surf-3);
+    --font: var(--font-sans);
+    --mono: var(--font-mono);
+
     /* ── Type scale ── */
     --text-page-title:   24px;   /* h1: page headings */
     --text-section:      14px;   /* h2: widget/section titles */
     --text-body:         14px;   /* default body text */
     --text-label:        14px;   /* secondary labels, captions */
     --text-meta:         12px;   /* table cells, metadata */
-    --text-caption:      10px;   /* tags, badges, tiny labels */
+    --text-caption:      12px;   /* tags, badges, tiny labels */
     --text-overline:     11px;   /* uppercase column/stat headers */
 
     --weight-title:      700;
@@ -218,4 +241,70 @@ label { font-size: var(--text-label); color: var(--text-2); }
 
 .nav-item-collapsed {
   justify-content: center;
+}
+
+/* ── Page topbar (sticky header bar used across all pages) ── */
+.page-topbar {
+  height: 40px;
+  padding: 0 16px;
+  background: var(--surf);
+  border-bottom: 1px solid var(--border-1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.page-topbar-title {
+  font-size: var(--text-label);
+  font-weight: 500;
+  color: var(--text-1);
+  font-family: var(--font-sans);
+}
+
+/* ── Page content wrapper ── */
+.page-content {
+  padding: 16px;
+}
+
+/* ── Primary gradient button ── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(90deg, #00ffe5 0%, #00f058 100%);
+  border: none;
+  color: #0a1a0a;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  white-space: nowrap;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+/* ── Secondary ghost button ── */
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border-2);
+  border-radius: 4px;
+  color: var(--text-2);
+  font-size: var(--text-caption);
+  padding: 4px 10px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  white-space: nowrap;
+}
+
+.btn-ghost:hover {
+  border-color: var(--border-3);
+  color: var(--text-1);
 }
