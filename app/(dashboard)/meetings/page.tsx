@@ -121,6 +121,7 @@ export default function MeetingsPage() {
         }
       } catch (error) {
         console.error('Failed to load data:', error)
+        toast.error('Failed to load meetings')
       }
     }
     loadData()
@@ -247,6 +248,7 @@ export default function MeetingsPage() {
       }
     } catch (error) {
       console.error('Failed to create meeting:', error)
+      toast.error('Failed to create meeting')
       alert('Failed to create meeting. Please try again.')
     }
   }
@@ -292,6 +294,7 @@ export default function MeetingsPage() {
       setSelectedMeeting(uiMeeting)
     } catch (error) {
       console.error('Failed to update meeting:', error)
+      toast.error('Failed to update meeting')
       alert('Failed to update meeting. Please try again.')
     }
   }
