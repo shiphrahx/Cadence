@@ -95,7 +95,9 @@ export async function saveAIConfig(input: {
 
 export async function deleteAIConfig(): Promise<void> {
   const supabase = createClient()
-  const { error } = await supabase.from('ai_config').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+  const { error } = await supabase.from('ai_config').delete().eq('user_id', user.id)
   if (error) throw error
 }
 
