@@ -303,10 +303,7 @@ export default function LandingPage() {
       <nav>
         <div className="nav-inner">
           <a href="#" className="nav-logo">
-            <div className="nav-logo-mark">
-              <svg width="16" height="16" viewBox="0 0 14 14" fill="none"><path d="M2 7l4 4L12 3" stroke="#0a0a0b" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </div>
-            <span className="nav-logo-name">Cadence</span>
+            <img src="/logo_transparent.png" alt="Cadence" style={{height:"32px",width:"auto"}} />
           </a>
           <div className="nav-links">
             <a href="#features">Features</a>
@@ -352,7 +349,7 @@ export default function LandingPage() {
       <section className="section" id="features">
         <div className="container">
           <div className="section-label"><span className="grad">Features</span></div>
-          <h2>Everything an EM needs.<br />Nothing they don&apos;t.</h2>
+          <h2>Everything an EM needs.</h2>
           <p className="section-desc">Purpose-built surfaces for the work engineering managers actually do — from Monday review to Friday summary.</p>
         </div>
       </section>
@@ -502,9 +499,7 @@ export default function LandingPage() {
         <div className="container">
           <div className="footer-inner">
             <div className="footer-left">
-              <div className="nav-logo-mark" style={{width:"22px",height:"22px",borderRadius:"5px"}}>
-                <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M2 7l4 4L12 3" stroke="#0a0a0b" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              </div>
+              <img src="/logo_transparent.png" alt="Cadence" style={{height:"24px",width:"auto",opacity:0.6}} />
               <span>© 2026 Cadence</span>
             </div>
             <div className="footer-links">
