@@ -1,13 +1,15 @@
 # Cadence
 
-![Cadence Banner](public/banner_02.png)
+![Cadence Banner](public/banner.png)
 
 ![Next.js](https://img.shields.io/github/package-json/dependency-version/shiphrahx/Cadence/next?logo=nextdotjs)
 ![React](https://img.shields.io/github/package-json/dependency-version/shiphrahx/Cadence/react?logo=react)
 ![TypeScript](https://img.shields.io/github/package-json/dependency-version/shiphrahx/Cadence/dev/typescript?logo=typescript)
 ![Tailwind CSS](https://img.shields.io/github/package-json/dependency-version/shiphrahx/Cadence/dev/tailwindcss?logo=tailwindcss)
 
-A lightweight web platform for engineering managers to run their day-to-day work. Brings together people management, tasks, meetings, follow-ups, and career development in one place.
+Cadence is a lightweight tool for engineering managers to keep track of people, conversations, and follow-ups in one place.
+
+It replaces your notes with a simple system built around how management work actually happens: unexpected ad-hoc meetings, regular 1:1s, ongoing feedback, and small actions that need to be followed through.
 
 ## Features
 
