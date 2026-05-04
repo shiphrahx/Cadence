@@ -14,6 +14,7 @@ import {
   type EvidenceSentiment,
 } from "@/lib/services/evidence"
 import { getPeople, type Person } from "@/lib/services/people"
+import { toast } from "sonner"
 
 const CATEGORY_LABELS: Record<EvidenceCategory, string> = {
   achievement:        "Achievement",
@@ -87,8 +88,8 @@ export default function EvidencePage() {
   const [filterTo, setFilterTo] = useState("")
 
   useEffect(() => {
-    getAllEvidence().then(setEntries).catch(console.error)
-    getPeople().then(setPeople).catch(console.error)
+    getAllEvidence().then(setEntries).catch(err => { console.error(err); toast.error('Failed to load evidence') })
+    getPeople().then(setPeople).catch(err => { console.error(err); toast.error('Failed to load people') })
   }, [])
 
   // Stats
@@ -148,6 +149,7 @@ export default function EvidencePage() {
       setShowForm(false)
     } catch (err) {
       console.error(err)
+      toast.error('Failed to save evidence')
     } finally {
       setSaving(false)
     }
@@ -160,6 +162,7 @@ export default function EvidencePage() {
       setEntries(entries.filter(e => e.id !== id))
     } catch (err) {
       console.error(err)
+      toast.error('Failed to delete evidence')
     } finally {
       setDeletingId(null)
     }

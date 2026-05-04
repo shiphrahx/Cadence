@@ -79,34 +79,25 @@ export async function saveAIConfig(input: {
   apiKey: string
   model: string
 }): Promise<AIConfig> {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Not authenticated')
-
-  // Encrypt key via DB function
-  const { data: encrypted, error: encErr } = await supabase.rpc('encrypt_api_key', {
-    plain_key: input.apiKey,
-    passphrase: process.env.NEXT_PUBLIC_AI_ENCRYPTION_KEY ?? 'cadence-default-key',
+  // Encryption uses a server-side private key — route handler keeps it out of client bundle
+  const res = await fetch('/api/ai-config', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(input),
   })
-  if (encErr || !encrypted) throw new Error('Failed to encrypt API key')
-
-  const { data, error } = await supabase
-    .from('ai_config')
-    .upsert({
-      user_id: user.id,
-      provider: input.provider,
-      api_key_encrypted: encrypted,
-      model: input.model,
-    }, { onConflict: 'user_id' })
-    .select()
-    .single()
-  if (error) throw error
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}))
+    throw new Error((body as { error?: string }).error ?? 'Failed to save AI config')
+  }
+  const data = await res.json()
   return rowToConfig(data as AIConfigRow)
 }
 
 export async function deleteAIConfig(): Promise<void> {
   const supabase = createClient()
-  const { error } = await supabase.from('ai_config').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+  const { error } = await supabase.from('ai_config').delete().eq('user_id', user.id)
   if (error) throw error
 }
 

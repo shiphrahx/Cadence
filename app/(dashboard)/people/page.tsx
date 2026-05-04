@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 import { PersonFormDialog } from "@/components/person-form-dialog"
 import { PeopleTable } from "@/components/people-table"
 import { DeleteConfirmDialog } from "@/components/delete-confirm-dialog"
@@ -37,6 +38,7 @@ export default function PeoplePage() {
       setTeams(data)
     } catch (error) {
       console.error('Failed to load teams:', error)
+      toast.error('Failed to load teams')
     }
   }
 
@@ -47,6 +49,7 @@ export default function PeoplePage() {
       setPeople(byName(data))
     } catch (error) {
       console.error('Failed to load people:', error)
+      toast.error('Failed to load people')
     } finally {
       setIsLoading(false)
     }
@@ -68,6 +71,7 @@ export default function PeoplePage() {
       setIsAddDialogOpen(false)
     } catch (error) {
       console.error('Failed to create person:', error)
+      toast.error('Failed to add person')
     }
   }
 
@@ -78,6 +82,7 @@ export default function PeoplePage() {
       setEditingPerson(null)
     } catch (error) {
       console.error('Failed to update person:', error)
+      toast.error('Failed to update person')
     }
   }
 
@@ -87,6 +92,7 @@ export default function PeoplePage() {
       setPeople(byName(people.map(p => p.id === updatedPerson.id ? updatedPerson : p)))
     } catch (error) {
       console.error('Failed to toggle person status:', error)
+      toast.error('Failed to update status')
     }
   }
 
@@ -98,6 +104,7 @@ export default function PeoplePage() {
         setDeletingPerson(null)
       } catch (error) {
         console.error('Failed to delete person:', error)
+        toast.error('Failed to delete person')
       }
     }
   }

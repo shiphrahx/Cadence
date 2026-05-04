@@ -41,6 +41,7 @@ import {
   updateAchievement,
   deleteAchievement,
 } from "@/lib/services/career-goals"
+import { toast } from "sonner"
 
 interface GapAnalysisRow {
   id: string
@@ -208,6 +209,7 @@ export default function CareerGoalsPage() {
       })))
     } catch (error) {
       console.error('Failed to load career goals data:', error)
+      toast.error('Failed to load career goals data')
     } finally {
       setIsLoading(false)
     }
@@ -222,6 +224,7 @@ export default function CareerGoalsPage() {
       })
     } catch (error) {
       console.error('Failed to update profile:', error)
+      toast.error('Failed to save profile')
     }
   }, [whereYouAre, whereYouWantToGo])
 
@@ -298,6 +301,7 @@ export default function CareerGoalsPage() {
       setIsGapDialogOpen(false)
     } catch (error) {
       console.error('Failed to save gap category:', error)
+      toast.error('Failed to save gap category')
     }
   }
 
@@ -308,6 +312,7 @@ export default function CareerGoalsPage() {
       await loadAllData()
     } catch (error) {
       console.error('Failed to delete gap category:', error)
+      toast.error('Failed to delete gap category')
     }
   }
 
@@ -344,6 +349,7 @@ export default function CareerGoalsPage() {
           })
         } catch (error) {
           console.error('Failed to update focus distribution:', error)
+          toast.error('Failed to save focus distribution')
         }
       }, 400)
     }
@@ -382,6 +388,7 @@ export default function CareerGoalsPage() {
       }])
     } catch (error) {
       console.error('Failed to create goal:', error)
+      toast.error('Failed to create goal')
     }
   }
 
@@ -411,6 +418,7 @@ export default function CareerGoalsPage() {
       await updateCareerGoal(id, updates)
     } catch (error) {
       console.error('Failed to update goal:', error)
+      toast.error('Failed to update goal')
     }
   }
 
@@ -420,6 +428,7 @@ export default function CareerGoalsPage() {
       setter(goals.filter(goal => goal.id !== id))
     } catch (error) {
       console.error('Failed to delete goal:', error)
+      toast.error('Failed to delete goal')
     }
   }
 
@@ -441,6 +450,7 @@ export default function CareerGoalsPage() {
       }])
     } catch (error) {
       console.error('Failed to create achievement:', error)
+      toast.error('Failed to create achievement')
     }
   }
 
@@ -461,6 +471,7 @@ export default function CareerGoalsPage() {
       await updateAchievement(id, updates)
     } catch (error) {
       console.error('Failed to update achievement:', error)
+      toast.error('Failed to update achievement')
     }
   }
 
@@ -470,6 +481,7 @@ export default function CareerGoalsPage() {
       setAchievements(achievements.filter(achievement => achievement.id !== id))
     } catch (error) {
       console.error('Failed to delete achievement:', error)
+      toast.error('Failed to delete achievement')
     }
   }
 
