@@ -258,7 +258,7 @@ export default function CareerGoalsPage() {
     updateFocusDistributions(shortTermFocus, setShortTermFocus)
     updateFocusDistributions(midTermFocus, setMidTermFocus)
     updateFocusDistributions(longTermFocus, setLongTermFocus)
-  }, [gapAnalysis, isLoading])
+  }, [gapAnalysis, categories, categoryMap, shortTermFocus, midTermFocus, longTermFocus, isLoading])
 
   // Gap Analysis Functions
   const openAddGapDialog = () => {
